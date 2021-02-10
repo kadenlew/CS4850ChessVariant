@@ -2,18 +2,30 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Chess.Definitions;
+
+namespace Chess 
+{
+namespace Piece
+{
+
 public class GamePieceBase : MonoBehaviour
 {
     public Material standard;
     public Material selected;
 
-    private Renderer targetRenderer;
+    protected Renderer targetRenderer;
+
+    protected BoardPosition position_;
 
     // Start is called before the first frame update
     void Start()
     {
         targetRenderer = GetComponentInChildren<Renderer>();
         Deselect();
+
+        position_ = new BoardPosition(1, 1);
+        Debug.Log(position_);
     }
 
     // Update is called once per frame
@@ -31,4 +43,12 @@ public class GamePieceBase : MonoBehaviour
     {
         targetRenderer.material = standard;
     }
+
+    public void init(BoardPosition starting_position) {
+        position_ = starting_position;
+    }
+
+}
+
+}
 }

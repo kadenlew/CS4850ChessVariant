@@ -55,6 +55,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -79,6 +80,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &7668856893853257396
 GameObject:
   m_ObjectHideFlags: 0
@@ -88,8 +90,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 195111658068360623}
-  - component: {fileID: -3062906298921088213}
   - component: {fileID: 8122945533883034812}
+  - component: {fileID: 7863496281323323620}
   m_Layer: 0
   m_Name: Pawn
   m_TagString: Player
@@ -112,20 +114,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-3062906298921088213
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7668856893853257396}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c561b8b61382b0448b627f6c3bda4621, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  standard: {fileID: 0}
-  selected: {fileID: 0}
 --- !u!136 &8122945533883034812
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -140,3 +128,17 @@ CapsuleCollider:
   m_Height: 1.8605106
   m_Direction: 1
   m_Center: {x: 0, y: 0.4302553, z: 0}
+--- !u!114 &7863496281323323620
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7668856893853257396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef6b1ea90baa57e438e05950c107f112, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  standard: {fileID: 0}
+  selected: {fileID: 0}

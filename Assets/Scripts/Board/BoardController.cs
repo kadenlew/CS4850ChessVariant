@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Chess.Piece;
+
 public class BoardController : MonoBehaviour
 {
     public int dimensions = 8;
