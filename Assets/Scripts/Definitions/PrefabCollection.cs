@@ -6,13 +6,8 @@ namespace Chess
 {
 namespace Definitions
 {
-<<<<<<< Updated upstream
-
-public readonly struct PrefabCollection 
-=======
         [System.Serializable]
         public readonly struct PrefabCollection 
->>>>>>> Stashed changes
 {
     public GameObject King { get; } 
     public GameObject Queen { get; }

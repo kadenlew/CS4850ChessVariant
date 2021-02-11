@@ -7,11 +7,7 @@ namespace Chess
 namespace Definitions
 {
 
-<<<<<<< Updated upstream
-class AttackAction : Action 
-=======
 public class AttackAction : Action 
->>>>>>> Stashed changes
 {
     
 }
