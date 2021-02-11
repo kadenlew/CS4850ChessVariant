@@ -52,11 +52,11 @@ public class Selector : MonoBehaviour
             }
             else
             {
-                if (selected)
-                    selected.Deselect();
-                selected = null;
-                selectedBoard = null;
-                uiController.activeAction = false;
+                //if (selected)
+                //    selected.Deselect();
+                //selected = null;
+                //selectedBoard = null;
+                //uiController.activeAction = false;
             }
 
         }
@@ -71,6 +71,7 @@ public class Selector : MonoBehaviour
                 selected.Deselect();
             selected = null;
             selectedBoard = null;
+            uiController.activeAction = false;
         }
     }
 }
