@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8129597141445052652}
-  - component: {fileID: -1636613947198998290}
   - component: {fileID: 8112260919092645253}
+  - component: {fileID: 7496951696243345285}
   m_Layer: 0
   m_Name: King
   m_TagString: Player
@@ -33,20 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-1636613947198998290
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4249060908999310181}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c561b8b61382b0448b627f6c3bda4621, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  standard: {fileID: 0}
-  selected: {fileID: 0}
 --- !u!136 &8112260919092645253
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -61,6 +47,20 @@ CapsuleCollider:
   m_Height: 2.4131088
   m_Direction: 1
   m_Center: {x: 0, y: 0.7065544, z: 0}
+--- !u!114 &7496951696243345285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4249060908999310181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 064ccc2937eed9c4abcd1e40063d9163, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  standard: {fileID: 0}
+  selected: {fileID: 0}
 --- !u!1 &8235431789680589327
 GameObject:
   m_ObjectHideFlags: 0
@@ -116,6 +116,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -140,3 +141,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}

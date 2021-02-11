@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1705706903207464820}
-  - component: {fileID: -4934250358972914879}
   - component: {fileID: 16908295185691247}
+  - component: {fileID: 6717969310719986089}
   m_Layer: 0
   m_Name: Queen
   m_TagString: Player
@@ -33,20 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &-4934250358972914879
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6082427672233922198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c561b8b61382b0448b627f6c3bda4621, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  standard: {fileID: 0}
-  selected: {fileID: 0}
 --- !u!136 &16908295185691247
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -61,6 +47,20 @@ CapsuleCollider:
   m_Height: 2.4488988
   m_Direction: 1
   m_Center: {x: 0, y: 0.7244494, z: 0}
+--- !u!114 &6717969310719986089
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6082427672233922198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac61047d8a6ff844b8fdd5b67bdd125, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  standard: {fileID: 0}
+  selected: {fileID: 0}
 --- !u!1 &8323938826153254090
 GameObject:
   m_ObjectHideFlags: 0
@@ -116,6 +116,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -140,3 +141,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}

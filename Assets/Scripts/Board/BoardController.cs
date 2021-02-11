@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+using Chess.Piece;
+using Chess.Control;
+
 public class BoardController : MonoBehaviour
 {
     public int dimensions = 8;
@@ -18,11 +22,16 @@ public class BoardController : MonoBehaviour
     public Material[] PieceMaterials;
     public Material[] PieceSelected;
 
+    private PlayerBase[] players = new PlayerBase[2];
 
+    public Chess.Definitions.PrefabCollection prefabs;
+
+    //comment
     // Start is called before the first frame update
     void Start()
     {
         InitializeBoard();
+        //InitializePlayers();
         InitializePieces();
     }
 
@@ -51,6 +60,12 @@ public class BoardController : MonoBehaviour
             if (cycler < 0)
                 cycler = BoardMaterials.Length - 1;
         }
+    }
+
+    private void InitializePlayers()
+    {
+        players[0] = new PlayerBase(true, prefabs);
+        players[1] = new PlayerBase(false, prefabs);
     }
 
     private void InitializePieces()
