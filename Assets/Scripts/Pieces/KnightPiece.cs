@@ -9,6 +9,7 @@ namespace Piece
 
 public class KnightPiece : SoldierPiece
 {
+<<<<<<< Updated upstream
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +21,9 @@ public class KnightPiece : SoldierPiece
     {
         
     }
+=======
+    
+>>>>>>> Stashed changes
 }
 
 }

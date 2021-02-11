@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+<<<<<<< Updated upstream
 namespace Chess 
 {
 namespace Piece
@@ -23,4 +24,17 @@ public class SoldierPiece : GamePieceBase
 }
 
 }
+=======
+namespace Chess
+{
+    namespace Piece
+    {
+
+        public class SoldierPiece : GamePieceBase
+        {
+            public CommanderPiece commander;
+        }
+
+    }
+>>>>>>> Stashed changes
 }
