@@ -18,6 +18,10 @@ public class GamePieceBase : MonoBehaviour
 
     protected BoardPosition position_;
 
+    // new function Explore() with a return type of a list of actions, abstract here, implement in the pieces
+    // public override of this function in all of the pieces and return a new list object
+    // have a way for the commander to store all of the pieces, within commander
+
     // Start is called before the first frame update
     void Start()
     {
