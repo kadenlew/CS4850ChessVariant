@@ -10,27 +10,43 @@ namespace Piece
 public class CommanderPiece : GamePieceBase
 {
     // Start is called before the first frame update
-    Definitions.PrefabCollection prefabs_;
+    protected Definitions.PrefabCollection prefabs_;
+    protected List<GameObject> soldiers_;
 
-    void Start()
-    {
-        
-    }
+    protected List<(GameObject, Definitions.BoardPosition)> spawnList_;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public virtual void commander_init(
+    public virtual List<GameObject> commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
         Definitions.PrefabCollection prefabs
     ) {
         // save the generic information that all commanders will require
-        prefabs_ = prefabs;
-        this.position_ = starting_position;
+        this.prefabs_ = prefabs;
+
+        // do the standard piece init as well
+        this.init(is_white, starting_position);
+
+
+        return soldiers_;
+    }
+
+    protected void spawn_units() {
+        // reset the soldier list and reserve enough space for our units
+        soldiers_ = new List<GameObject>(spawnList_.Count);
+
+        // for each unit thats been defined, spawn it in and call its init function 
+        // with the board position specified
+        foreach((GameObject piece, Definitions.BoardPosition pos) in spawnList_)
+        {
+            soldiers_.Add(
+                GameObject.Instantiate(piece)
+            );
+
+            soldiers_[soldiers_.Count - 1].GetComponent<Piece.GamePieceBase>().init(
+                is_white_,
+                pos
+            );
+        }
     }
 }
 

@@ -9,19 +9,7 @@ namespace Piece
     
 public class KingPiece : CommanderPiece
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public override void commander_init(
+    public override List<GameObject> commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
         Definitions.PrefabCollection prefabs
@@ -33,7 +21,18 @@ public class KingPiece : CommanderPiece
             prefabs
         );
 
-        // initialize this specific corp of pieces
+        spawnList_ = new List<(GameObject, Definitions.BoardPosition)>()
+        {
+            (prefabs_.Rook,     new Definitions.BoardPosition(1, is_white_ ? 1 : 8)),
+            (prefabs_.Queen,    new Definitions.BoardPosition(4, is_white_ ? 1 : 8)),
+            (prefabs_.Pawn,     new Definitions.BoardPosition(4, is_white_ ? 2 : 7)),
+            (prefabs_.Pawn,     new Definitions.BoardPosition(5, is_white_ ? 2 : 7)),
+            (prefabs_.Rook,     new Definitions.BoardPosition(8, is_white_ ? 1 : 8))
+        };
+
+        this.spawn_units(); 
+        return soldiers_;
+
     }
 }
 
