@@ -14,8 +14,6 @@ public class BoardController : MonoBehaviour
     public Material[] BoardMaterials;
 
     public Definitions.PrefabCollection prefabs;
-    public Material[] PieceMaterials;
-    public Material[] PieceSelected;
 
     protected List<Control.PlayerBase> players_;
 
@@ -72,9 +70,9 @@ public class BoardController : MonoBehaviour
 
     protected Vector3 compute_transform(Definitions.BoardPosition pos) {
         return new Vector3(
-            (pos.get_file() - dimensions / 2) * 2f,
+            (pos.get_file() - dimensions / pieceSize) * pieceSize,
             0f,
-            (pos.get_rank() - dimensions / 2) * 2f
+            (pos.get_rank() - dimensions / pieceSize) * pieceSize
         );
     }
 
