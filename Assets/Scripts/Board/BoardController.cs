@@ -70,9 +70,9 @@ public class BoardController : MonoBehaviour
 
     protected Vector3 compute_transform(Definitions.BoardPosition pos) {
         return new Vector3(
-            (pos.get_file() - dimensions / pieceSize) * pieceSize,
+            (pos.get_file() - dimensions / pieceSize) * pieceSize - pieceSize / 2f,
             0f,
-            (pos.get_rank() - dimensions / pieceSize) * pieceSize
+            (pos.get_rank() - dimensions / pieceSize) * pieceSize - pieceSize / 2f
         );
     }
 
