@@ -15,6 +15,8 @@ namespace Chess
             protected List<string> CollectActions() 
             {
                 List<string> actions = new List<string>();
+
+                // add actions from each soldier piece using Explore()
                 foreach (var piece in soldiers) 
                 {
                     List<string> tempActions = piece.Explore();
@@ -23,6 +25,14 @@ namespace Chess
                         actions.Add(action);
                     }
                 }
+
+                // add actions from this commander
+                List<string> commanderActions = this.Explore();
+                foreach (var action in commanderActions)
+                {
+                    actions.Add(action);
+                }
+
                 return actions;
             }
 
