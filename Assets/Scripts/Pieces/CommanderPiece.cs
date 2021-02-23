@@ -7,34 +7,17 @@ namespace Chess
     namespace Piece
     {
 
-        public class CommanderPiece : GamePieceBase
+        public abstract class CommanderPiece : GamePieceBase
         {
             public List<SoldierPiece> soldiers;
 
-            // method to work with Explore() method from GamePieceBase class, returns a list of all of the actions from the commander and any soldier piece
-            protected List<string> CollectActions() 
-            {
-                List<string> actions = new List<string>();
+            public override abstract List<Definitions.Action> Explore();
 
-                // add actions from each soldier piece using Explore()
-                foreach (var piece in soldiers) 
-                {
-                    List<string> tempActions = piece.Explore();
-                    foreach (var action in tempActions)
-                    {
-                        actions.Add(action);
-                    }
-                }
-
-                // add actions from this commander
-                List<string> commanderActions = this.Explore();
-                foreach (var action in commanderActions)
-                {
-                    actions.Add(action);
-                }
-
-                return actions;
-            }
+            /* public List<Definitions.Action> explore(board_state) {
+                List<Definitions.Action> res = this.explore();
+                foreach(GameObject p : this.soldiers_)
+                res.AddRange(p.expolore(board_state));
+            } */
 
             Definitions.PrefabCollection prefabs_;
 
