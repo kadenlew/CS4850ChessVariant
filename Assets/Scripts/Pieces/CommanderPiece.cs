@@ -12,7 +12,7 @@ namespace Chess
             public List<SoldierPiece> soldiers;
 
             // method to work with Explore() method from GamePieceBase class
-            public List<string> CollectActions() 
+            protected List<string> CollectActions() 
             {
                 List<string> actions = new List<string>();
                 foreach (var piece in soldiers) 
