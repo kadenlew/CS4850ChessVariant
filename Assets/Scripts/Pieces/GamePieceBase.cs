@@ -22,7 +22,7 @@ public class GamePieceBase : MonoBehaviour
     // public override of this function in all of the pieces and return a new list object
     // have a way for the commander to store all of the pieces, within commander
 
-    // method Explore, not sure exactly what input will be or list type will be, so leaving it blank/string for now. can't be abstract unless entire class is abstract
+    // method Explore(), not sure exactly what input will be or list type will be, so leaving it blank/string for now. can't be abstract unless entire class is abstract
     public List<string> Explore()
     {
         List<string> pieceActions = new List<string>();

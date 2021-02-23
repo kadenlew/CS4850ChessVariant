@@ -11,7 +11,7 @@ namespace Chess
         {
             public List<SoldierPiece> soldiers;
 
-            // method to work with Explore() method from GamePieceBase class
+            // method to work with Explore() method from GamePieceBase class, returns a list of all of the actions from the commander and any soldier piece
             protected List<string> CollectActions() 
             {
                 List<string> actions = new List<string>();
