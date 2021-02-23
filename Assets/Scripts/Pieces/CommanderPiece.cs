@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Chess 
+namespace Chess
 {
 namespace Piece
 {
 
-public class CommanderPiece : GamePieceBase
+public abstract class CommanderPiece : GamePieceBase
 {
     // Start is called before the first frame update
     protected Definitions.PrefabCollection prefabs_;
@@ -48,7 +48,9 @@ public class CommanderPiece : GamePieceBase
             );
         }
     }
+    public override abstract List<Definitions.Action> Explore();
 }
+
 
 }
 }

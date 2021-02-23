@@ -9,6 +9,10 @@ namespace Piece
     
 public class KingPiece : CommanderPiece
 {
+    public override List<Definitions.Action> Explore()
+    {
+        return new List<Definitions.Action>();
+    }
     public override List<GameObject> commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,

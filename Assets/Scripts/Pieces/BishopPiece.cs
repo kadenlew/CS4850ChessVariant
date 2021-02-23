@@ -36,7 +36,11 @@ public class BishopPiece : CommanderPiece
 
         this.spawn_units(); 
         return soldiers_;
+    }
 
+    public override List<Definitions.Action> Explore()
+    {
+        return new List<Definitions.Action>();
     }
 }
 

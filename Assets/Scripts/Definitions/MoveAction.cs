@@ -7,7 +7,7 @@ namespace Chess
 namespace Definitions
 {
 
-class MoveAction : Action
+public class MoveAction : Action
 {
     
 }
