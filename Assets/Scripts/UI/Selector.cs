@@ -7,8 +7,6 @@ using UnityEngine.UI;
 using Chess.Piece;
 using UnityEngine.EventSystems;
 
-using Chess.Piece;
-
 public class Selector : MonoBehaviour
 {
     public bool moveAllowed = true;

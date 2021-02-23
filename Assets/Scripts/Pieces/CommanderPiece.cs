@@ -11,6 +11,21 @@ namespace Chess
         {
             public List<SoldierPiece> soldiers;
 
+            // method to work with Explore() method from GamePieceBase class
+            public List<string> CollectActions() 
+            {
+                List<string> actions = new List<string>();
+                foreach (var piece in soldiers) 
+                {
+                    List<string> tempActions = piece.Explore();
+                    foreach (var action in tempActions)
+                    {
+                        actions.Add(action);
+                    }
+                }
+                return actions;
+            }
+
             Definitions.PrefabCollection prefabs_;
 
             public virtual void commander_init(
