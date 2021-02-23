@@ -7,9 +7,17 @@ namespace Chess
     namespace Piece
     {
 
-        public class CommanderPiece : GamePieceBase
+        public abstract class CommanderPiece : GamePieceBase
         {
             public List<SoldierPiece> soldiers;
+
+            public override abstract List<Definitions.Action> Explore();
+
+            /* public List<Definitions.Action> explore(board_state) {
+                List<Definitions.Action> res = this.explore();
+                foreach(GameObject p : this.soldiers_)
+                res.AddRange(p.expolore(board_state));
+            } */
 
             Definitions.PrefabCollection prefabs_;
 
