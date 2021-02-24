@@ -6,32 +6,37 @@ namespace Chess
 {
 namespace Definitions
 {
-        [System.Serializable]
-        public readonly struct PrefabCollection 
-{
-    public GameObject King { get; } 
-    public GameObject Queen { get; }
-    public GameObject Bishop { get; }
-    public GameObject Knight{ get; }
-    public GameObject Rook{ get; }
-    public GameObject Pawn { get; }
 
-    public PrefabCollection(
-        GameObject KingPrefab,
-        GameObject QueenPrefab,
-        GameObject BishopPrefab,
-        GameObject KnightPrefab,
-        GameObject RookPrefab,
-        GameObject PawnPrefab
-    )
-    {
-        King = KingPrefab;
-        Queen = QueenPrefab;
-        Bishop = BishopPrefab;
-        Knight = KnightPrefab;
-        Rook = RookPrefab;
-        Pawn = PawnPrefab;
-    }
+[System.Serializable]
+public class PrefabCollection 
+{
+    public GameObject King;  
+    public GameObject Queen; 
+    public GameObject Bishop;
+    public GameObject Knight; 
+    public GameObject Rook;
+    public GameObject Pawn;
+    public Material[]  pieceColors;
+
+    public Material[] pieceColorsSelected;
+
+    // public PrefabCollection(
+    //     GameObject KingPrefab,
+    //     GameObject QueenPrefab,
+    //     GameObject BishopPrefab,
+    //     GameObject KnightPrefab,
+    //     GameObject RookPrefab,
+    //     GameObject PawnPrefab,
+    //     Material[] pieceMaterials
+    // )
+    // {
+    //     King = KingPrefab;
+    //     Queen = QueenPrefab;
+    //     Bishop = BishopPrefab;
+    //     Knight = KnightPrefab;
+    //     Rook = RookPrefab;
+    //     Pawn = PawnPrefab;
+    // }
 
 }
 

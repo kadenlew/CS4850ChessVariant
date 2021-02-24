@@ -9,7 +9,10 @@ namespace Piece
 
 public class QueenPiece : SoldierPiece
 {
-    
+    public override List<Definitions.Action> Explore()
+    {
+        return new List<Definitions.Action>();
+    }
 }
 
 }
