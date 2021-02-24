@@ -16,26 +16,26 @@ public class Action
         {"Bishop, King", 5}, {"Bishop, Queen", 5}, {"Bishop, Knight", 5}, {"Bishop, Bishop", 4}, {"Bishop, Rook", 5}, {"Bishop, Pawn", 3},
         {"Rook, King", 4}, {"Rook, Queen", 4}, {"Rook, Knight", 5}, {"Rook, Bishop", 5}, {"Rook, Rook", 6}, {"Rook, Pawn", 5},
         {"Pawn, King", 6}, {"Pawn, Queen", 6}, {"Pawn, Knight", 6}, {"Pawn, Bishop", 5}, {"Pawn, Rook", 6}, {"Pawn, Pawn", 4} 
-    }
+    };
 
-    public AttackResult checkAttack(ref AttackAction){
-        // Recieve game piece information
-        // Convert game pieces to concated string
+    // public AttackResult checkAttack(ref AttackAction){
+    //     // Recieve game piece information
+    //     // Convert game pieces to concated string
 
-        string gamePieces;
-        int roll = random.Next(1,7);
-        int minRoll;
-        bool attack = false;
+    //     string gamePieces;
+    //     int roll = random.Next(1,7);
+    //     int minRoll;
+    //     bool attack = false;
 
-        if(roll >= captureTable.TryGetValue(gamePieces, out minRoll)){
-            attack = true;
-        }
-        else{
-            attack = false;
-        }
-        return roll, attack;
+    //     if(roll >= captureTable.TryGetValue(gamePieces, out minRoll)){
+    //         attack = true;
+    //     }
+    //     else{
+    //         attack = false;
+    //     }
+    //     return roll, attack;
 
-    }
+    // }
 }
 
 
