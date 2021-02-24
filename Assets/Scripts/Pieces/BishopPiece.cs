@@ -7,45 +7,45 @@ namespace Chess
 namespace Piece
 {
     
-public class BishopPiece : CommanderPiece
-{
+public class BishopPiece : CommanderPiece {
     // Start is called before the first frame update
 
     public override List<GameObject> commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
-        Definitions.PrefabCollection prefabs
+        Definitions.PrefabCollection prefabs,
+        BoardController controller
     ) {
         // generic commander initialization details
         base.commander_init(
             is_white,
             starting_position,
-            prefabs
+            prefabs,
+            controller
         );
 
         // determine which commander bishop this is
-        bool is_left = (this.position_.get_file() == 3) ? true : false;
+        bool is_left = (this.position.file == 3) ? true : false;
 
         spawnList_ = new List<(GameObject, Definitions.BoardPosition)>()
         {
-            (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 1 : 8, is_white_ ? 2 : 7)),
-            (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 2 : 7, is_white_ ? 2 : 7)),
-            (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 3 : 6, is_white_ ? 2 : 7)),
-            (prefabs_.Knight,   new Definitions.BoardPosition(is_left ? 2 : 7, is_white_ ? 1 : 8))
+            (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 1 : 8, is_white ? 2 : 7)),
+            (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 2 : 7)),
+            (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 3 : 6, is_white ? 2 : 7)),
+            (prefabs_.Knight,   new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 1 : 8))
         };
 
-        this.spawn_units(); 
+        this.spawn_units(controller); 
         return soldiers_;
     }
 
-    public override List<Definitions.Action> Explore()
-    {
+    // @TODO: IMPLEMENT ME
+    public override List<Definitions.Action> Explore() {
         return new List<Definitions.Action>();
     }
 
-    void Start()
-    {
-        this.type_ = PieceType.Bishop;
+    void Start() {
+        this.type = PieceType.Bishop;
     }
 }
 

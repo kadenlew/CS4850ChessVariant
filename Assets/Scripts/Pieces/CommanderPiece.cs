@@ -7,8 +7,7 @@ namespace Chess
 namespace Piece
 {
 
-public abstract class CommanderPiece : GamePieceBase
-{
+public abstract class CommanderPiece : GamePieceBase {
     // Start is called before the first frame update
     protected Definitions.PrefabCollection prefabs_;
     protected List<GameObject> soldiers_;
@@ -18,19 +17,19 @@ public abstract class CommanderPiece : GamePieceBase
     public virtual List<GameObject> commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
-        Definitions.PrefabCollection prefabs
+        Definitions.PrefabCollection prefabs,
+        BoardController controller
     ) {
         // save the generic information that all commanders will require
         this.prefabs_ = prefabs;
 
         // do the standard piece init as well
-        this.init(is_white, starting_position);
-
+        this.init(is_white, starting_position, controller);
 
         return soldiers_;
     }
 
-    protected void spawn_units() {
+    protected void spawn_units(BoardController controller) {
         // reset the soldier list and reserve enough space for our units
         soldiers_ = new List<GameObject>(spawnList_.Count);
 
@@ -43,8 +42,9 @@ public abstract class CommanderPiece : GamePieceBase
             );
 
             soldiers_[soldiers_.Count - 1].GetComponent<Piece.GamePieceBase>().init(
-                is_white_,
-                pos
+                is_white,
+                pos,
+                controller
             );
         }
     }
@@ -52,5 +52,5 @@ public abstract class CommanderPiece : GamePieceBase
 }
 
 
-}
-}
+} // Piece
+} // Chess

@@ -7,18 +7,15 @@ namespace Chess
 namespace Piece
 {
 
-public class PawnPiece : SoldierPiece
-{
-    public override List<Definitions.Action> Explore()
-    {
+public class PawnPiece : SoldierPiece {
+    public override List<Definitions.Action> Explore() {
         return new List<Definitions.Action>();
     }
-    void Start()
-    {
-        this.type_ = PieceType.Bishop;
+    void Start() {
+        this.type = PieceType.Bishop;
     }
 
 }
 
-}
-}
+} // Piece
+} // Chess
