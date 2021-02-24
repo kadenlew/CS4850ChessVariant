@@ -7,48 +7,45 @@ namespace Chess
 namespace Control
 {
 
-public class PlayerBase 
-{
+public class PlayerBase {
     protected List<GameObject> commanders_;
 
-    private List<Definitions.Action> possible_actions_;
+    public List<Definitions.Action> possible_actions_ { get; protected set; }
 
-    Definitions.PrefabCollection prefabs_;
+    protected Definitions.PrefabCollection prefabs_;
 
-    private bool is_white_; 
-
-    protected List<(GameObject, Definitions.BoardPosition)> spawnList_;
+    public bool is_white { get; } 
     
-    protected List<(GameObject, List<GameObject>)> pieces_;
+    public List<(GameObject, List<GameObject>)> pieces { get; protected set; }
 
 
     public PlayerBase(bool is_white, Definitions.PrefabCollection prefabs) {
-        is_white_ = is_white;
+        this.is_white = is_white;
         prefabs_ = prefabs;
 
         // defines the list of commanders to spawn 
-        spawnList_ = new List<(GameObject, Definitions.BoardPosition)>()
+        var spawnList = new List<(GameObject, Definitions.BoardPosition)>()
         {
-            (prefabs_.King,     new Definitions.BoardPosition(5, is_white_ ? 1 : 8)),
-            (prefabs_.Bishop,   new Definitions.BoardPosition(3, is_white_ ? 1 : 8)),
-            (prefabs_.Bishop,   new Definitions.BoardPosition(6, is_white_ ? 1 : 8))
+            (prefabs_.King,     new Definitions.BoardPosition(5, is_white ? 1 : 8)),
+            (prefabs_.Bishop,   new Definitions.BoardPosition(3, is_white ? 1 : 8)),
+            (prefabs_.Bishop,   new Definitions.BoardPosition(6, is_white ? 1 : 8))
         };
 
         // there will always be 3 commanders
-        commanders_ = new List<GameObject>(spawnList_.Count);
-        pieces_ = new List<(GameObject, List<GameObject>)>(spawnList_.Count);
+        commanders_ = new List<GameObject>(spawnList.Count);
+        pieces = new List<(GameObject, List<GameObject>)>(spawnList.Count);
 
         // spawn each commander specified above and call its init function
         // store references to all of the pieces that have been spawned grouped
         // by commander for quick reference
-        foreach((GameObject piece, Definitions.BoardPosition pos) in spawnList_)
+        foreach((GameObject piece, Definitions.BoardPosition pos) in spawnList)
         {
             commanders_.Add(
                 GameObject.Instantiate(piece)
             );
 
 
-            pieces_.Add(
+            pieces.Add(
                 (
                     commanders_[commanders_.Count - 1], 
                     commanders_[commanders_.Count - 1].GetComponent<Piece.CommanderPiece>().commander_init(
@@ -60,17 +57,7 @@ public class PlayerBase
             );
         }
     } 
-
-    public bool is_white() {
-        return is_white_;
-    }
-
-    public ref List<GameObject> getCommanders()  => ref commanders_;
-
-    public ref List<(GameObject, List<GameObject>)> getPieces() => ref pieces_;
-
-    
 }
 
-}
-}
+} // Control
+} // Chess

@@ -7,8 +7,7 @@ namespace Chess
 namespace Piece
 {
 
-public abstract class CommanderPiece : GamePieceBase
-{
+public abstract class CommanderPiece : GamePieceBase {
     // Start is called before the first frame update
     protected Definitions.PrefabCollection prefabs_;
     protected List<GameObject> soldiers_;
@@ -26,7 +25,6 @@ public abstract class CommanderPiece : GamePieceBase
         // do the standard piece init as well
         this.init(is_white, starting_position);
 
-
         return soldiers_;
     }
 
@@ -43,7 +41,7 @@ public abstract class CommanderPiece : GamePieceBase
             );
 
             soldiers_[soldiers_.Count - 1].GetComponent<Piece.GamePieceBase>().init(
-                is_white_,
+                is_white,
                 pos
             );
         }
@@ -52,5 +50,5 @@ public abstract class CommanderPiece : GamePieceBase
 }
 
 
-}
-}
+} // Piece
+} // Chess

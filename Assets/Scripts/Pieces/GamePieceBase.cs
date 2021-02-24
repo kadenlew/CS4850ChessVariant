@@ -17,14 +17,10 @@ public enum PieceType {
     NONE
 }
 
-public abstract class GamePieceBase : MonoBehaviour
-{
+public abstract class GamePieceBase : MonoBehaviour {
     public Material standard;
     public Material selected;
-
-    protected Renderer targetRenderer;
-
-    protected Definitions.BoardPosition position_;
+    public Definitions.BoardPosition position { get; protected set; }
 
     // new function Explore() with a return type of a list of actions, abstract here, implement in the pieces
     // public override of this function in all of the pieces and return a new list object
@@ -38,41 +34,22 @@ public abstract class GamePieceBase : MonoBehaviour
         // pieceActions.add(action);
         // return pieceActions;
 
-    protected bool is_white_;
+    public bool is_white { get; protected set; }
 
-    protected PieceType type_;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-    }
-
-    public void Select()
-    {
+    public PieceType type { get; protected set; }
+    public void Select() {
         GetComponentInChildren<Renderer>().material = selected;
     }
 
-    public void Deselect()
-    {
+    public void Deselect() {
         GetComponentInChildren<Renderer>().material = standard;
     }
 
     public void init(bool is_white, Definitions.BoardPosition starting_position) {
-        position_ = starting_position;
-        is_white_ = is_white;
+        this.position = starting_position;
+        this.is_white = is_white;
     }
-
-    public Definitions.BoardPosition GetBoardPosition() => this.position_;
-
-    public bool is_white() => this.is_white_;
-
 }
 
-}
-}
+} // Piece
+} // Chess

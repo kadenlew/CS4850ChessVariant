@@ -7,19 +7,15 @@ namespace Chess
 namespace Piece
 {
 
-public class KnightPiece : SoldierPiece
-{
-    public override List<Definitions.Action> Explore()
-    {
+public class KnightPiece : SoldierPiece {
+    public override List<Definitions.Action> Explore() {
         return new List<Definitions.Action>();
     }
 
-    void Start()
-    {
-        this.type_ = PieceType.Knight;
+    void Start() {
+        this.type = PieceType.Knight;
     }
-
 }
 
-}
-}
+} // Piece
+} // Chess

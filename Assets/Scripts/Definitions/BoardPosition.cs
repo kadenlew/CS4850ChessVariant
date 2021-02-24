@@ -7,14 +7,13 @@ namespace Chess
 namespace Definitions
 {
 
-public class BoardPosition
-{
-    private int file_;
-    private int rank_;
+public class BoardPosition {
+    public int file { get; protected set; }
+    public int rank { get; protected set; }
 
     public BoardPosition(int file, int rank) {
-        file_ = file;
-        rank_ = rank;
+        this.file = file;
+        this.rank = rank;
     }
 
     public BoardPosition(string notation) {
@@ -35,28 +34,23 @@ public class BoardPosition
     public override string ToString() {
         return (
             (char)(
-                ((int)'a') - 1 + file_)
-            ).ToString() + rank_;
+                ((int)'a') - 1 + file)
+            ).ToString() + rank;
     }
 
-    public int get_file() {
-        return file_;
-    }
-
-    public int get_rank() {
-        return rank_;
-    }
-
-    public void update_position(int file, int rank) {
+    public bool update_position(int file, int rank) {
         // error check
         if(file < 1 || file > 8 || rank < 1 || rank > 8)
         {
-            throw new System.ArgumentException("file and rank must both be in the range of 1-8 inclusive");
+            // throw new System.ArgumentException("file and rank must both be in the range of 1-8 inclusive");
+            return false;
         }
         
         // update the position
-        file_ = file;
-        rank_ = rank;
+        this.file = file;
+        this.rank = rank;
+
+        return true;
     }
 }
 

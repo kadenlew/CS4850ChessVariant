@@ -8,8 +8,7 @@ using Chess.Control;
 
 namespace Chess {
 
-public class BoardController : MonoBehaviour
-{
+public class BoardController : MonoBehaviour {
     public int dimensions = 8;
     public float pieceSize = 2f;
     public GameObject plane;
@@ -21,8 +20,7 @@ public class BoardController : MonoBehaviour
 
     //comment
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start() {
         players_ = new List<Control.PlayerBase>(2);
 
         players_.Add(
@@ -46,25 +44,23 @@ public class BoardController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update(){
         set_transforms();
     }
 
-    protected void set_transforms()
-    {
+    protected void set_transforms(){
         foreach(Control.PlayerBase player in players_)
         {
-            foreach((GameObject commander, List<GameObject> soldiers) in player.getPieces())
+            foreach((GameObject commander, List<GameObject> soldiers) in player.pieces)
             {
                 foreach(GameObject piece in soldiers)
                 {
                     piece.transform.position = compute_transform(
-                        piece.GetComponent<GamePieceBase>().GetBoardPosition()
+                        piece.GetComponent<GamePieceBase>().position
                     );
                 }
                 commander.transform.position = compute_transform(
-                    commander.GetComponent<GamePieceBase>().GetBoardPosition()
+                    commander.GetComponent<GamePieceBase>().position
                 );
             }
         }
@@ -72,36 +68,34 @@ public class BoardController : MonoBehaviour
 
     protected Vector3 compute_transform(Definitions.BoardPosition pos) {
         return new Vector3(
-            (pos.get_file() - dimensions / pieceSize) * pieceSize - pieceSize / 2f,
+            (pos.file - dimensions / pieceSize) * pieceSize - pieceSize / 2f,
             0f,
-            (pos.get_rank() - dimensions / pieceSize) * pieceSize - pieceSize / 2f
+            (pos.rank - dimensions / pieceSize) * pieceSize - pieceSize / 2f
         );
     }
 
-    protected void init_colors()
-    {
+    protected void init_colors() {
         foreach(Control.PlayerBase player in players_)
         {
-            foreach((GameObject commander, List<GameObject> soldiers) in player.getPieces())
+            foreach((GameObject commander, List<GameObject> soldiers) in player.pieces)
             {
                 foreach(GameObject piece in soldiers)
                 {
                     GamePieceBase p = piece.GetComponent<GamePieceBase>();
-                    p.standard = prefabs.pieceColors[p.is_white() ? 0 : 1];
-                    p.selected = prefabs.pieceColorsSelected[p.is_white() ? 0 : 1];
+                    p.standard = prefabs.pieceColors[p.is_white ? 0 : 1];
+                    p.selected = prefabs.pieceColorsSelected[p.is_white ? 0 : 1];
                     p.Deselect();
                 }
 
                 GamePieceBase c = commander.GetComponent<GamePieceBase>();
-                c.standard = prefabs.pieceColors[c.is_white() ? 0 : 1];
-                c.selected = prefabs.pieceColorsSelected[c.is_white() ? 0 : 1];
+                c.standard = prefabs.pieceColors[c.is_white ? 0 : 1];
+                c.selected = prefabs.pieceColorsSelected[c.is_white ? 0 : 1];
                 c.Deselect();
             }
         }
     }
 
-    private void InitializeBoard()
-    {
+    private void InitializeBoard() {
         int cycler = 0;
         for (int i = 1; i <= dimensions; i++)
         {
@@ -128,4 +122,4 @@ public class BoardController : MonoBehaviour
     }
 }
 
-}
+} // Chess
