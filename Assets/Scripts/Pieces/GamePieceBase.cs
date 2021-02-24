@@ -47,7 +47,7 @@ public abstract class GamePieceBase : MonoBehaviour {
         GetComponentInChildren<Renderer>().material = standard;
     }
 
-    public void init(bool is_white, Definitions.BoardPosition starting_position, ref BoardController controller) {
+    public void init(bool is_white, Definitions.BoardPosition starting_position, BoardController controller) {
         this.position = starting_position;
         this.is_white = is_white;
         this.controller_ref = controller;

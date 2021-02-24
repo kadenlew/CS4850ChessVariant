@@ -19,7 +19,7 @@ public class PlayerBase {
     public List<(GameObject, List<GameObject>)> pieces { get; protected set; }
 
 
-    public PlayerBase(bool is_white, Definitions.PrefabCollection prefabs) {
+    public PlayerBase(bool is_white, Definitions.PrefabCollection prefabs, BoardController controller) {
         this.is_white = is_white;
         prefabs_ = prefabs;
 
@@ -51,7 +51,8 @@ public class PlayerBase {
                     commanders_[commanders_.Count - 1].GetComponent<Piece.CommanderPiece>().commander_init(
                         is_white,
                         pos,
-                        prefabs_
+                        prefabs_,
+                        controller
                     )
                 )
             );

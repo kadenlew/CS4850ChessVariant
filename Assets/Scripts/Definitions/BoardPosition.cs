@@ -7,6 +7,32 @@ namespace Chess
 namespace Definitions
 {
 
+public class BoardVector {
+    public int file_length { get; }
+    public int rank_length { get;  }   
+    public int manhattan_mag {
+        get { return System.Math.Abs(file_length) + System.Math.Abs(rank_length); }
+    }
+
+    public BoardVector(
+        int file_length,
+        int rank_length
+    ) {
+        this.file_length = file_length;
+        this.rank_length = rank_length;
+    }
+
+    public static BoardVector operator+ (BoardVector a, BoardVector b) => new BoardVector(
+        a.file_length + b.file_length,
+        a.rank_length + b.rank_length
+    );
+
+    public static BoardVector operator- (BoardVector a, BoardVector b) => new BoardVector(
+        a.file_length - b.file_length,
+        a.rank_length - b.rank_length
+    );
+}
+
 public class BoardPosition {
     public int file { get; protected set; }
     public int rank { get; protected set; }
@@ -52,6 +78,22 @@ public class BoardPosition {
 
         return true;
     }
+
+    public static BoardPosition operator+ (BoardPosition a, BoardVector b) => new BoardPosition(
+        a.file + b.file_length,
+        a.rank + b.rank_length
+    );
+
+    public static BoardPosition operator- (BoardPosition a, BoardVector b) => new BoardPosition(
+        a.file - b.file_length,
+        a.rank - b.rank_length
+    );
+
+    public static BoardVector operator- (BoardPosition a, BoardPosition b) => new BoardVector(
+        a.file - b.file,
+        a.rank - b.rank
+    );
+
 }
 
 }   // Definitions

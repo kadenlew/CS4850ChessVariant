@@ -26,14 +26,16 @@ public class BoardController : MonoBehaviour {
         players_.Add(
             new Control.PlayerBase(
                 true,
-                prefabs
+                prefabs,
+                this
             )
         );
 
         players_.Add(
             new Control.PlayerBase(
                 false,
-                prefabs
+                prefabs,
+                this
             )
         );
 

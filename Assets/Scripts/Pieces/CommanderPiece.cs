@@ -18,18 +18,18 @@ public abstract class CommanderPiece : GamePieceBase {
         bool is_white, 
         Definitions.BoardPosition starting_position,
         Definitions.PrefabCollection prefabs,
-        ref BoardController controller
+        BoardController controller
     ) {
         // save the generic information that all commanders will require
         this.prefabs_ = prefabs;
 
         // do the standard piece init as well
-        this.init(is_white, starting_position, ref controller);
+        this.init(is_white, starting_position, controller);
 
         return soldiers_;
     }
 
-    protected void spawn_units(ref BoardController controller) {
+    protected void spawn_units(BoardController controller) {
         // reset the soldier list and reserve enough space for our units
         soldiers_ = new List<GameObject>(spawnList_.Count);
 
@@ -44,7 +44,7 @@ public abstract class CommanderPiece : GamePieceBase {
             soldiers_[soldiers_.Count - 1].GetComponent<Piece.GamePieceBase>().init(
                 is_white,
                 pos,
-                ref controller
+                controller
             );
         }
     }
