@@ -41,6 +41,16 @@ public abstract class GamePieceBase : MonoBehaviour {
     public PieceType type { get; protected set; }
     public void Select() {
         GetComponentInChildren<Renderer>().material = selected;
+
+        GameObject res;
+        if(this.controller_ref.checkPosition(this.position, out res))
+        {
+            Debug.Log(res.GetComponent<GamePieceBase>());
+        }
+        else
+        {
+            Debug.Log("No Result Found!");
+        }
     }
 
     public void Deselect() {
@@ -52,6 +62,9 @@ public abstract class GamePieceBase : MonoBehaviour {
         this.is_white = is_white;
         this.controller_ref = controller;
     }
+
+    public override string ToString() => $"{(this.is_white ? "White" : "Black")} {this.type} {this.position}";
+        
 }
 
 } // Piece

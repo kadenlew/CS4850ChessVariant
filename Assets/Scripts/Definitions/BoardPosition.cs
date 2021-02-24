@@ -94,6 +94,24 @@ public class BoardPosition {
         a.rank - b.rank
     );
 
+    public static bool operator== (BoardPosition a, BoardPosition b) => (
+        a.file == b.file && a.rank == b.rank
+    );
+
+    public static bool operator!= (BoardPosition a, BoardPosition b) => (
+        !(a == b)
+    );
+
+    public override bool Equals(System.Object obj){
+        if((obj == null) || !this.GetType().Equals(obj.GetType()))
+            return false;
+        
+        BoardPosition pos = (BoardPosition) obj;
+        return pos == this;
+    }
+
+    public override int GetHashCode() => 10 * this.file + this.rank;
+
 }
 
 }   // Definitions

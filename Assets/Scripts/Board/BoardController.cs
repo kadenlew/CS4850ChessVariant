@@ -18,10 +18,14 @@ public class BoardController : MonoBehaviour {
 
     protected List<Control.PlayerBase> players_;
 
+    public List<(bool, List<(GameObject, List<GameObject>)>)> piece_map { get; protected set; }
+
     //comment
     // Start is called before the first frame update
     void Start() {
+        // reserve storage structures
         players_ = new List<Control.PlayerBase>(2);
+        piece_map = new List<(bool, List<(GameObject, List<GameObject>)>)>(2);
 
         players_.Add(
             new Control.PlayerBase(
@@ -31,12 +35,20 @@ public class BoardController : MonoBehaviour {
             )
         );
 
+        piece_map.Add(
+            (true, players_[players_.Count - 1].pieces)
+        );
+
         players_.Add(
             new Control.PlayerBase(
                 false,
                 prefabs,
                 this
             )
+        );
+
+        piece_map.Add(
+            (false, players_[players_.Count - 1].pieces)
         );
 
         InitializeBoard();
@@ -122,6 +134,32 @@ public class BoardController : MonoBehaviour {
                 cycler = BoardMaterials.Length - 1;
         }
     }
+
+    public bool checkPosition(Definitions.BoardPosition pos, out GameObject result) {
+        foreach((bool color, List<(GameObject, List<GameObject>)> player_pieces) in piece_map)
+        {
+            foreach((GameObject commander, List<GameObject> soldiers) in player_pieces)
+            {
+                foreach(GameObject soldier in soldiers)
+                {
+                    if(soldier.GetComponent<GamePieceBase>().position == pos)
+                    {
+                        result = soldier;
+                        return true;
+                    }
+                }
+                if(commander.GetComponent<GamePieceBase>().position == pos)
+                {
+                    result = commander;
+                    return true;
+                }
+            }
+        }
+        
+        // could not find
+        result = null;
+        return false;
+    } 
 }
 
 } // Chess
