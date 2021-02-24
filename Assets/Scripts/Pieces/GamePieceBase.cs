@@ -22,6 +22,8 @@ public abstract class GamePieceBase : MonoBehaviour {
     public Material selected;
     public Definitions.BoardPosition position { get; protected set; }
 
+    public BoardController controller_ref { get; set; }
+
     // new function Explore() with a return type of a list of actions, abstract here, implement in the pieces
     // public override of this function in all of the pieces and return a new list object
     // have a way for the commander to store all of the pieces, within commander
@@ -45,9 +47,10 @@ public abstract class GamePieceBase : MonoBehaviour {
         GetComponentInChildren<Renderer>().material = standard;
     }
 
-    public void init(bool is_white, Definitions.BoardPosition starting_position) {
+    public void init(bool is_white, Definitions.BoardPosition starting_position, ref BoardController controller) {
         this.position = starting_position;
         this.is_white = is_white;
+        this.controller_ref = controller;
     }
 }
 

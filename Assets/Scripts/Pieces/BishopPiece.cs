@@ -13,13 +13,15 @@ public class BishopPiece : CommanderPiece {
     public override List<GameObject> commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
-        Definitions.PrefabCollection prefabs
+        Definitions.PrefabCollection prefabs,
+        ref BoardController controller
     ) {
         // generic commander initialization details
         base.commander_init(
             is_white,
             starting_position,
-            prefabs
+            prefabs,
+            ref controller
         );
 
         // determine which commander bishop this is
@@ -33,7 +35,7 @@ public class BishopPiece : CommanderPiece {
             (prefabs_.Knight,   new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 1 : 8))
         };
 
-        this.spawn_units(); 
+        this.spawn_units(ref controller); 
         return soldiers_;
     }
 

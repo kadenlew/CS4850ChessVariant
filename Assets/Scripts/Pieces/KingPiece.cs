@@ -15,13 +15,15 @@ public class KingPiece : CommanderPiece {
     public override List<GameObject> commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
-        Definitions.PrefabCollection prefabs
+        Definitions.PrefabCollection prefabs,
+        ref BoardController controller
     ) {
         // generic commander initialization details
         base.commander_init(
             is_white,
             starting_position,
-            prefabs
+            prefabs,
+            ref controller
         );
 
         spawnList_ = new List<(GameObject, Definitions.BoardPosition)>()
@@ -33,7 +35,7 @@ public class KingPiece : CommanderPiece {
             (prefabs_.Rook,     new Definitions.BoardPosition(8, is_white ? 1 : 8))
         };
 
-        this.spawn_units(); 
+        this.spawn_units(ref controller); 
         return soldiers_;
 
     }
