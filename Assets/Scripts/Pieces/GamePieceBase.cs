@@ -7,6 +7,16 @@ namespace Chess
 namespace Piece
 {
 
+public enum PieceType {
+    King,
+    Queen,
+    Bishop,
+    Rook,
+    Knight,
+    Pawn,
+    NONE
+}
+
 public abstract class GamePieceBase : MonoBehaviour
 {
     public Material standard;
@@ -30,9 +40,12 @@ public abstract class GamePieceBase : MonoBehaviour
 
     protected bool is_white_;
 
+    protected PieceType type_;
+
     // Start is called before the first frame update
     void Start()
     {
+
     }
 
     // Update is called once per frame
