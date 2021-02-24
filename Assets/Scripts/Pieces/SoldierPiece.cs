@@ -7,9 +7,11 @@ namespace Chess
     namespace Piece
     {
 
-        public class SoldierPiece : GamePieceBase
+        public abstract class SoldierPiece : GamePieceBase
         {
             public CommanderPiece commander;
+
+            public override abstract List<Definitions.Action> Explore();
         }
 
     }

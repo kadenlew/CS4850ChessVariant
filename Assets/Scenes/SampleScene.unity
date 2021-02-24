@@ -904,18 +904,21 @@ MonoBehaviour:
   BoardMaterials:
   - {fileID: 2100000, guid: cfcc3e1d45f95c5449b87d4c6713bbbc, type: 2}
   - {fileID: 2100000, guid: 9079a18cd0f21164797f83b6a94526db, type: 2}
-  King: {fileID: 4249060908999310181, guid: d77e7386c1b6a1e4c9a7af123a9868c8, type: 3}
-  Queen: {fileID: 6082427672233922198, guid: 67510f12ecbe74043a9e2033efabf74b, type: 3}
-  Bishop: {fileID: 7416989517157957696, guid: 5e8c12c38f66af948819767a3e4a0a8b, type: 3}
-  Knight: {fileID: 4899020452060455501, guid: 815ba73e1de47e64984ff08acd5cfc10, type: 3}
-  Rook: {fileID: 6690695925123412812, guid: 8488cb84227966648b016618b3d1af32, type: 3}
-  Pawn: {fileID: 7668856893853257396, guid: 552545f19e064ec4aa77b35b7c074337, type: 3}
-  PieceMaterials:
-  - {fileID: 2100000, guid: f37469148686be84e80a1d3105556d4c, type: 2}
-  - {fileID: 2100000, guid: b9ad7f4dc4c111f409fa63a198765a56, type: 2}
-  PieceSelected:
-  - {fileID: 2100000, guid: 9c38f94f5488cd14da5859e61b9ffcf4, type: 2}
-  - {fileID: 2100000, guid: 03366e0ab0f1f0e4c845c5d8f94c7a03, type: 2}
+  prefabs:
+    King: {fileID: 4249060908999310181, guid: d77e7386c1b6a1e4c9a7af123a9868c8, type: 3}
+    Queen: {fileID: 6082427672233922198, guid: 67510f12ecbe74043a9e2033efabf74b, type: 3}
+    Bishop: {fileID: 7416989517157957696, guid: 5e8c12c38f66af948819767a3e4a0a8b,
+      type: 3}
+    Knight: {fileID: 4899020452060455501, guid: 815ba73e1de47e64984ff08acd5cfc10,
+      type: 3}
+    Rook: {fileID: 6690695925123412812, guid: 8488cb84227966648b016618b3d1af32, type: 3}
+    Pawn: {fileID: 7668856893853257396, guid: 552545f19e064ec4aa77b35b7c074337, type: 3}
+    pieceColors:
+    - {fileID: 2100000, guid: b9ad7f4dc4c111f409fa63a198765a56, type: 2}
+    - {fileID: 2100000, guid: f37469148686be84e80a1d3105556d4c, type: 2}
+    pieceColorsSelected:
+    - {fileID: 2100000, guid: 03366e0ab0f1f0e4c845c5d8f94c7a03, type: 2}
+    - {fileID: 2100000, guid: 9c38f94f5488cd14da5859e61b9ffcf4, type: 2}
 --- !u!4 &617720349
 Transform:
   m_ObjectHideFlags: 0
