@@ -13,6 +13,10 @@ public class RookPiece : SoldierPiece
     {
         return new List<Definitions.Action>();
     }
+    void Start()
+    {
+        this.type_ = PieceType.Rook;
+    }
 }
 
 }

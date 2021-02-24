@@ -38,6 +38,10 @@ public class KingPiece : CommanderPiece
         return soldiers_;
 
     }
+    void Start()
+    {
+        this.type_ = PieceType.King;
+    }
 }
 
 }
