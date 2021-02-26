@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 
 using Chess.Piece;
@@ -19,6 +20,7 @@ public class BoardController : MonoBehaviour {
     protected List<Control.PlayerBase> players_;
 
     public List<(bool, List<(GameObject, List<GameObject>)>)> piece_map { get; protected set; }
+    public Dictionary<Definitions.BoardPosition, GameObject> board_lookup { get; protected set; }
 
     //comment
     // Start is called before the first frame update
@@ -26,6 +28,7 @@ public class BoardController : MonoBehaviour {
         // reserve storage structures
         players_ = new List<Control.PlayerBase>(2);
         piece_map = new List<(bool, List<(GameObject, List<GameObject>)>)>(2);
+        board_lookup = new Dictionary<Definitions.BoardPosition, GameObject>();
 
         players_.Add(
             new Control.PlayerBase(
@@ -54,7 +57,7 @@ public class BoardController : MonoBehaviour {
         InitializeBoard();
         set_transforms();
         init_colors();
-
+        update_lookup();
     }
 
     // Update is called once per frame
@@ -72,6 +75,10 @@ public class BoardController : MonoBehaviour {
                     piece.transform.position = compute_transform(
                         piece.GetComponent<GamePieceBase>().position
                     );
+
+                    var p = piece.GetComponent<GamePieceBase>();
+                    var n = p.position + new Definitions.BoardVector(1, 1);
+                    var k = (p.position - p.position).manhattan_mag;
                 }
                 commander.transform.position = compute_transform(
                     commander.GetComponent<GamePieceBase>().position
@@ -135,31 +142,54 @@ public class BoardController : MonoBehaviour {
         }
     }
 
-    public bool checkPosition(Definitions.BoardPosition pos, out GameObject result) {
+    private void update_lookup() {
+        board_lookup.Clear();
+
         foreach((bool color, List<(GameObject, List<GameObject>)> player_pieces) in piece_map)
         {
             foreach((GameObject commander, List<GameObject> soldiers) in player_pieces)
             {
                 foreach(GameObject soldier in soldiers)
                 {
-                    if(soldier.GetComponent<GamePieceBase>().position == pos)
+                    board_lookup[soldier.GetComponent<GamePieceBase>().position] = soldier;
+                }
+
+                board_lookup[commander.GetComponent<GamePieceBase>().position] = commander;
+            }
+        }
+        Debug.Log(board_lookup.Count);
+    }
+
+    public bool checkPosition(Definitions.BoardPosition pos, out GameObject result) {
+        if(this.board_lookup.TryGetValue(pos, out result)) 
+            return true;
+        return false;
+    } 
+
+    public bool checkPositionFull(Definitions.BoardPosition position, out GameObject result) {
+        foreach((bool color, List<(GameObject, List<GameObject>)> player_pieces) in piece_map)
+        {
+            foreach((GameObject commander, List<GameObject> soldiers) in player_pieces)
+            {
+                foreach(GameObject soldier in soldiers)
+                {
+                    if(soldier.GetComponent<GamePieceBase>().position == position)
                     {
                         result = soldier;
                         return true;
                     }
                 }
-                if(commander.GetComponent<GamePieceBase>().position == pos)
+
+                if(commander.GetComponent<GamePieceBase>().position == position)
                 {
-                    result = commander;
-                    return true;
+                        result = commander;
+                        return true;
                 }
             }
         }
-        
-        // could not find
         result = null;
         return false;
-    } 
+    }
 }
 
 } // Chess

@@ -9,12 +9,10 @@ namespace Piece
 
 public class PawnPiece : SoldierPiece {
     public override List<Definitions.Action> Explore() {
-        return new List<Definitions.Action>();
-    }
-    void Start() {
-        this.type = PieceType.Bishop;
+        return Exploring.ForwardExplore.Explore(this);
     }
 
+    public override PieceType type { get; } = PieceType.Pawn;
 }
 
 } // Piece

@@ -9,7 +9,7 @@ namespace Piece
     
 public class KingPiece : CommanderPiece {
     public override List<Definitions.Action> Explore() {
-        return new List<Definitions.Action>();
+        return Exploring.NPathExplore.Explore(this, 3);
     }
 
     public override List<GameObject> commander_init(
@@ -39,9 +39,8 @@ public class KingPiece : CommanderPiece {
         return soldiers_;
 
     }
-    void Start() {
-        this.type = PieceType.King;
-    }
+
+    public override PieceType type { get; } = PieceType.King;
 }
 
 } // Piece
