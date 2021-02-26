@@ -41,12 +41,10 @@ public class BishopPiece : CommanderPiece {
 
     // @TODO: IMPLEMENT ME
     public override List<Definitions.Action> Explore() {
-        return new List<Definitions.Action>();
+        return Exploring.ForwardExplore.Explore(this);
     }
 
-    void Start() {
-        this.type = PieceType.Bishop;
-    }
+    public override PieceType type { get; } = PieceType.Bishop;
 }
 
 }

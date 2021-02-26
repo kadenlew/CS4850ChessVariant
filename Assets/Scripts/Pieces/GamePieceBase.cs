@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Chess 
 {
@@ -14,7 +15,6 @@ public enum PieceType {
     Rook,
     Knight,
     Pawn,
-    NONE
 }
 
 public abstract class GamePieceBase : MonoBehaviour {
@@ -36,20 +36,25 @@ public abstract class GamePieceBase : MonoBehaviour {
         // pieceActions.add(action);
         // return pieceActions;
 
+
     public bool is_white { get; protected set; }
 
-    public PieceType type { get; protected set; }
+    public abstract PieceType type { get; }
     public void Select() {
         GetComponentInChildren<Renderer>().material = selected;
 
-        GameObject res;
-        if(this.controller_ref.checkPosition(this.position, out res))
+        for(int i = 0; i < 1000; i++)
         {
-            Debug.Log(res.GetComponent<GamePieceBase>());
-        }
-        else
-        {
-            Debug.Log("No Result Found!");
+            GameObject res;
+            if(this.controller_ref.checkPosition(this.position, out res))
+            {
+                // Debug.Log($"Dict: {res.GetComponent<GamePieceBase>()}");
+                // this.Explore();
+            }
+            else
+            {
+                Debug.Log("Dict: No Result Found!");
+            }
         }
     }
 
