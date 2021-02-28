@@ -19,6 +19,18 @@ public class MoveAction : Action
        this.agent = agent;
        this.target = target;
     }
+    public override Result Execute(BoardController controller) {
+        agent.GetComponent<Piece.GamePieceBase>().move(
+            target
+        );
+
+        return new MoveResult();
+    }
+
+
+///////////////////////////////////////////////////////////////////////////
+//                              OPERATORS
+//////////////////////////////////////////////////////////////////////////
 
     public static bool operator== (MoveAction a, MoveAction b) => (
         GameObject.ReferenceEquals(a.agent, b.agent) &&
@@ -46,6 +58,8 @@ public class MoveAction : Action
         $"{agent.GetComponent<Piece.GamePieceBase>()} to {target}"
     );
 }
+
+public class MoveResult : Result {}
 
 } // Definitions
 } // Chess

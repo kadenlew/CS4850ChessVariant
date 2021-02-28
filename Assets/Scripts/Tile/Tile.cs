@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Chess {
+namespace Definitions {
 // represents a single tile on the chess board
 // used to associate a BoardPosition with a specific GameObject
 public class Tile : MonoBehaviour
@@ -32,4 +33,5 @@ public class Tile : MonoBehaviour
     }
 }
 
+} // Definitions
 } // Chess

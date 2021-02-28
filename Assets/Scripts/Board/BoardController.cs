@@ -13,6 +13,8 @@ public class BoardController : MonoBehaviour {
     public int dimensions = 8;
     public float pieceSize = 2f;
 
+    public bool is_white_turn { get; protected set; } = true;
+
     public Definitions.PrefabCollection prefabs;
 
     protected List<Control.PlayerBase> players_;
@@ -66,11 +68,25 @@ public class BoardController : MonoBehaviour {
     }
 
     public void start_turn() {
-        players_[0].explore_actions();
+        player_explore();
     }
 
-    public bool execute_action(Definitions.Action action) {
-        return true;
+    public Definitions.Result execute_action(Definitions.Action action) {
+        // execute the action
+        var result = action.Execute(this);
+
+        // the board state has change, update the lookup table
+        update_lookup();
+
+        // re-explore the space since the board state has changed
+        player_explore();
+
+        // indicate the action executed successfully
+        return result;
+    }
+
+    public void player_explore() {
+        players_[is_white_turn ? 0 : 1].explore_actions();
     }
 
     protected void set_transforms(){
@@ -97,7 +113,7 @@ public class BoardController : MonoBehaviour {
         foreach(KeyValuePair<Definitions.BoardPosition, GameObject> kvp in board_tiles)
         {
             kvp.Value.transform.position = compute_transform(
-                kvp.Value.GetComponent<Tile>().position
+                kvp.Value.GetComponent<Definitions.Tile>().position
             );
         }
 
@@ -122,7 +138,7 @@ public class BoardController : MonoBehaviour {
                 // create and init the board
                 board_tiles[pos] = Instantiate(prefabs.Tile);
 
-                board_tiles[pos].GetComponent<Tile>().init(
+                board_tiles[pos].GetComponent<Definitions.Tile>().init(
                     new Definitions.BoardPosition(
                         i, k
                     ),
@@ -147,6 +163,13 @@ public class BoardController : MonoBehaviour {
                 board_lookup[commander.GetComponent<GamePieceBase>().position] = commander;
             }
         }
+    }
+
+    public void remove_piece(
+        GameObject piece,
+        GameObject pieces_commander
+    ) {
+
     }
 
     public bool checkPosition(Definitions.BoardPosition pos, out GameObject result) {

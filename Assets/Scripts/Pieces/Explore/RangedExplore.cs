@@ -15,7 +15,9 @@ namespace Exploring
 // the option to move onto that space given the attack is successful
 // is used by the Rook
 public class RangedExplore {
-    // explore function called by the pieces 
+    // explore function called by the pieces, it can be assumed that the actions
+    // appended to results are all valid AND that every possible action is 
+    // appended to results
     public static void Explore(
         GameObject p, 
         int gap,

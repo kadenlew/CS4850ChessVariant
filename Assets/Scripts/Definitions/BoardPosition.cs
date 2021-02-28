@@ -112,9 +112,13 @@ public class BoardPosition {
         a.rank - b.rank
     );
 
-    public static bool operator== (BoardPosition a, BoardPosition b) => (
-        a.file == b.file && a.rank == b.rank
-    );
+    public static bool operator== (BoardPosition a, BoardPosition b) {
+        if(object.ReferenceEquals(a, null))
+            return object.ReferenceEquals(b, null);
+        if(object.ReferenceEquals(b, null))
+            return object.ReferenceEquals(a, null);
+        return a.file == b.file && a.rank == b.rank;
+    }
 
     public static bool operator!= (BoardPosition a, BoardPosition b) => (
         !(a == b)

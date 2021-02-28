@@ -32,6 +32,8 @@ public abstract class GamePieceBase : MonoBehaviour {
     
     // determines what side this piece is on
     public bool is_white { get; protected set; }
+
+    public bool is_active { get; protected set; }
     
     // the type this piece is for use in dictionary lookups
     public abstract PieceType type { get; }
@@ -75,6 +77,14 @@ public abstract class GamePieceBase : MonoBehaviour {
         this.selected = prefabs_.pieceColorsSelected[is_white ? 0 : 1];
 
         this.GetComponentInChildren<Renderer>().material = this.standard;
+    }
+
+    public void move(Definitions.BoardPosition position) {
+        this.position = position;
+    }
+    
+    public virtual void set_inactive() {
+        this.is_active = false;
     }
 
     public override string ToString() => $"{(this.is_white ? "White" : "Black")} {this.type} {this.position}";

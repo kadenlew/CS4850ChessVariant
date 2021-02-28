@@ -30,13 +30,28 @@ public class AttackAction : Action {
         this.roll_modifer = roll_modifer;
     }
 
+    public override Result Execute(BoardController controller) {
+        // do the roll
+        var result = AttackAction.checkAttack(
+            this
+        );
+
+        // if we passed our check, kill
+        if(result.was_successful)
+        {
+
+        }
+
+        return result;
+    }
+
 ///////////////////////////////////////////////////////////////////////////
 //                      STATIC FUNCTIONS AND MEMBERS
 ///////////////////////////////////////////////////////////////////////////
 
     // given an AttackAction object, check what roll is required for that attack to succeed.
     // if return whether the attack succeeded, and what roll was gotten
-    public static AttackResult checkAttack(ref AttackAction attack) {
+    public static AttackResult checkAttack(AttackAction attack) {
         int roll = Random.Range((int)1, (int)7);
         return new AttackResult(
             roll,
@@ -101,6 +116,22 @@ public class AttackAction : Action {
         $"{((roll_modifer != 10) ? $" with a roll modifier of {roll_modifer}" : "")}"
     );
         
+}
+
+public class AttackResult : Result  {
+    // what the d6 (plus any modifer) resulted in
+    public int roll_result { get; }
+    // whether that roll was successful, given the roll table
+    public bool was_successful { get; }
+
+    // constructor
+    public AttackResult(
+        int roll_result,
+        bool was_successful
+    ) {
+        this.roll_result = roll_result;
+        this.was_successful = was_successful;
+    }
 }
 
 } // Definitions

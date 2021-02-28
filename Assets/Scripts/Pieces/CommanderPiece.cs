@@ -17,6 +17,8 @@ public abstract class CommanderPiece : GamePieceBase {
     // this piece will own, and is used to spawn each of those soliders in
     protected List<(GameObject, Definitions.BoardPosition)> spawnList_;
 
+    public uint energy { get; protected set; } 
+
     // Object init specific to commanders, allowing each of them to 
     // specify what pieces they will command and spawn them in
     public virtual List<GameObject> commander_init(
@@ -27,6 +29,8 @@ public abstract class CommanderPiece : GamePieceBase {
     ) {
         // do the standard piece init as well
         this.init(is_white, starting_position, controller, prefabs);
+
+        this.energy = 1;
 
         // required, but does not return anything
         return soldiers_;
@@ -48,9 +52,10 @@ public abstract class CommanderPiece : GamePieceBase {
             );
 
             // call its init function to sync it with the board
-            soldiers_[soldiers_.Count - 1].GetComponent<Piece.GamePieceBase>().init(
+            soldiers_[soldiers_.Count - 1].GetComponent<Piece.SoldierPiece>().soldier_init(
                 is_white,
                 pos,
+                this.gameObject,
                 controller,
                 prefabs_
             );
@@ -68,6 +73,26 @@ public abstract class CommanderPiece : GamePieceBase {
         this.Explore(ref results);
 
         UnityEngine.Profiling.Profiler.EndSample();
+    }
+
+    public bool expend_energy(uint cost) {
+        if(cost <= energy) {
+            energy -= cost;
+            return true;
+        }
+        return false;
+    }
+
+    public override void set_inactive()
+    {
+        // cause this piece to become inactive
+        base.set_inactive();
+    }
+
+    public void remove_soldier(GameObject soldier) {
+        soldiers_.Remove(
+            soldier
+        );
     }
 
     // forwarding the abstract piece explore function
