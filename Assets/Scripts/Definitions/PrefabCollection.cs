@@ -19,6 +19,9 @@ public class PrefabCollection
     public Material[]  pieceColors;
 
     public Material[] pieceColorsSelected;
+
+    public GameObject Tile;
+    public Material[] tileMaterials;
 }
 
 } // Definitions

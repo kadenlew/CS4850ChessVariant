@@ -12,14 +12,14 @@ namespace Chess {
 public class BoardController : MonoBehaviour {
     public int dimensions = 8;
     public float pieceSize = 2f;
-    public GameObject plane;
-    public Material[] BoardMaterials;
 
     public Definitions.PrefabCollection prefabs;
 
     protected List<Control.PlayerBase> players_;
 
     public List<(bool, List<(GameObject, List<GameObject>)>)> piece_map { get; protected set; }
+
+    public List<GameObject> board_tiles { get; protected set; }
     public Dictionary<Definitions.BoardPosition, GameObject> board_lookup { get; protected set; }
 
     //comment
@@ -64,7 +64,6 @@ public class BoardController : MonoBehaviour {
     // Update is called once per frame
     void Update(){
         set_transforms();
-        start_turn();
     }
 
     public void start_turn() {
@@ -92,6 +91,13 @@ public class BoardController : MonoBehaviour {
                 );
             }
         }
+        foreach(GameObject tile in board_tiles)
+        {
+            tile.transform.position = compute_transform(
+                tile.GetComponent<Tile>().position
+            );
+        }
+
         UnityEngine.Profiling.Profiler.EndSample();
     }
 
@@ -125,28 +131,23 @@ public class BoardController : MonoBehaviour {
     }
 
     private void InitializeBoard() {
-        int cycler = 0;
+        board_tiles = new List<GameObject>();
         for (int i = 1; i <= dimensions; i++)
         {
             for (int k = 1; k <= dimensions; k++)
             {
-                GameObject p = Instantiate(plane);
-                p.transform.position = compute_transform(
-                    new Definitions.BoardPosition(
-                        k, i
-                    )
+                // create and init the board
+                board_tiles.Add(
+                    Instantiate(prefabs.Tile)
                 );
 
-                Renderer target = p.GetComponent<Renderer>();
-                target.material = BoardMaterials[cycler];
-                
-                cycler++;
-                if (cycler == BoardMaterials.Length)
-                    cycler = 0;
+                board_tiles[board_tiles.Count - 1].GetComponent<Tile>().init(
+                    new Definitions.BoardPosition(
+                        i, k
+                    ),
+                    prefabs
+                );
             }
-            cycler--;
-            if (cycler < 0)
-                cycler = BoardMaterials.Length - 1;
         }
     }
 
@@ -165,7 +166,6 @@ public class BoardController : MonoBehaviour {
                 board_lookup[commander.GetComponent<GamePieceBase>().position] = commander;
             }
         }
-        Debug.Log(board_lookup.Count);
     }
 
     public bool checkPosition(Definitions.BoardPosition pos, out GameObject result) {
