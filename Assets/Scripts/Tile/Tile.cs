@@ -3,21 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Chess {
+// represents a single tile on the chess board
+// used to associate a BoardPosition with a specific GameObject
 public class Tile : MonoBehaviour
 {
+    // the boardPosition this tile is representing
     public Definitions.BoardPosition position { get; protected set; }
+    
+    // reference to the unity prefabs used for unified spawning
     protected Definitions.PrefabCollection prefabs_;
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    // called when this tile is created to assign it it's position
+    // and get its color set correctly
     public void init(
         Definitions.BoardPosition position,
         Definitions.PrefabCollection prefabs

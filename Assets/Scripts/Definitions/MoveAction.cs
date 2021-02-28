@@ -7,10 +7,14 @@ namespace Chess
 namespace Definitions
 {
 
+// reprents an action that is the movement of the agent from its current position
+// to a target board position.  
 public class MoveAction : Action
 {
+    // target position the piece will be moving to
     public BoardPosition target { get; }
 
+    // constructor
     public MoveAction(GameObject agent, BoardPosition target) {
        this.agent = agent;
        this.target = target;

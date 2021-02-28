@@ -7,13 +7,21 @@ namespace Chess
 namespace Definitions
 {
 
+// represents a change in board position. Used to have a constant list of 
+// potential paths of motion for each explore function, that can merely be
+// added to a boardPosition to generate new positions
 public class BoardVector {
+    // the magnitude of the file dimension
     public int file_length { get; }
+    // the magnitude of the rank dimension
     public int rank_length { get;  }   
+    
+    // manhattan magnitude of the entire vector
     public int manhattan_mag {
         get { return System.Math.Abs(file_length) + System.Math.Abs(rank_length); }
     }
 
+    // constructor
     public BoardVector(
         int file_length,
         int rank_length
@@ -21,6 +29,10 @@ public class BoardVector {
         this.file_length = file_length;
         this.rank_length = rank_length;
     }
+
+///////////////////////////////////////////////////////////////////////////
+//                              OPERATORS
+//////////////////////////////////////////////////////////////////////////
 
     public static BoardVector operator+ (BoardVector a, BoardVector b) => new BoardVector(
         a.file_length + b.file_length,
@@ -33,19 +45,35 @@ public class BoardVector {
     );
 }
 
+// represents a position on the chess board. file represents the "x" position, and rank
+// represents the "y" position. both range from [1-8] inclusive in valid positions, but can
+// be constructed with invalid positions to aid search. is_valid is provided to add the ability
+// to prevent invalid positions from being utilized.
+//
+// Changes in BoardPosition are best represented with a BoardVector, as is often the use case in
+// moves about the board. Any addition or subtraction with a BoardVector will create a new BoardPosition
+// and is the prefered way of finding out where a move would land. Subtracting 2 BoardPositions
+// will return a BoardVector, indicating the distance between the 2 positions.
 public class BoardPosition {
+    // the "x" position. valid range is [1-8] inclusive. represented with the 
+    // the characters [a-h] in string form
     public int file { get; protected set; }
+    // the "y" position. valid range is [1-8] inclusive. 
     public int rank { get; protected set; }
     
+    // determines if this current object can represent a physical square on a standard
+    // 8x8 chess board
     public bool is_valid {
         get { return !(file < 1 || file > 8 || rank < 1 || rank > 8); }
     }
 
+    // constructor
     public BoardPosition(int file, int rank) {
         this.file = file;
         this.rank = rank;
     }
 
+    // constructor given algebraic notation string
     public BoardPosition(string notation) {
         if(notation.Length != 2)
         {
@@ -53,11 +81,8 @@ public class BoardPosition {
         }
 
         // grab the values from the chess notation
-        int file_t =  ((int) notation[0] - (int) 'a') + 1;
-        int rank_t = int.Parse(notation[1].ToString());
-
-        // use the update position function for boundary checking
-        update_position(file_t, rank_t);
+        this.file =  ((int) notation[0] - (int) 'a') + 1;
+        this.rank = int.Parse(notation[1].ToString());
     }
 
     // convert file rank (1 indexed) to chess notation
@@ -68,20 +93,9 @@ public class BoardPosition {
             ).ToString() + rank;
     }
 
-    public bool update_position(int file, int rank) {
-        // error check
-        if(file < 1 || file > 8 || rank < 1 || rank > 8)
-        {
-            // throw new System.ArgumentException("file and rank must both be in the range of 1-8 inclusive");
-            return false;
-        }
-        
-        // update the position
-        this.file = file;
-        this.rank = rank;
-
-        return true;
-    }
+///////////////////////////////////////////////////////////////////////////
+//                              OPERATORS
+//////////////////////////////////////////////////////////////////////////
 
     public static BoardPosition operator+ (BoardPosition a, BoardVector b) => new BoardPosition(
         a.file + b.file_length,

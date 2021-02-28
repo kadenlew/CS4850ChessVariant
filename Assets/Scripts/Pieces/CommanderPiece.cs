@@ -7,28 +7,33 @@ namespace Chess
 namespace Piece
 {
 
+// abstract class representing the additional duties a commander piece has 
+// over the standard piece
 public abstract class CommanderPiece : GamePieceBase {
-    // Start is called before the first frame update
-    protected Definitions.PrefabCollection prefabs_;
+    // the list of soliders this commander owns
     protected List<GameObject> soldiers_;
 
+    // a list that is used on object creation to indicate which soliders 
+    // this piece will own, and is used to spawn each of those soliders in
     protected List<(GameObject, Definitions.BoardPosition)> spawnList_;
 
+    // Object init specific to commanders, allowing each of them to 
+    // specify what pieces they will command and spawn them in
     public virtual List<GameObject> commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
         Definitions.PrefabCollection prefabs,
         BoardController controller
     ) {
-        // save the generic information that all commanders will require
-        this.prefabs_ = prefabs;
-
         // do the standard piece init as well
-        this.init(is_white, starting_position, controller);
+        this.init(is_white, starting_position, controller, prefabs);
 
+        // required, but does not return anything
         return soldiers_;
     }
 
+    // given the spawnList set during commander init, spawn in each soldier 
+    // specified
     protected void spawn_units(BoardController controller) {
         // reset the soldier list and reserve enough space for our units
         soldiers_ = new List<GameObject>(spawnList_.Count);
@@ -37,17 +42,23 @@ public abstract class CommanderPiece : GamePieceBase {
         // with the board position specified
         foreach((GameObject piece, Definitions.BoardPosition pos) in spawnList_)
         {
+            // spawn the soldier
             soldiers_.Add(
                 GameObject.Instantiate(piece)
             );
 
+            // call its init function to sync it with the board
             soldiers_[soldiers_.Count - 1].GetComponent<Piece.GamePieceBase>().init(
                 is_white,
                 pos,
-                controller
+                controller,
+                prefabs_
             );
         }
     }
+
+    // function dealing with delegating out a command for each of its soldiers to explore its space
+    // also calls its own explore function itself
     public void commander_explore(ref HashSet<Definitions.Action> results) {
         UnityEngine.Profiling.Profiler.BeginSample("Commander Explore");
 
@@ -59,6 +70,7 @@ public abstract class CommanderPiece : GamePieceBase {
         UnityEngine.Profiling.Profiler.EndSample();
     }
 
+    // forwarding the abstract piece explore function
     public override abstract void Explore(ref HashSet<Definitions.Action> results);
 }
 

@@ -8,8 +8,11 @@ namespace Piece
 {
     
 public class BishopPiece : CommanderPiece {
-    // Start is called before the first frame update
+    // Used in dictionary lookups
+    public override PieceType type { get; } = PieceType.Bishop;
 
+    // Extend the base commander initing to indicate what soldiers 
+    // this piece has under it, and where they spawn
     public override List<GameObject> commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
@@ -27,6 +30,7 @@ public class BishopPiece : CommanderPiece {
         // determine which commander bishop this is
         bool is_left = (this.position.file == 3) ? true : false;
 
+        // create the list of soldiers that this commander will command
         spawnList_ = new List<(GameObject, Definitions.BoardPosition)>()
         {
             (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 1 : 8, is_white ? 2 : 7)),
@@ -35,16 +39,18 @@ public class BishopPiece : CommanderPiece {
             (prefabs_.Pawn,   new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 1 : 8))
         };
 
+        // spawn those soldiers
         this.spawn_units(controller); 
+
+        // return for the lookup tables
         return soldiers_;
     }
 
-    // @TODO: IMPLEMENT ME
+    // Bishop specific exploring 
     public override void Explore(ref HashSet<Definitions.Action> results) {
         Exploring.ForwardExplore.Explore(this.gameObject, ref results);
     }
 
-    public override PieceType type { get; } = PieceType.Bishop;
 }
 
 }
