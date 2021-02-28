@@ -9,7 +9,7 @@ namespace Piece
 
 public class PawnPiece : SoldierPiece {
     public override List<Definitions.Action> Explore() {
-        return Exploring.ForwardExplore.Explore(this);
+        return Exploring.ForwardExplore.Explore(this.gameObject);
     }
 
     public override PieceType type { get; } = PieceType.Pawn;

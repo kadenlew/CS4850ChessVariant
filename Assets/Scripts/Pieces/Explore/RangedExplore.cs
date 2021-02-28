@@ -11,7 +11,7 @@ namespace Exploring
 
 public class RangedExplore {
     public static List<Definitions.Action> Explore(
-        GamePieceBase p, 
+        GameObject p, 
         int gap
     ) {
         Debug.Log($"I Can Shoot you From Afar with a gap of {gap} between us!");

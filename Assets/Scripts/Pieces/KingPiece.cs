@@ -9,7 +9,7 @@ namespace Piece
     
 public class KingPiece : CommanderPiece {
     public override List<Definitions.Action> Explore() {
-        return Exploring.NPathExplore.Explore(this, 3);
+        return Exploring.NPathExplore.Explore(this.gameObject, 3);
     }
 
     public override List<GameObject> commander_init(

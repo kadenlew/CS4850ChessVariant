@@ -8,7 +8,7 @@ namespace Definitions
 {
 
 public abstract class Action {
-    public GameObject agent { get; }
+    public GameObject agent { get; protected set; }
 }
 
 

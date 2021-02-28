@@ -11,7 +11,8 @@ public class MoveAction : Action
 {
    public BoardPosition target { get; }
 
-   public MoveAction(BoardPosition target) {
+   public MoveAction(GameObject agent, BoardPosition target) {
+       this.agent = agent;
        this.target = target;
    }
 }

@@ -41,7 +41,7 @@ public class BishopPiece : CommanderPiece {
 
     // @TODO: IMPLEMENT ME
     public override List<Definitions.Action> Explore() {
-        return Exploring.ForwardExplore.Explore(this);
+        return Exploring.ForwardExplore.Explore(this.gameObject);
     }
 
     public override PieceType type { get; } = PieceType.Bishop;

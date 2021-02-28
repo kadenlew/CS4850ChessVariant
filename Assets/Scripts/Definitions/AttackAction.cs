@@ -14,9 +14,11 @@ public class AttackAction : Action {
     int roll_modifer { get; } = 0;
 
     public AttackAction(
+        GameObject agent, 
         GameObject target,
         int roll_modifer = 0
     ) {
+        this.agent = agent;
         this.target = target;
         this.roll_modifer = roll_modifer;
     }

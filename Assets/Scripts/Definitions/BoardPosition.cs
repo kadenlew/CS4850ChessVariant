@@ -36,6 +36,10 @@ public class BoardVector {
 public class BoardPosition {
     public int file { get; protected set; }
     public int rank { get; protected set; }
+    
+    public bool is_valid {
+        get { return file < 1 || file > 8 || rank < 1 || rank > 8; }
+    }
 
     public BoardPosition(int file, int rank) {
         this.file = file;
