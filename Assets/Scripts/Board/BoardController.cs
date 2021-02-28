@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -58,14 +58,21 @@ public class BoardController : MonoBehaviour {
         set_transforms();
         init_colors();
         update_lookup();
+        start_turn();
     }
 
     // Update is called once per frame
     void Update(){
         set_transforms();
+        start_turn();
+    }
+
+    public void start_turn() {
+        players_[0].explore_actions();
     }
 
     protected void set_transforms(){
+        UnityEngine.Profiling.Profiler.BeginSample("Set Piece Transforms");
         foreach(Control.PlayerBase player in players_)
         {
             foreach((GameObject commander, List<GameObject> soldiers) in player.pieces)
@@ -78,13 +85,14 @@ public class BoardController : MonoBehaviour {
 
                     var p = piece.GetComponent<GamePieceBase>();
                     var n = p.position + new Definitions.BoardVector(1, 1);
-                    var k = (p.position - p.position).manhattan_mag;
+                    
                 }
                 commander.transform.position = compute_transform(
                     commander.GetComponent<GamePieceBase>().position
                 );
             }
         }
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     protected Vector3 compute_transform(Definitions.BoardPosition pos) {
@@ -161,12 +169,17 @@ public class BoardController : MonoBehaviour {
     }
 
     public bool checkPosition(Definitions.BoardPosition pos, out GameObject result) {
-        if(this.board_lookup.TryGetValue(pos, out result)) 
+        UnityEngine.Profiling.Profiler.BeginSample("Search for Position DICT");
+        if(this.board_lookup.TryGetValue(pos, out result))  {
+            UnityEngine.Profiling.Profiler.EndSample();
             return true;
+        }   
+        UnityEngine.Profiling.Profiler.EndSample();
         return false;
     } 
 
     public bool checkPositionFull(Definitions.BoardPosition position, out GameObject result) {
+        UnityEngine.Profiling.Profiler.BeginSample("Search for Position FULL");
         foreach((bool color, List<(GameObject, List<GameObject>)> player_pieces) in piece_map)
         {
             foreach((GameObject commander, List<GameObject> soldiers) in player_pieces)
@@ -176,6 +189,7 @@ public class BoardController : MonoBehaviour {
                     if(soldier.GetComponent<GamePieceBase>().position == position)
                     {
                         result = soldier;
+                        UnityEngine.Profiling.Profiler.EndSample();
                         return true;
                     }
                 }
@@ -183,11 +197,13 @@ public class BoardController : MonoBehaviour {
                 if(commander.GetComponent<GamePieceBase>().position == position)
                 {
                         result = commander;
+                        UnityEngine.Profiling.Profiler.EndSample();
                         return true;
                 }
             }
         }
         result = null;
+        UnityEngine.Profiling.Profiler.EndSample();
         return false;
     }
 }

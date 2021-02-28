@@ -8,7 +8,7 @@ namespace Piece
 {
 
 public abstract class SoldierPiece : GamePieceBase {
-    public override abstract List<Definitions.Action> Explore();
+    public override abstract void Explore(ref HashSet<Definitions.Action> results);
 }
 
 } // Piece

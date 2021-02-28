@@ -48,7 +48,18 @@ public abstract class CommanderPiece : GamePieceBase {
             );
         }
     }
-    public override abstract List<Definitions.Action> Explore();
+    public void commander_explore(ref HashSet<Definitions.Action> results) {
+        UnityEngine.Profiling.Profiler.BeginSample("Commander Explore");
+
+        foreach(var soldier in soldiers_)
+            soldier.GetComponent<GamePieceBase>().Explore(ref results);
+
+        this.Explore(ref results);
+
+        UnityEngine.Profiling.Profiler.EndSample();
+    }
+
+    public override abstract void Explore(ref HashSet<Definitions.Action> results);
 }
 
 

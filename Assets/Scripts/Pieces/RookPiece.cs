@@ -8,8 +8,8 @@ namespace Piece
 {
     
 public class RookPiece : SoldierPiece {
-    public override List<Definitions.Action> Explore() {
-        return Exploring.RangedExplore.Explore(this.gameObject, 2);
+    public override void Explore(ref HashSet<Definitions.Action> results) {
+        Exploring.RangedExplore.Explore(this.gameObject, 2, ref results);
     }
 
     public override PieceType type { get; } = PieceType.Rook;

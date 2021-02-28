@@ -54,6 +54,35 @@ public class AttackAction : Action {
         {(Piece.PieceType.Pawn,     Piece.PieceType.Knight),    6}, {(Piece.PieceType.Pawn,     Piece.PieceType.Bishop),    5}, 
         {(Piece.PieceType.Pawn,     Piece.PieceType.Rook),      6}, {(Piece.PieceType.Pawn,     Piece.PieceType.Pawn),      4} 
     };
+
+    public static bool operator== (AttackAction a, AttackAction b) => (
+        GameObject.ReferenceEquals(a.agent, b.agent) &&
+        GameObject.ReferenceEquals(a.target, b.target)
+    );
+    
+    public static bool operator!= (AttackAction a, AttackAction b) => (
+        !(a == b)
+    );
+
+    public override bool Equals(object obj)
+    {
+        if((obj == null) || !this.GetType().Equals(obj.GetType()))
+            return false;
+
+        AttackAction action = (AttackAction) obj;
+        return action == this;
+    }
+
+    public override int GetHashCode() => (
+        agent.GetComponent<Piece.GamePieceBase>().position.GetHashCode() * 1000 +
+        target.GetComponent<Piece.GamePieceBase>().position.GetHashCode()
+    );
+
+    public override string ToString() => (
+        $"{agent.GetComponent<Piece.GamePieceBase>()} attacks {target.GetComponent<Piece.GamePieceBase>()}" +
+        $"{((roll_modifer != 10) ? $" with a roll modifier of {roll_modifer}" : "")}"
+    );
+        
 }
 
 } // Definitions

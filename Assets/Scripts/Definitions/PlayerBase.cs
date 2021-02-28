@@ -10,7 +10,7 @@ namespace Control
 public class PlayerBase {
     protected List<GameObject> commanders_;
 
-    public List<Definitions.Action> possible_actions_ { get; protected set; }
+    public HashSet<Definitions.Action> possible_actions = new HashSet<Definitions.Action>();
 
     protected Definitions.PrefabCollection prefabs_;
 
@@ -26,7 +26,7 @@ public class PlayerBase {
         // defines the list of commanders to spawn 
         var spawnList = new List<(GameObject, Definitions.BoardPosition)>()
         {
-            (prefabs_.King,     new Definitions.BoardPosition(5, is_white ? 1 : 8)),
+            (prefabs_.King,     new Definitions.BoardPosition(5, is_white ? 2 : 7)),
             (prefabs_.Bishop,   new Definitions.BoardPosition(3, is_white ? 1 : 8)),
             (prefabs_.Bishop,   new Definitions.BoardPosition(6, is_white ? 1 : 8))
         };
@@ -58,6 +58,17 @@ public class PlayerBase {
             );
         }
     } 
+
+    public void explore_actions() {
+        UnityEngine.Profiling.Profiler.BeginSample("Explore all Player Actions");
+
+        possible_actions.Clear();
+        foreach(var commander in commanders_)
+            commander.GetComponent<Piece.CommanderPiece>().commander_explore(ref possible_actions);
+
+        UnityEngine.Profiling.Profiler.EndSample();
+        // Debug.Log($"{possible_actions.Count}");
+    }
 }
 
 } // Control

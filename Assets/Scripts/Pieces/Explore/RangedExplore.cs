@@ -10,12 +10,12 @@ namespace Exploring
 {
 
 public class RangedExplore {
-    public static List<Definitions.Action> Explore(
+    public static void Explore(
         GameObject p, 
-        int gap
+        int gap,
+        ref HashSet<Definitions.Action> results
     ) {
-        Debug.Log($"I Can Shoot you From Afar with a gap of {gap} between us!");
-        return new List<Definitions.Action>();
+        // Debug.Log($"I Can Shoot you From Afar with a gap of {gap} between us!");
     }
 }
 

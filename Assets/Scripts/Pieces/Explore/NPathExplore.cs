@@ -30,12 +30,13 @@ public class NPathExplore {
 
     public static GameObject piece_ref { get; protected set; }
     
-    public static List<Definitions.Action> Explore(
+    public static void Explore(
         GameObject piece, 
         int n, 
+        ref HashSet<Definitions.Action> results,
         bool move_and_attack = false
     ) {
-        results.Clear();
+        NPathExplore.results = results;
         piece_ref = piece;   
         
         explore_adjacent(
@@ -44,10 +45,7 @@ public class NPathExplore {
             0,
             move_and_attack
         );
-
-        Debug.Log($"{results.Count}");
-            
-        return new List<Definitions.Action>();
+        // Debug.Log($"{piece.GetComponent<GamePieceBase>()}: {results.Count} possible moves.");
     }
 
     public static void explore_adjacent(   
@@ -56,28 +54,31 @@ public class NPathExplore {
         int current_length,
         bool move_and_attack
     ) {
-        if (current_length > max_length) 
+        if (current_length > max_length) {
             return;
+        }
 
         if (current_length > 0) {
             if (!pos.is_valid) {
                 return;
             }
 
+
             GameObject res;
-            if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPositionFull(pos, out res)) {
+            if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(pos, out res)) {
                 if ( 
                     piece_ref.GetComponent<GamePieceBase>().is_white != res.GetComponent<GamePieceBase>().is_white
                 ) {
+
                     if(current_length == 1 || move_and_attack) {
                         results.Add(
                             new Definitions.AttackAction(
                                 piece_ref,
                                 res,
                                 (move_and_attack && current_length > 1) ? -1 : 0
-                            )
-                        );
+                        ));
                     }
+
                 }
 
                 return;
@@ -88,6 +89,7 @@ public class NPathExplore {
                         piece_ref,
                         pos
                 ));
+
             }       
         } 
         

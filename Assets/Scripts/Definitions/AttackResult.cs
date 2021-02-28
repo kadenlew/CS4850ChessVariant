@@ -14,7 +14,6 @@ public readonly struct AttackResult {
         this.roll_result = roll_result;
         this.was_successful = was_successful;
     }
-
 }
 
 } // Definitions

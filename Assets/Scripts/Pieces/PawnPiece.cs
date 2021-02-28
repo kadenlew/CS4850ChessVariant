@@ -8,8 +8,8 @@ namespace Piece
 {
 
 public class PawnPiece : SoldierPiece {
-    public override List<Definitions.Action> Explore() {
-        return Exploring.ForwardExplore.Explore(this.gameObject);
+    public override void Explore(ref HashSet<Definitions.Action> results) {
+        Exploring.ForwardExplore.Explore(this.gameObject, ref results);
     }
 
     public override PieceType type { get; } = PieceType.Pawn;

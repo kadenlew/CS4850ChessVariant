@@ -30,9 +30,9 @@ public class BishopPiece : CommanderPiece {
         spawnList_ = new List<(GameObject, Definitions.BoardPosition)>()
         {
             (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 1 : 8, is_white ? 2 : 7)),
-            (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 2 : 7)),
+            (prefabs_.Knight,     new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 2 : 7)),
             (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 3 : 6, is_white ? 2 : 7)),
-            (prefabs_.Knight,   new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 1 : 8))
+            (prefabs_.Pawn,   new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 1 : 8))
         };
 
         this.spawn_units(controller); 
@@ -40,8 +40,8 @@ public class BishopPiece : CommanderPiece {
     }
 
     // @TODO: IMPLEMENT ME
-    public override List<Definitions.Action> Explore() {
-        return Exploring.ForwardExplore.Explore(this.gameObject);
+    public override void Explore(ref HashSet<Definitions.Action> results) {
+        Exploring.ForwardExplore.Explore(this.gameObject, ref results);
     }
 
     public override PieceType type { get; } = PieceType.Bishop;
