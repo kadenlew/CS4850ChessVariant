@@ -44,6 +44,8 @@ public class NPathExplore {
             0,
             move_and_attack
         );
+
+        Debug.Log($"{results.Count}");
             
         return new List<Definitions.Action>();
     }
@@ -56,7 +58,7 @@ public class NPathExplore {
     ) {
         if (current_length > max_length) 
             return;
-            
+
         if (current_length > 0) {
             if (!pos.is_valid) {
                 return;

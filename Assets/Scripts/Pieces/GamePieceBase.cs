@@ -42,20 +42,8 @@ public abstract class GamePieceBase : MonoBehaviour {
     public abstract PieceType type { get; }
     public void Select() {
         GetComponentInChildren<Renderer>().material = selected;
-
-        for(int i = 0; i < 1000; i++)
-        {
-            GameObject res;
-            if(this.controller_ref.checkPosition(this.position, out res))
-            {
-                // Debug.Log($"Dict: {res.GetComponent<GamePieceBase>()}");
-                // this.Explore();
-            }
-            else
-            {
-                Debug.Log("Dict: No Result Found!");
-            }
-        }
+        Debug.Log("I am here");
+        this.Explore();
     }
 
     public void Deselect() {
