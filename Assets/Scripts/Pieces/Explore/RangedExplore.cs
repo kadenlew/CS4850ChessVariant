@@ -28,46 +28,59 @@ public class RangedExplore {
         );
     }
 
-    public static void explore_radius(
-        Definitions.BoardPosition pos,
-        int current_gap
+    public static int euclidian_mag(
+        Definitions.BoardPosition origin,
+        Definitions.BoardPosition target
     ){
-        if(current_gap > 0){
-            if (!pos.is_valid){
-            return;
-            }
-        }
-
-        GameObject res;
-        if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(pos, out res)){
-            if(piece_ref.GetComponent<GamePieceBase>().is_white != res.GetComponent<GamePieceBase>().is_white){
-                results.Add(
-                    new Definitions.AttackAction(
-                        piece_ref,
-                        res,
-                        current_gap
-                    ));
-            }
-        }
-        return;
-
-        else{
-            results.Add(
-                new Definitions.MoveAction(
-                    piece_ref,
-                    pos
-                ));
-        }
+        delta_x = abs(origin.rank - target.rank);
+        delta_y = abs(origin.file - target.file);
+        return min(delta_x, delta_y) * sqrt(2) + abs(delta_x - delta_y);
     }
 
-    for(int i = 0; i <= 3; i++){
-        for(int j = 0; j <= 3; j++){
-            explore_radius(
-                pos + new Definitions.BoardVector(i, j),
-                current_gap + 1
-            );
-        }
-    }
+    public static void explore_radius(
+        Definitions.BoardPosition pos
+    ){
+        for(int x = -3; x <= 3; x++){
+            for(int y = -3;  y <= 3; y++){
+                var move = new BoardVector(x, y);
+                int mag = euclidian_mag(pos, (pos + move));
+                
+                if(mag > y){
+                    continue;
+                }
+
+                if(mag == 1){
+                    GameObject res;
+                    if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(pos, out res)){
+                        if(piece_ref.GetComponent<GamePieceBase>().is_white != res.GetComponent<GamePieceBase>().is_white){
+                            results.Add(
+                                new Definitions.AttackAction(
+                                piece_ref,
+                                res,
+                                mag
+                            ));
+                        }
+                    }
+                    else{
+                        results.Add(
+                            new Definitions.MoveAction(
+                            piece_ref,
+                            pos
+                        ));
+                    }
+                }
+                else if(mag > 1){
+                    if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(pos, out res)){
+                        if(piece_ref.GetComponent<GamePieceBase>().is_white != res.GetComponent<GamePieceBase>().is_white){
+                            results.Add(
+                                new Definitions.AttackAction(
+                                piece_ref,
+                                res,
+                                mag
+                            ));
+                        }
+                    }
+                }
 }
 
 } // Explore
