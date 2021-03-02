@@ -22,7 +22,6 @@ public class RangedExplore {
     ){
         RangedExplore.results = results;
         piece_ref = p;
-        int gap = 3;
 
         explore_radius(
             p.GetComponent<GamePieceBase>().position,
@@ -84,6 +83,9 @@ public class RangedExplore {
                         }
                     }
                 }
+            }
+        }
+    }
 }
 
 } // Explore
