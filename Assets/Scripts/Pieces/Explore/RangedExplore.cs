@@ -22,13 +22,15 @@ public class RangedExplore {
     ){
         RangedExplore.results = results;
         piece_ref = p;
+        int gap = 3;
 
         explore_radius(
-            p.GetComponent<GamePieceBase>().position
+            p.GetComponent<GamePieceBase>().position,
+            gap
         );
     }
 
-    public static int euclidian_mag(
+    public static int special_mag(
         Definitions.BoardPosition origin,
         Definitions.BoardPosition target
     ){
@@ -38,12 +40,13 @@ public class RangedExplore {
     }
 
     public static void explore_radius(
-        Definitions.BoardPosition pos
+        Definitions.BoardPosition pos,
+        int gap
     ){
-        for(int x = -3; x <= 3; x++){
-            for(int y = -3;  y <= 3; y++){
+        for(int x = -gap; x <= 3; x++){
+            for(int y = -gap;  y <= 3; y++){
                 var move = new BoardVector(x, y);
-                int mag = euclidian_mag(pos, (pos + move));
+                int mag = special_mag(pos, (pos + move));
                 
                 if(mag > y){
                     continue;
