@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1705706903207464820}
   - component: {fileID: 16908295185691247}
   - component: {fileID: 6717969310719986089}
+  - component: {fileID: -1111988554879500479}
   m_Layer: 0
   m_Name: Queen
   m_TagString: Player
@@ -61,6 +62,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   standard: {fileID: 0}
   selected: {fileID: 0}
+  commander: {fileID: 0}
+--- !u!114 &-1111988554879500479
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6082427672233922198}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 1
+  outlineColor: {r: 0.01868689, g: 1, b: 0, a: 1}
+  outlineWidth: 4
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &8323938826153254090
 GameObject:
   m_ObjectHideFlags: 0

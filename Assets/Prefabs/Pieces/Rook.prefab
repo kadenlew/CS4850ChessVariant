@@ -92,6 +92,7 @@ GameObject:
   - component: {fileID: 5800789983476737440}
   - component: {fileID: 6100171940796339067}
   - component: {fileID: 5483043433401523313}
+  - component: {fileID: 7401448158622038338}
   m_Layer: 0
   m_Name: Rook
   m_TagString: Player
@@ -142,3 +143,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   standard: {fileID: 0}
   selected: {fileID: 0}
+  commander: {fileID: 0}
+--- !u!114 &7401448158622038338
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6690695925123412812}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 1
+  outlineColor: {r: 0.01868689, g: 1, b: 0, a: 1}
+  outlineWidth: 4
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []

@@ -6,126 +6,146 @@ using UnityEngine;
 using Chess.Piece;
 using Chess.Control;
 
-namespace Chess {
-
-public class BoardController : MonoBehaviour
+namespace Chess
 {
-    public int dimensions = 8;
-    public float pieceSize = 2f;
-    public GameObject plane;
-    public Material[] BoardMaterials;
 
-    public Definitions.PrefabCollection prefabs;
-
-    protected List<Control.PlayerBase> players_;
-
-    //comment
-    // Start is called before the first frame update
-    void Start()
+    public class BoardController : MonoBehaviour
     {
-        players_ = new List<Control.PlayerBase>(2);
+        public int dimensions = 8;
+        public float pieceSize = 2f;
+        public GameObject plane;
+        public Material[] BoardMaterials;
 
-        players_.Add(
-            new Control.PlayerBase(
-                true,
-                prefabs
-            )
-        );
+        public Definitions.PrefabCollection prefabs;
 
-        players_.Add(
-            new Control.PlayerBase(
-                false,
-                prefabs
-            )
-        );
+        protected List<Control.PlayerBase> players_;
 
-        InitializeBoard();
-        set_transforms();
-        init_colors();
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        set_transforms();
-    }
-
-    protected void set_transforms()
-    {
-        foreach(Control.PlayerBase player in players_)
+        //comment
+        // Start is called before the first frame update
+        void Start()
         {
-            foreach((GameObject commander, List<GameObject> soldiers) in player.getPieces())
+            players_ = new List<Control.PlayerBase>(2);
+
+            players_.Add(
+                new Control.PlayerBase(
+                    true,
+                    prefabs
+                )
+            );
+
+            players_.Add(
+                new Control.PlayerBase(
+                    false,
+                    prefabs
+                )
+            );
+
+            InitializeBoard();
+            set_transforms();
+            init_colors();
+
+        }
+
+        // Update is called once per frame
+        void Update()
+        {
+            set_transforms();
+        }
+
+        protected void set_transforms()
+        {
+            foreach (Control.PlayerBase player in players_)
             {
-                foreach(GameObject piece in soldiers)
+                foreach ((GameObject commander, List<GameObject> soldiers) in player.getPieces())
                 {
-                    piece.transform.position = compute_transform(
-                        piece.GetComponent<GamePieceBase>().GetBoardPosition()
+                    foreach (GameObject piece in soldiers)
+                    {
+                        piece.transform.position = compute_transform(
+                            piece.GetComponent<GamePieceBase>().GetBoardPosition()
+                        );
+                        piece.transform.rotation = compute_rotation(
+                        piece.GetComponent<GamePieceBase>().is_white()
                     );
+                    }
+                    commander.transform.position = compute_transform(
+                        commander.GetComponent<GamePieceBase>().GetBoardPosition()
+                    );
+                    commander.transform.rotation = compute_rotation(
+                        commander.GetComponent<GamePieceBase>().is_white()
+                        );
                 }
-                commander.transform.position = compute_transform(
-                    commander.GetComponent<GamePieceBase>().GetBoardPosition()
-                );
             }
         }
-    }
 
-    protected Vector3 compute_transform(Definitions.BoardPosition pos) {
-        return new Vector3(
-            (pos.get_file() - dimensions / pieceSize) * pieceSize - pieceSize / 2f,
-            0f,
-            (pos.get_rank() - dimensions / pieceSize) * pieceSize - pieceSize / 2f
-        );
-    }
-
-    protected void init_colors()
-    {
-        foreach(Control.PlayerBase player in players_)
+        protected Vector3 compute_transform(Definitions.BoardPosition pos)
         {
-            foreach((GameObject commander, List<GameObject> soldiers) in player.getPieces())
+            return new Vector3(
+                (pos.get_file() - dimensions / pieceSize) * pieceSize - pieceSize / 2f,
+                0f,
+                (pos.get_rank() - dimensions / pieceSize) * pieceSize - pieceSize / 2f
+            );
+        }
+
+        protected Quaternion compute_rotation(bool isWhite)
+        {
+            if(isWhite)
             {
-                foreach(GameObject piece in soldiers)
+                return Quaternion.Euler(0, 180, 0);
+            }
+            else
+            {
+                return new Quaternion();
+            }
+        }
+
+        protected void init_colors()
+        {
+            foreach (Control.PlayerBase player in players_)
+            {
+                foreach ((GameObject commander, List<GameObject> soldiers) in player.getPieces())
                 {
-                    GamePieceBase p = piece.GetComponent<GamePieceBase>();
-                    p.standard = prefabs.pieceColors[p.is_white() ? 0 : 1];
-                    p.selected = prefabs.pieceColorsSelected[p.is_white() ? 0 : 1];
-                    p.Deselect();
+                    foreach (GameObject piece in soldiers)
+                    {
+                        GamePieceBase p = piece.GetComponent<GamePieceBase>();
+                        piece.GetComponentInChildren<Renderer>().material = prefabs.pieceColors[p.is_white() ? 0 : 1];
+                        p.Deselect();
+                    }
+
+                    GamePieceBase c = commander.GetComponent<GamePieceBase>();
+                    commander.GetComponentInChildren<Renderer>().material = prefabs.pieceColors[c.is_white() ? 0 : 1];
+                    c.Deselect();
                 }
-
-                GamePieceBase c = commander.GetComponent<GamePieceBase>();
-                c.standard = prefabs.pieceColors[c.is_white() ? 0 : 1];
-                c.selected = prefabs.pieceColorsSelected[c.is_white() ? 0 : 1];
-                c.Deselect();
             }
         }
-    }
 
-    private void InitializeBoard()
-    {
-        int cycler = 0;
-        for (int i = 1; i <= dimensions; i++)
+        private void InitializeBoard()
         {
-            for (int k = 1; k <= dimensions; k++)
+            int cycler = 0;
+            for (int i = 1; i <= dimensions; i++)
             {
-                GameObject p = Instantiate(plane);
-                p.transform.position = compute_transform(
-                    new Definitions.BoardPosition(
-                        k, i
-                    )
-                );
+                for (int k = 1; k <= dimensions; k++)
+                {
+                    GameObject p = Instantiate(plane);
+                    p.transform.position = compute_transform(
+                        new Definitions.BoardPosition(
+                            k, i
+                        )
+                    );
 
-                Renderer target = p.GetComponent<Renderer>();
-                target.material = BoardMaterials[cycler];
-                
-                cycler++;
-                if (cycler == BoardMaterials.Length)
-                    cycler = 0;
+                    Renderer target = p.GetComponent<Renderer>();
+                    target.material = BoardMaterials[cycler];
+                    p.GetComponent<BoardLocation>().location[0] = k;
+                    p.GetComponent<BoardLocation>().location[1] = i;
+
+                    cycler++;
+                    if (cycler == BoardMaterials.Length)
+                        cycler = 0;
+                }
+                cycler--;
+                if (cycler < 0)
+                    cycler = BoardMaterials.Length - 1;
             }
-            cycler--;
-            if (cycler < 0)
-                cycler = BoardMaterials.Length - 1;
         }
     }
-}
 
 }
