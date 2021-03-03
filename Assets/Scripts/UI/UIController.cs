@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UIController : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class UIController : MonoBehaviour
     public GameObject confirmButton;
     public GameObject tooltipImage;
     public Selector selector;
-    public Text turnText;
+    public TMP_Text turnText;
 
 
     Chess.Definitions.Action gameAction_;
@@ -20,7 +21,7 @@ public class UIController : MonoBehaviour
     private bool transferMode = false;
 
     //false is black, true is white
-    private bool turn = false;
+    private bool turn = true;
 
     private bool tooltip = false;
 
