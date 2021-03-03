@@ -48,7 +48,7 @@ public class UIController : MonoBehaviour
 
     public void confirmAction()
     {
-        selector._TempMovePiece();
+        selector.send_move_action();
     }
 
     public void endTurn()

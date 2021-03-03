@@ -11,15 +11,8 @@ public class Selector : MonoBehaviour
 {
     public bool moveAllowed = true;
     public UIController uiController;
-
-    private GamePieceBase selected = null;
-    private GameObject selectedBoard = null;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private GameObject selectedPiece = null;
+    private Chess.Definitions.BoardPosition selectedSpace = null;
 
     // Update is called once per frame
     void Update()
@@ -32,44 +25,36 @@ public class Selector : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 GameObject objectHit = hit.transform.gameObject;
+                if (objectHit.gameObject.CompareTag("Player"))
                 {
-                    if (objectHit.gameObject.CompareTag("Player"))
-                    {
-                        if (selected)
-                            selected.Deselect();
-
-                        selected = objectHit.GetComponent<GamePieceBase>();
-                        selected.Select();
-                    }
-                    if (moveAllowed && objectHit.gameObject.CompareTag("Board") && selected)
-                    {
-                        selectedBoard = objectHit.gameObject;
-                        uiController.activeAction = true;
-                    }
+                    selectedPiece = objectHit; 
+                    Debug.Log($"Selected: {selectedPiece.GetComponent<GamePieceBase>()}");
+                }
+                if(objectHit.gameObject.CompareTag("Board"))
+                {
+                    selectedSpace = objectHit.GetComponent<Chess.Definitions.Tile>().position;
+                    Debug.Log($"Selected Position: {selectedSpace}");
                 }
             }
-            else
-            {
-                //if (selected)
-                //    selected.Deselect();
-                //selected = null;
-                //selectedBoard = null;
-                //uiController.activeAction = false;
-            }
+        }
 
+        if(selectedPiece != null && selectedSpace != null) {
+            uiController.activeAction = true;
+        }
+        else {
+            uiController.activeAction = false;
         }
     }
 
-    public void _TempMovePiece()
-    {
-        if (moveAllowed)
-        {
-            selected.transform.position = selectedBoard.transform.position;
-            if (selected)
-                selected.Deselect();
-            selected = null;
-            selectedBoard = null;
-            uiController.activeAction = false;
-        }
+    public void send_move_action() {
+        Object.FindObjectOfType<Chess.BoardController>().execute_action(
+            new Chess.Definitions.MoveAction(
+                selectedPiece,
+                selectedSpace
+            )
+        );
+
+        selectedPiece = null;
+        selectedSpace = null;
     }
 }

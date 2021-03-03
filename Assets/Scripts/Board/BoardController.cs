@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
@@ -12,14 +12,16 @@ namespace Chess {
 public class BoardController : MonoBehaviour {
     public int dimensions = 8;
     public float pieceSize = 2f;
-    public GameObject plane;
-    public Material[] BoardMaterials;
+
+    public bool is_white_turn { get; protected set; } = true;
 
     public Definitions.PrefabCollection prefabs;
 
     protected List<Control.PlayerBase> players_;
 
     public List<(bool, List<(GameObject, List<GameObject>)>)> piece_map { get; protected set; }
+
+    public Dictionary<Definitions.BoardPosition, GameObject> board_tiles { get; protected set; }
     public Dictionary<Definitions.BoardPosition, GameObject> board_lookup { get; protected set; }
 
     //comment
@@ -56,8 +58,8 @@ public class BoardController : MonoBehaviour {
 
         InitializeBoard();
         set_transforms();
-        init_colors();
         update_lookup();
+        start_turn();
     }
 
     // Update is called once per frame
@@ -65,7 +67,30 @@ public class BoardController : MonoBehaviour {
         set_transforms();
     }
 
+    public void start_turn() {
+        player_explore();
+    }
+
+    public Definitions.Result execute_action(Definitions.Action action) {
+        // execute the action
+        var result = action.Execute(this);
+
+        // the board state has change, update the lookup table
+        update_lookup();
+
+        // re-explore the space since the board state has changed
+        player_explore();
+
+        // indicate the action executed successfully
+        return result;
+    }
+
+    public void player_explore() {
+        players_[is_white_turn ? 0 : 1].explore_actions();
+    }
+
     protected void set_transforms(){
+        UnityEngine.Profiling.Profiler.BeginSample("Set Piece Transforms");
         foreach(Control.PlayerBase player in players_)
         {
             foreach((GameObject commander, List<GameObject> soldiers) in player.pieces)
@@ -75,16 +100,21 @@ public class BoardController : MonoBehaviour {
                     piece.transform.position = compute_transform(
                         piece.GetComponent<GamePieceBase>().position
                     );
-
-                    var p = piece.GetComponent<GamePieceBase>();
-                    var n = p.position + new Definitions.BoardVector(1, 1);
-                    var k = (p.position - p.position).manhattan_mag;
+                    
                 }
                 commander.transform.position = compute_transform(
                     commander.GetComponent<GamePieceBase>().position
                 );
             }
         }
+        foreach(KeyValuePair<Definitions.BoardPosition, GameObject> kvp in board_tiles)
+        {
+            kvp.Value.transform.position = compute_transform(
+                kvp.Value.GetComponent<Definitions.Tile>().position
+            );
+        }
+
+        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     protected Vector3 compute_transform(Definitions.BoardPosition pos) {
@@ -95,50 +125,23 @@ public class BoardController : MonoBehaviour {
         );
     }
 
-    protected void init_colors() {
-        foreach(Control.PlayerBase player in players_)
-        {
-            foreach((GameObject commander, List<GameObject> soldiers) in player.pieces)
-            {
-                foreach(GameObject piece in soldiers)
-                {
-                    GamePieceBase p = piece.GetComponent<GamePieceBase>();
-                    p.standard = prefabs.pieceColors[p.is_white ? 0 : 1];
-                    p.selected = prefabs.pieceColorsSelected[p.is_white ? 0 : 1];
-                    p.Deselect();
-                }
-
-                GamePieceBase c = commander.GetComponent<GamePieceBase>();
-                c.standard = prefabs.pieceColors[c.is_white ? 0 : 1];
-                c.selected = prefabs.pieceColorsSelected[c.is_white ? 0 : 1];
-                c.Deselect();
-            }
-        }
-    }
-
     private void InitializeBoard() {
-        int cycler = 0;
+        board_tiles = new Dictionary<Definitions.BoardPosition, GameObject>();
         for (int i = 1; i <= dimensions; i++)
         {
             for (int k = 1; k <= dimensions; k++)
             {
-                GameObject p = Instantiate(plane);
-                p.transform.position = compute_transform(
-                    new Definitions.BoardPosition(
-                        k, i
-                    )
-                );
+                var pos = new Definitions.BoardPosition(i, k);
+                // create and init the board
+                board_tiles[pos] = Instantiate(prefabs.Tile);
 
-                Renderer target = p.GetComponent<Renderer>();
-                target.material = BoardMaterials[cycler];
-                
-                cycler++;
-                if (cycler == BoardMaterials.Length)
-                    cycler = 0;
+                board_tiles[pos].GetComponent<Definitions.Tile>().init(
+                    new Definitions.BoardPosition(
+                        i, k
+                    ),
+                    prefabs
+                );
             }
-            cycler--;
-            if (cycler < 0)
-                cycler = BoardMaterials.Length - 1;
         }
     }
 
@@ -157,39 +160,24 @@ public class BoardController : MonoBehaviour {
                 board_lookup[commander.GetComponent<GamePieceBase>().position] = commander;
             }
         }
-        Debug.Log(board_lookup.Count);
+    }
+
+    public void remove_piece(
+        GameObject piece,
+        GameObject pieces_commander
+    ) {
+
     }
 
     public bool checkPosition(Definitions.BoardPosition pos, out GameObject result) {
-        if(this.board_lookup.TryGetValue(pos, out result)) 
+        UnityEngine.Profiling.Profiler.BeginSample("Search for Position DICT");
+        if(this.board_lookup.TryGetValue(pos, out result))  {
+            UnityEngine.Profiling.Profiler.EndSample();
             return true;
+        }   
+        UnityEngine.Profiling.Profiler.EndSample();
         return false;
     } 
-
-    public bool checkPositionFull(Definitions.BoardPosition position, out GameObject result) {
-        foreach((bool color, List<(GameObject, List<GameObject>)> player_pieces) in piece_map)
-        {
-            foreach((GameObject commander, List<GameObject> soldiers) in player_pieces)
-            {
-                foreach(GameObject soldier in soldiers)
-                {
-                    if(soldier.GetComponent<GamePieceBase>().position == position)
-                    {
-                        result = soldier;
-                        return true;
-                    }
-                }
-
-                if(commander.GetComponent<GamePieceBase>().position == position)
-                {
-                        result = commander;
-                        return true;
-                }
-            }
-        }
-        result = null;
-        return false;
-    }
 }
 
 } // Chess

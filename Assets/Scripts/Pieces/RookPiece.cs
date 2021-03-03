@@ -8,11 +8,16 @@ namespace Piece
 {
     
 public class RookPiece : SoldierPiece {
-    public override List<Definitions.Action> Explore() {
-        return Exploring.RangedExplore.Explore(this, 2);
+    // piece type for dictionary lookup
+    public override PieceType type { get; } = PieceType.Rook;
+
+    // the rook can attack in a ranged style, at pieces who are up to 3 tiles away (codifed as a gap of 2 in the rules)
+    // if the rook is adjacent to what is attacking, it can move to that square. Otherwise, it will not move after it attacks.
+    // it can move to any adjacent square as well
+    public override void Explore(ref HashSet<Definitions.Action> results) {
+        Exploring.RangedExplore.Explore(this.gameObject, 2, ref results);
     }
 
-    public override PieceType type { get; } = PieceType.Rook;
 }
 
 } // Piece

@@ -1632,6 +1632,10 @@ MonoBehaviour:
     pieceColorsSelected:
     - {fileID: 2100000, guid: 03366e0ab0f1f0e4c845c5d8f94c7a03, type: 2}
     - {fileID: 2100000, guid: 9c38f94f5488cd14da5859e61b9ffcf4, type: 2}
+    Tile: {fileID: 1485174424388067239, guid: 925e6d34fb2b82643994d03f18e5f496, type: 3}
+    tileMaterials:
+    - {fileID: 2100000, guid: 9079a18cd0f21164797f83b6a94526db, type: 2}
+    - {fileID: 2100000, guid: cfcc3e1d45f95c5449b87d4c6713bbbc, type: 2}
 --- !u!4 &617720349
 Transform:
   m_ObjectHideFlags: 0
@@ -1646,6 +1650,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &617720350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 617720347}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 724af508638048e47844639d26bcd705, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &636399035
 GameObject:
   m_ObjectHideFlags: 0
