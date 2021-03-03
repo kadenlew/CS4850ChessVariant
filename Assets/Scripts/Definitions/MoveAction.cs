@@ -15,6 +15,8 @@ public class MoveAction : Action
        this.agent = agent;
        this.target = target;
    }
+
+    public override string ToString() => $"{agent.GetComponent<Piece.GamePieceBase>()} to {target}";
 }
 
 } // Definitions

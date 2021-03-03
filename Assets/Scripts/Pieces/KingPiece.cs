@@ -28,7 +28,7 @@ public class KingPiece : CommanderPiece {
 
         spawnList_ = new List<(GameObject, Definitions.BoardPosition)>()
         {
-            (prefabs_.Rook,     new Definitions.BoardPosition(1, is_white ? 1 : 8)),
+            (prefabs_.Rook,     new Definitions.BoardPosition(1, is_white ? 8 : 1)),
             (prefabs_.Queen,    new Definitions.BoardPosition(4, is_white ? 1 : 8)),
             (prefabs_.Pawn,     new Definitions.BoardPosition(4, is_white ? 2 : 7)),
             (prefabs_.Pawn,     new Definitions.BoardPosition(5, is_white ? 2 : 7)),

@@ -1,6 +1,4 @@
-using System.Collections;
 using System.Collections.Generic;
-using System;
 using UnityEngine;
 
 namespace Chess 
@@ -20,22 +18,13 @@ public class RangedExplore {
         GameObject p,
         int gap
     ){
-        RangedExplore.results = results;
+        results.Clear();
         piece_ref = p;
 
         explore_radius(
             p.GetComponent<GamePieceBase>().position,
             gap
         );
-    }
-
-    public static double special_mag(
-        Definitions.BoardPosition origin,
-        Definitions.BoardPosition target
-    ){
-        double delta_x = Math.Abs(origin.rank - target.rank);
-        double delta_y = Math.Abs(origin.file - target.file);
-        return Math.Min(delta_x, delta_y) * Math.Sqrt(2) + Math.Abs(delta_x - delta_y);
     }
 
     public static void explore_radius(
@@ -45,23 +34,27 @@ public class RangedExplore {
         for(int x = -(gap + 1); x <= (gap + 1); x++){
             for(int y = -(gap + 1);  y <= (gap + 1); y++){
                 var move = new Definitions.BoardVector(x, y);
-                double mag = special_mag(pos, (pos + move));
-                
-                GameObject res;
+                double mag = move.special_mag;
 
                 if(mag > gap + 1){
                     continue;
                 }
 
-                if(mag == 1){
-                    if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(pos, out res)){
+                var new_pos = pos + move;                
+                if(!new_pos.is_valid)
+                    continue;
+
+
+                GameObject res;
+                if(mag <= 1){
+                    if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(new_pos, out res)){
                         if(piece_ref.GetComponent<GamePieceBase>().is_white != res.GetComponent<GamePieceBase>().is_white){
                             results.Add(
                                 new Definitions.AttackAction(
                                 piece_ref,
                                 res
                             ));
-                        }
+                        } 
                     }
                     else{
                         results.Add(
@@ -72,14 +65,14 @@ public class RangedExplore {
                     }
                 }
                 else if(mag > 1){
-                    if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(pos, out res)){
+                    if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(new_pos, out res)){
                         if(piece_ref.GetComponent<GamePieceBase>().is_white != res.GetComponent<GamePieceBase>().is_white){
                             results.Add(
                                 new Definitions.AttackAction(
                                 piece_ref,
                                 res
                             ));
-                        }
+                        } 
                     }
                 }
             }
