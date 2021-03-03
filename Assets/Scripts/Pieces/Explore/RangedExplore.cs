@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace Chess 
@@ -17,8 +18,7 @@ public class RangedExplore {
 
     public static void Explore(
         GameObject p,
-        int gap,
-        ref HashSet<Definitions.Action> results
+        int gap
     ){
         RangedExplore.results = results;
         piece_ref = p;
@@ -29,37 +29,37 @@ public class RangedExplore {
         );
     }
 
-    public static int special_mag(
+    public static double special_mag(
         Definitions.BoardPosition origin,
         Definitions.BoardPosition target
     ){
-        delta_x = abs(origin.rank - target.rank);
-        delta_y = abs(origin.file - target.file);
-        return min(delta_x, delta_y) * sqrt(2) + abs(delta_x - delta_y);
+        double delta_x = Math.Abs(origin.rank - target.rank);
+        double delta_y = Math.Abs(origin.file - target.file);
+        return Math.Min(delta_x, delta_y) * Math.Sqrt(2) + Math.Abs(delta_x - delta_y);
     }
 
     public static void explore_radius(
         Definitions.BoardPosition pos,
         int gap
     ){
-        for(int x = -gap; x <= 3; x++){
-            for(int y = -gap;  y <= 3; y++){
-                var move = new BoardVector(x, y);
-                int mag = special_mag(pos, (pos + move));
+        for(int x = -(gap + 1); x <= (gap + 1); x++){
+            for(int y = -(gap + 1);  y <= (gap + 1); y++){
+                var move = new Definitions.BoardVector(x, y);
+                double mag = special_mag(pos, (pos + move));
                 
-                if(mag > y){
+                GameObject res;
+
+                if(mag > gap + 1){
                     continue;
                 }
 
                 if(mag == 1){
-                    GameObject res;
                     if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(pos, out res)){
                         if(piece_ref.GetComponent<GamePieceBase>().is_white != res.GetComponent<GamePieceBase>().is_white){
                             results.Add(
                                 new Definitions.AttackAction(
                                 piece_ref,
-                                res,
-                                mag
+                                res
                             ));
                         }
                     }
@@ -77,8 +77,7 @@ public class RangedExplore {
                             results.Add(
                                 new Definitions.AttackAction(
                                 piece_ref,
-                                res,
-                                mag
+                                res
                             ));
                         }
                     }

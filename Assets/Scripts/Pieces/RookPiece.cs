@@ -9,7 +9,8 @@ namespace Piece
     
 public class RookPiece : SoldierPiece {
     public override List<Definitions.Action> Explore() {
-        return Exploring.RangedExplore.Explore(this, 2);
+        Exploring.RangedExplore.Explore(this.gameObject, 2);
+        return new List<Definitions.Action>();
     }
 
     public override PieceType type { get; } = PieceType.Rook;
