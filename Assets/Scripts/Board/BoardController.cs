@@ -100,9 +100,6 @@ public class BoardController : MonoBehaviour {
                     piece.transform.position = compute_transform(
                         piece.GetComponent<GamePieceBase>().position
                     );
-
-                    var p = piece.GetComponent<GamePieceBase>();
-                    var n = p.position + new Definitions.BoardVector(1, 1);
                     
                 }
                 commander.transform.position = compute_transform(

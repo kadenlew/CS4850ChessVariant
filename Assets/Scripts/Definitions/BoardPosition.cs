@@ -21,7 +21,14 @@ public class BoardVector {
         get { return System.Math.Abs(file_length) + System.Math.Abs(rank_length); }
     }
 
-    // constructor
+    public double special_mag {
+        get {
+            double delta_x = System.Math.Abs(rank_length);
+            double delta_y = System.Math.Abs(file_length);
+            return System.Math.Min(delta_x, delta_y) * System.Math.Sqrt(2) + System.Math.Abs(delta_x - delta_y);
+        }
+    }
+
     public BoardVector(
         int file_length,
         int rank_length
