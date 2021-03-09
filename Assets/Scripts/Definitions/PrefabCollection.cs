@@ -7,6 +7,7 @@ namespace Chess
 namespace Definitions
 {
 
+// collection of unity materials and prefabs used in making spawning more unified
 [System.Serializable]
 public class PrefabCollection 
 {
@@ -19,6 +20,9 @@ public class PrefabCollection
     public Material[]  pieceColors;
 
     public Material[] pieceColorsSelected;
+
+    public GameObject Tile;
+    public Material[] tileMaterials;
 }
 
 } // Definitions

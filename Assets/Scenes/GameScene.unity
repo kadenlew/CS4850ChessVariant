@@ -1163,10 +1163,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dimensions: 8
   pieceSize: 2
-  plane: {fileID: 1485174424388067239, guid: 925e6d34fb2b82643994d03f18e5f496, type: 3}
-  BoardMaterials:
-  - {fileID: 2100000, guid: cfcc3e1d45f95c5449b87d4c6713bbbc, type: 2}
-  - {fileID: 2100000, guid: 9079a18cd0f21164797f83b6a94526db, type: 2}
   prefabs:
     King: {fileID: 4249060908999310181, guid: d77e7386c1b6a1e4c9a7af123a9868c8, type: 3}
     Queen: {fileID: 6082427672233922198, guid: 67510f12ecbe74043a9e2033efabf74b, type: 3}
@@ -1182,6 +1178,10 @@ MonoBehaviour:
     pieceColorsSelected:
     - {fileID: 2100000, guid: 03366e0ab0f1f0e4c845c5d8f94c7a03, type: 2}
     - {fileID: 2100000, guid: 9c38f94f5488cd14da5859e61b9ffcf4, type: 2}
+    Tile: {fileID: 1485174424388067239, guid: 925e6d34fb2b82643994d03f18e5f496, type: 3}
+    tileMaterials:
+    - {fileID: 2100000, guid: 9079a18cd0f21164797f83b6a94526db, type: 2}
+    - {fileID: 2100000, guid: cfcc3e1d45f95c5449b87d4c6713bbbc, type: 2}
 --- !u!4 &617720349
 Transform:
   m_ObjectHideFlags: 0

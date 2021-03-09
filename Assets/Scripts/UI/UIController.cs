@@ -43,7 +43,7 @@ public class UIController : MonoBehaviour
     private UIState uiStatus = UIState.NoSelect;
     private bool activeAction = false;
     private GamePieceBase selected = null;
-    public List<GamePieceBase> relevantPieces = new List<GamePieceBase>();
+    public List<GameObject> relevantPieces = new List<GameObject>();
     private GameObject selectedBoard = null;
 
 
@@ -159,7 +159,7 @@ public class UIController : MonoBehaviour
                             selected.Deselect();
 
                         selected = objectHit.GetComponent<GamePieceBase>();
-                        // selected.Select(HighlightColors[0]);
+                        selected.Select(HighlightColors[0]);
                         uiStatus = UIState.PieceMainSelect;
                         UpdateUI();
                     }
@@ -192,9 +192,9 @@ public class UIController : MonoBehaviour
     {
         uiStatus = UIState.PieceLeadership;
         relevantPieces = GetRelevantLeadership();
-        foreach (GamePieceBase piece in relevantPieces)
+        foreach (GameObject piece in relevantPieces)
         {
-            // piece.Select(HighlightColors[2]);
+            piece.GetComponent<GamePieceBase>().Select(HighlightColors[2]);
         }
         UpdateUI();
     }
@@ -210,9 +210,9 @@ public class UIController : MonoBehaviour
         }
         if (uiStatus == UIState.PieceLeadership)
         {
-            foreach (GamePieceBase piece in relevantPieces)
+            foreach (GameObject piece in relevantPieces)
             {
-                piece.Deselect();
+                piece.GetComponent<GamePieceBase>().Deselect();
             }
             relevantPieces.Clear();
             uiStatus = UIState.PieceMainSelect;
@@ -227,28 +227,28 @@ public class UIController : MonoBehaviour
         tooltipImage.SetActive(tooltip);
     }
 
-    private List<GamePieceBase> GetRelevantLeadership()
+    private List<GameObject> GetRelevantLeadership()
     {
-        // if(selected)
-        // {
-        //     List<GamePieceBase> relatedPieces = new List<GamePieceBase>();
-        //     if (selected.GetComponent<SoldierPiece>())
-        //     {
-        //         relatedPieces.Add(selected.GetComponent<SoldierPiece>().commander);
-        //     }
-        //     else if(selected.GetComponent<CommanderPiece>())
-        //     {
-        //         // Cannot implement until I can access the list commanders have
-        //         CommanderPiece p = selected.GetComponent<CommanderPiece>();
-        //         Debug.Log("Feature not implemented yet");
-        //     }
-        //     else
-        //     {
-        //         Debug.LogError("A Piece is currently neither a commander nor a soldier!");
-        //     }
+        if(selected)
+        {
+            List<GameObject> relatedPieces = new List<GameObject>();
+            if (selected.GetComponent<SoldierPiece>())
+            {
+                relatedPieces.Add(selected.GetComponent<SoldierPiece>().commander);
+            }
+            else if(selected.GetComponent<CommanderPiece>())
+            {
+                // Cannot implement until I can access the list commanders have
+                CommanderPiece p = selected.GetComponent<CommanderPiece>();
+                Debug.Log("Feature not implemented yet");
+            }
+            else
+            {
+                Debug.LogError("A Piece is currently neither a commander nor a soldier!");
+            }
 
-        //     return relatedPieces;
-        // }
+            return relatedPieces;
+        }
         return null;
     }
 }

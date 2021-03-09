@@ -8,17 +8,28 @@ namespace Piece
 namespace Exploring
 {
 
+// represents the ability for a piece at a given position to explore in ranged fashion, meaning
+// the piece can attack pieces up to gap + 1 spaces away (since the rules codify ranged distances as gaps 
+// inbetween pieces). the piece can only move to adjacent squares. If the piece it is attacking is adjacent, it has 
+// the option to move onto that space given the attack is successful
+// is used by the Rook
+    
+    
 public class RangedExplore {
     
     public static HashSet<Definitions.Action> results { get; protected set; } = new HashSet<Definitions.Action>();
     
     public static GameObject piece_ref { get; protected set; }
 
+    // explore function called by the pieces, it can be assumed that the actions
+    // appended to results are all valid AND that every possible action is 
+    // appended to results
     public static void Explore(
         GameObject p,
-        int gap
+        int gap,
+        ref HashSet<Definitions.Action> results
     ){
-        results.Clear();
+        RangedExplore.results = results;
         piece_ref = p;
 
         explore_radius(
