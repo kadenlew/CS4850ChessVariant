@@ -4,15 +4,13 @@ using UnityEngine;
 
 namespace Chess
 {
-    namespace Piece
-    {
+namespace Piece
+{
 
-        public abstract class SoldierPiece : GamePieceBase
-        {
-            public CommanderPiece commander;
-
-            public override abstract List<Definitions.Action> Explore();
-        }
-
-    }
+public abstract class SoldierPiece : GamePieceBase {
+    public GameObject commander { get; protected set; }
+    public override abstract List<Definitions.Action> Explore();
 }
+
+} // Piece
+} // Chess

@@ -7,14 +7,51 @@ namespace Chess
 namespace Definitions
 {
 
-public class BoardPosition
-{
-    private int file_;
-    private int rank_;
+public class BoardVector {
+    public int file_length { get; }
+    public int rank_length { get;  }   
+    public int manhattan_mag {
+        get { return System.Math.Abs(file_length) + System.Math.Abs(rank_length); }
+    }
+
+    public double special_mag {
+        get {
+            double delta_x = System.Math.Abs(rank_length);
+            double delta_y = System.Math.Abs(file_length);
+            return System.Math.Min(delta_x, delta_y) * System.Math.Sqrt(2) + System.Math.Abs(delta_x - delta_y);
+        }
+    }
+
+    public BoardVector(
+        int file_length,
+        int rank_length
+    ) {
+        this.file_length = file_length;
+        this.rank_length = rank_length;
+    }
+
+    public static BoardVector operator+ (BoardVector a, BoardVector b) => new BoardVector(
+        a.file_length + b.file_length,
+        a.rank_length + b.rank_length
+    );
+
+    public static BoardVector operator- (BoardVector a, BoardVector b) => new BoardVector(
+        a.file_length - b.file_length,
+        a.rank_length - b.rank_length
+    );
+}
+
+public class BoardPosition {
+    public int file { get; protected set; }
+    public int rank { get; protected set; }
+
+    public bool is_valid {
+        get { return !(file < 1 || file > 8 || rank < 1 || rank > 8); }
+    }
 
     public BoardPosition(int file, int rank) {
-        file_ = file;
-        rank_ = rank;
+        this.file = file;
+        this.rank = rank;
     }
 
     public BoardPosition(string notation) {
@@ -35,29 +72,58 @@ public class BoardPosition
     public override string ToString() {
         return (
             (char)(
-                ((int)'a') - 1 + file_)
-            ).ToString() + rank_;
+                ((int)'a') - 1 + file)
+            ).ToString() + rank;
     }
 
-    public int get_file() {
-        return file_;
-    }
-
-    public int get_rank() {
-        return rank_;
-    }
-
-    public void update_position(int file, int rank) {
+    public bool update_position(int file, int rank) {
         // error check
         if(file < 1 || file > 8 || rank < 1 || rank > 8)
         {
-            throw new System.ArgumentException("file and rank must both be in the range of 1-8 inclusive");
+            // throw new System.ArgumentException("file and rank must both be in the range of 1-8 inclusive");
+            return false;
         }
         
         // update the position
-        file_ = file;
-        rank_ = rank;
+        this.file = file;
+        this.rank = rank;
+
+        return true;
     }
+
+    public static BoardPosition operator+ (BoardPosition a, BoardVector b) => new BoardPosition(
+        a.file + b.file_length,
+        a.rank + b.rank_length
+    );
+
+    public static BoardPosition operator- (BoardPosition a, BoardVector b) => new BoardPosition(
+        a.file - b.file_length,
+        a.rank - b.rank_length
+    );
+
+    public static BoardVector operator- (BoardPosition a, BoardPosition b) => new BoardVector(
+        a.file - b.file,
+        a.rank - b.rank
+    );
+
+    public static bool operator== (BoardPosition a, BoardPosition b) => (
+        a.file == b.file && a.rank == b.rank
+    );
+
+    public static bool operator!= (BoardPosition a, BoardPosition b) => (
+        !(a == b)
+    );
+
+    public override bool Equals(System.Object obj){
+        if((obj == null) || !this.GetType().Equals(obj.GetType()))
+            return false;
+        
+        BoardPosition pos = (BoardPosition) obj;
+        return pos == this;
+    }
+
+    public override int GetHashCode() => 10 * this.file + this.rank;
+
 }
 
 }   // Definitions

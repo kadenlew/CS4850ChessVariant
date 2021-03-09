@@ -7,13 +7,14 @@ namespace Chess
 namespace Piece
 {
     
-public class RookPiece : SoldierPiece
-{
-    public override List<Definitions.Action> Explore()
-    {
+public class RookPiece : SoldierPiece {
+    public override List<Definitions.Action> Explore() {
+        Exploring.RangedExplore.Explore(this.gameObject, 2);
         return new List<Definitions.Action>();
     }
+
+    public override PieceType type { get; } = PieceType.Rook;
 }
 
-}
-}
+} // Piece
+} // Chess

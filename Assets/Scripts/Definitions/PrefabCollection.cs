@@ -19,26 +19,7 @@ public class PrefabCollection
     public Material[]  pieceColors;
 
     public Material[] pieceColorsSelected;
-
-    // public PrefabCollection(
-    //     GameObject KingPrefab,
-    //     GameObject QueenPrefab,
-    //     GameObject BishopPrefab,
-    //     GameObject KnightPrefab,
-    //     GameObject RookPrefab,
-    //     GameObject PawnPrefab,
-    //     Material[] pieceMaterials
-    // )
-    // {
-    //     King = KingPrefab;
-    //     Queen = QueenPrefab;
-    //     Bishop = BishopPrefab;
-    //     Knight = KnightPrefab;
-    //     Rook = RookPrefab;
-    //     Pawn = PawnPrefab;
-    // }
-
 }
 
-}
-}
+} // Definitions
+} // Chess

@@ -153,13 +153,13 @@ public class UIController : MonoBehaviour
             {
                 GameObject objectHit = hit.transform.gameObject;
                 {
-                    if (objectHit.gameObject.CompareTag("Player") && objectHit.gameObject.GetComponent<GamePieceBase>().is_white() == turn)
+                    if (objectHit.gameObject.CompareTag("Player") && objectHit.gameObject.GetComponent<GamePieceBase>().is_white == turn)
                     {
                         if (selected)
                             selected.Deselect();
 
                         selected = objectHit.GetComponent<GamePieceBase>();
-                        selected.Select(HighlightColors[0]);
+                        // selected.Select(HighlightColors[0]);
                         uiStatus = UIState.PieceMainSelect;
                         UpdateUI();
                     }
@@ -194,7 +194,7 @@ public class UIController : MonoBehaviour
         relevantPieces = GetRelevantLeadership();
         foreach (GamePieceBase piece in relevantPieces)
         {
-            piece.Select(HighlightColors[2]);
+            // piece.Select(HighlightColors[2]);
         }
         UpdateUI();
     }
@@ -229,26 +229,26 @@ public class UIController : MonoBehaviour
 
     private List<GamePieceBase> GetRelevantLeadership()
     {
-        if(selected)
-        {
-            List<GamePieceBase> relatedPieces = new List<GamePieceBase>();
-            if (selected.GetComponent<SoldierPiece>())
-            {
-                relatedPieces.Add(selected.GetComponent<SoldierPiece>().commander);
-            }
-            else if(selected.GetComponent<CommanderPiece>())
-            {
-                // Cannot implement until I can access the list commanders have
-                CommanderPiece p = selected.GetComponent<CommanderPiece>();
-                Debug.Log("Feature not implemented yet");
-            }
-            else
-            {
-                Debug.LogError("A Piece is currently neither a commander nor a soldier!");
-            }
+        // if(selected)
+        // {
+        //     List<GamePieceBase> relatedPieces = new List<GamePieceBase>();
+        //     if (selected.GetComponent<SoldierPiece>())
+        //     {
+        //         relatedPieces.Add(selected.GetComponent<SoldierPiece>().commander);
+        //     }
+        //     else if(selected.GetComponent<CommanderPiece>())
+        //     {
+        //         // Cannot implement until I can access the list commanders have
+        //         CommanderPiece p = selected.GetComponent<CommanderPiece>();
+        //         Debug.Log("Feature not implemented yet");
+        //     }
+        //     else
+        //     {
+        //         Debug.LogError("A Piece is currently neither a commander nor a soldier!");
+        //     }
 
-            return relatedPieces;
-        }
+        //     return relatedPieces;
+        // }
         return null;
     }
 }
