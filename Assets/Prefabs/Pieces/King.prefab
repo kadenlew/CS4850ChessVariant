@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8129597141445052652}
   - component: {fileID: 8112260919092645253}
   - component: {fileID: 7496951696243345285}
+  - component: {fileID: -2882807232642717715}
   m_Layer: 0
   m_Name: King
   m_TagString: Player
@@ -61,6 +62,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   standard: {fileID: 0}
   selected: {fileID: 0}
+--- !u!114 &-2882807232642717715
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4249060908999310181}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fea29bb7c508c244a1f805a5fd3fc4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineMode: 1
+  outlineColor: {r: 0.01868689, g: 1, b: 0, a: 1}
+  outlineWidth: 4
+  precomputeOutline: 0
+  bakeKeys: []
+  bakeValues: []
 --- !u!1 &8235431789680589327
 GameObject:
   m_ObjectHideFlags: 0

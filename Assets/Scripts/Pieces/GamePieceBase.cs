@@ -50,12 +50,13 @@ public abstract class GamePieceBase : MonoBehaviour {
     // this piece can make
     public abstract void Explore(ref HashSet<Definitions.Action> results);
 
-    public void Select() {
-        GetComponentInChildren<Renderer>().material = selected;
+    public void Select(Color highlight_color) {
+        this.GetComponent<Outline>().enabled = true;
+        this.GetComponent<Outline>().OutlineColor = highlight_color;
     }
 
     public void Deselect() {
-        GetComponentInChildren<Renderer>().material = standard;
+        this.GetComponent<Outline>().enabled = false;
     }
 
     // Function called on object creation, initializing the properties of this gameObject
