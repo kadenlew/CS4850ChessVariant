@@ -22,10 +22,8 @@ public enum PieceType {
 // the abstract base structure of a GamePiece which includes all of the required 
 // methods and members of a GamePiece for interaction in a generic collection.
 public abstract class GamePieceBase : MonoBehaviour {
-    // Material for the renderer to use when the piece is not selected by the user
+    // Material for the renderer to use for white/black
     public Material standard;
-    // Material for the renderer to use when the piece is selected by the user
-    public Material selected;
     // the physical space this piece occupies; abstracts the Vector3d of unity 
     // to keep all logic within "Board Space"
     public Definitions.BoardPosition position { get; protected set; }
@@ -75,7 +73,6 @@ public abstract class GamePieceBase : MonoBehaviour {
         // unity related items
         this.prefabs_ = prefabs;
         this.standard = prefabs_.pieceColors[is_white ? 0 : 1];
-        this.selected = prefabs_.pieceColorsSelected[is_white ? 0 : 1];
 
         this.GetComponentInChildren<Renderer>().material = this.standard;
     }

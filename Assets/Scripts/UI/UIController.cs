@@ -9,8 +9,8 @@ enum UIState
     NoSelect,
     PieceMainSelect,
     PieceLeadership,
-    PieceMove,
-    PieceAttack
+    PieceMoveAttack,
+    PieceSpecialAttack
 }
 
 
@@ -44,8 +44,12 @@ public class UIController : MonoBehaviour
     private bool activeAction = false;
     private GamePieceBase selected = null;
     public List<GameObject> relevantPieces = new List<GameObject>();
+    public List<GameObject> relevantTiles = new List<GameObject>();
+    public HashSet<Chess.Definitions.Action> actionList = new HashSet<Chess.Definitions.Action>();
+
     private GameObject selectedBoard = null;
 
+    private Chess.BoardController boardController;
 
     private bool transferMode = false;
 
@@ -58,7 +62,7 @@ public class UIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //transferNotification.SetActive(false);
+        boardController = GameObject.FindGameObjectWithTag("GameController").GetComponent<Chess.BoardController>();
         tooltipImage.SetActive(false);
         UpdateUI();
     }
@@ -73,13 +77,13 @@ public class UIController : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && confirmButton.activeSelf)
         {
-
+            Confirm();
         }
 
         RayCastSelector();
-        confirmButton.SetActive(activeAction);
     }
 
+    // This moves around the UI and toggles on and off elements as the UI state changes
     private void UpdateUI()
     {
         if(uiStatus == UIState.NoSelect)
@@ -96,14 +100,15 @@ public class UIController : MonoBehaviour
         if(uiStatus == UIState.PieceMainSelect)
         {
             informationPanel.SetActive(true);
+            confirmButton.SetActive(false);
             moveButton.SetActive(true);
             moveButton.transform.position = ButtonPositionToVector(true, 0);
-            attackButton.SetActive(true);
-            attackButton.transform.position = ButtonPositionToVector(true, 1);
+            //attackButton.SetActive(true);
+            //attackButton.transform.position = ButtonPositionToVector(true, 1);
             leadershipButton.SetActive(true);
-            leadershipButton.transform.position = ButtonPositionToVector(true, 2);
+            leadershipButton.transform.position = ButtonPositionToVector(true, 1);
             cancelButton.SetActive(true);
-            cancelButton.transform.position = ButtonPositionToVector(true, 3);
+            cancelButton.transform.position = ButtonPositionToVector(true, 2);
 
             endTurnButton.SetActive(false);
         }
@@ -118,7 +123,32 @@ public class UIController : MonoBehaviour
             cancelButton.SetActive(true);
             cancelButton.transform.position = ButtonPositionToVector(true, 0);
         }
-
+        if (uiStatus == UIState.PieceMoveAttack)
+        {
+            if(selectedBoard)
+            {
+                informationPanel.SetActive(true);
+                moveButton.SetActive(false);
+                attackButton.SetActive(false);
+                leadershipButton.SetActive(false);
+                endTurnButton.SetActive(false);
+                confirmButton.SetActive(true);
+                confirmButton.transform.position = ButtonPositionToVector(true, 0);
+                cancelButton.SetActive(true);
+                cancelButton.transform.position = ButtonPositionToVector(true, 1);
+            } 
+            else
+            {
+                informationPanel.SetActive(true);
+                moveButton.SetActive(false);
+                attackButton.SetActive(false);
+                leadershipButton.SetActive(false);
+                confirmButton.SetActive(false);
+                endTurnButton.SetActive(false);
+                cancelButton.SetActive(true);
+                cancelButton.transform.position = ButtonPositionToVector(true, 0);
+            }
+        }
 
 
         if (turn)
@@ -133,6 +163,7 @@ public class UIController : MonoBehaviour
         }
     }
 
+    // A tool for placing UI elements correctly
     private Vector3 ButtonPositionToVector (bool infoPanel, int index)
     {
         if(infoPanel)
@@ -142,9 +173,10 @@ public class UIController : MonoBehaviour
             return new Vector3(buttonOffset * (1 + index) + buttonSize * index, buttonOffset, 0);
     }
 
+
     private void RayCastSelector()
     {
-        if (Input.GetMouseButtonDown(0) && ((uiStatus == UIState.NoSelect) || (uiStatus == UIState.PieceMainSelect)))
+        if (Input.GetMouseButtonDown(0))
         {
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -153,32 +185,32 @@ public class UIController : MonoBehaviour
             {
                 GameObject objectHit = hit.transform.gameObject;
                 {
-                    if (objectHit.gameObject.CompareTag("Player") && objectHit.gameObject.GetComponent<GamePieceBase>().is_white == turn)
+                    if (uiStatus == UIState.NoSelect || uiStatus == UIState.PieceMainSelect)
                     {
-                        if (selected)
-                            selected.Deselect();
+                        if (objectHit.gameObject.CompareTag("Player") && objectHit.gameObject.GetComponent<GamePieceBase>().is_white == turn)
+                        {
+                            if (selected)
+                                selected.Deselect();
 
-                        selected = objectHit.GetComponent<GamePieceBase>();
-                        selected.Select(HighlightColors[0]);
-                        uiStatus = UIState.PieceMainSelect;
-                        UpdateUI();
+                            selected = objectHit.GetComponent<GamePieceBase>();
+                            selected.Select(HighlightColors[0]);
+                            uiStatus = UIState.PieceMainSelect;
+                            UpdateUI();
+                        }
                     }
-                    //if (moveAllowed && objectHit.gameObject.CompareTag("Board") && selected)
-                    //{
-                    //    selectedBoard = objectHit.gameObject;
-                    //    uiController.activeAction = true;
-                    //}
+                    if (uiStatus == UIState.PieceMoveAttack && objectHit.gameObject.CompareTag("Board") && selected)
+                    {
+                        if (relevantTiles.Contains(objectHit.gameObject))
+                        {
+                            if (selectedBoard)
+                                selectedBoard.GetComponent<Chess.Definitions.Tile>().Select();
+                            selectedBoard = objectHit.gameObject;
+                            selectedBoard.GetComponent<Chess.Definitions.Tile>().SelectMove();
+                            UpdateUI();
+                        }
+                    }
                 }
             }
-            else
-            {
-                //if (selected)
-                //    selected.Deselect();
-                //selected = null;
-                //selectedBoard = null;
-                //uiController.activeAction = false;
-            }
-
         }
     }
 
@@ -188,6 +220,7 @@ public class UIController : MonoBehaviour
         UpdateUI();
     }
 
+    // Used by UI Button
     public void Leadership()
     {
         uiStatus = UIState.PieceLeadership;
@@ -199,6 +232,47 @@ public class UIController : MonoBehaviour
         UpdateUI();
     }
 
+    // Used by UI button
+    public void AttackMove()
+    {
+        uiStatus = UIState.PieceMoveAttack;
+        selected.Explore(ref actionList);
+        relevantPieces = GetRelevantMoveAttack(actionList);
+        foreach (GameObject piece in relevantPieces)
+        {
+            piece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
+        }
+        relevantTiles = GetRelevantMoveTiles(actionList);
+        foreach (GameObject tile in relevantTiles)
+        {
+            tile.GetComponent<Chess.Definitions.Tile>().Select();
+        }
+        UpdateUI();
+    }
+
+    // Used by UI button and hotkey
+    public void Confirm()
+    {
+        if (uiStatus == UIState.PieceMoveAttack)
+        {
+            if (selectedBoard)
+            {
+                boardController.execute_action(
+                    new Chess.Definitions.MoveAction(
+                        selected.gameObject,
+                        selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
+
+                uiStatus = UIState.NoSelect;
+                DeselectAll();
+                selected.Deselect();
+                selected = null;
+                UpdateUI();
+            }
+        }
+    }
+
+
+    // Used by UI button and hotkey
     public void Cancel()
     {
         if (uiStatus == UIState.PieceMainSelect)
@@ -208,13 +282,9 @@ public class UIController : MonoBehaviour
             uiStatus = UIState.NoSelect;
             UpdateUI();
         }
-        if (uiStatus == UIState.PieceLeadership)
+        if (uiStatus == UIState.PieceLeadership || uiStatus == UIState.PieceMoveAttack)
         {
-            foreach (GameObject piece in relevantPieces)
-            {
-                piece.GetComponent<GamePieceBase>().Deselect();
-            }
-            relevantPieces.Clear();
+            DeselectAll();
             uiStatus = UIState.PieceMainSelect;
             UpdateUI();
         }
@@ -227,6 +297,65 @@ public class UIController : MonoBehaviour
         tooltipImage.SetActive(tooltip);
     }
 
+    // Tool for quickly deselecting all objects. Note it doesn't deselect the selected piece
+    private void DeselectAll()
+    {
+        foreach (GameObject piece in relevantPieces)
+        {
+            piece.GetComponent<GamePieceBase>().Deselect();
+        }
+        foreach (GameObject tile in relevantTiles)
+        {
+            tile.GetComponent<Chess.Definitions.Tile>().Deselect();
+        }
+        relevantPieces.Clear();
+        relevantTiles.Clear();
+        actionList.Clear();
+        selectedBoard = null;
+    }
+
+    // Gets targets for attack/move
+    private List<GameObject> GetRelevantMoveAttack(HashSet<Chess.Definitions.Action> localActions)
+    {
+        if (selected)
+        {
+            List<GameObject> targets = new List<GameObject>();    
+            foreach (Chess.Definitions.Action action in localActions)
+            {
+                if(action is Chess.Definitions.AttackAction)
+                {
+                    Chess.Definitions.AttackAction attack = (Chess.Definitions.AttackAction)action;
+                    targets.Add(attack.target);
+                }
+            }
+            return targets;
+        }
+        return null;
+    }
+
+    // Gets move tiles for attack/move
+    private List<GameObject> GetRelevantMoveTiles(HashSet<Chess.Definitions.Action> localActions)
+    {
+        if (selected)
+        {
+            List<GameObject> tiles = new List<GameObject>();
+            foreach (Chess.Definitions.Action action in localActions)
+            {
+                if (action is Chess.Definitions.MoveAction)
+                {
+                    Chess.Definitions.MoveAction move = (Chess.Definitions.MoveAction)action;
+                    tiles.Add(boardController.board_tiles[move.target]);
+                }
+                
+            }
+            return tiles;
+        }
+
+
+        return null;
+    }
+
+    // Gets leadership relevant to the piece
     private List<GameObject> GetRelevantLeadership()
     {
         if(selected)
@@ -238,9 +367,11 @@ public class UIController : MonoBehaviour
             }
             else if(selected.GetComponent<CommanderPiece>())
             {
-                // Cannot implement until I can access the list commanders have
                 CommanderPiece p = selected.GetComponent<CommanderPiece>();
-                Debug.Log("Feature not implemented yet");
+                foreach (GameObject soldier in p.soldiers_)
+                {
+                    relatedPieces.Add(soldier);
+                }
             }
             else
             {
