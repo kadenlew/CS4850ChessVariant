@@ -11,7 +11,7 @@ namespace Piece
 // over the standard piece
 public abstract class CommanderPiece : GamePieceBase {
     // the list of soliders this commander owns
-    protected List<GameObject> soldiers_;
+    public List<GameObject> soldiers_ { get; protected set; }
 
     // a list that is used on object creation to indicate which soliders 
     // this piece will own, and is used to spawn each of those soliders in
