@@ -54,7 +54,6 @@ public class UIController : MonoBehaviour
     private bool transferMode = false;
 
     //false is black, true is white
-    private bool turn = true;
 
     private bool tooltip = false;
 
@@ -151,7 +150,7 @@ public class UIController : MonoBehaviour
         }
 
 
-        if (turn)
+        if (boardController.is_white_turn)
         {
             whiteTurn.color = new Color(whiteTurn.color.r, whiteTurn.color.g, whiteTurn.color.b, 1f);
             blackTurn.color = new Color(blackTurn.color.r, blackTurn.color.g, blackTurn.color.b, 0f);
@@ -187,7 +186,7 @@ public class UIController : MonoBehaviour
                 {
                     if (uiStatus == UIState.NoSelect || uiStatus == UIState.PieceMainSelect)
                     {
-                        if (objectHit.gameObject.CompareTag("Player") && objectHit.gameObject.GetComponent<GamePieceBase>().is_white == turn)
+                        if (objectHit.gameObject.CompareTag("Player") && objectHit.gameObject.GetComponent<GamePieceBase>().is_white == boardController.is_white_turn)
                         {
                             if (selected)
                                 selected.Deselect();
@@ -216,7 +215,7 @@ public class UIController : MonoBehaviour
 
     public void endTurn()
     {
-        turn = !turn;
+        boardController.end_turn();
         UpdateUI();
     }
 

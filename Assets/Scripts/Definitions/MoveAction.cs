@@ -20,6 +20,10 @@ public class MoveAction : Action
        this.target = target;
     }
     public override Result Execute(BoardController controller) {
+        // spend the energy
+        agent.GetComponent<Piece.GamePieceBase>().expend_energy(1);
+
+        // move
         agent.GetComponent<Piece.GamePieceBase>().move(
             target
         );

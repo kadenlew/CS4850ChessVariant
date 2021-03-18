@@ -17,14 +17,16 @@ public class BishopPiece : CommanderPiece {
         bool is_white, 
         Definitions.BoardPosition starting_position,
         Definitions.PrefabCollection prefabs,
-        BoardController controller
+        BoardController controller,
+        Control.PlayerBase owner
     ) {
         // generic commander initialization details
         base.commander_init(
             is_white,
             starting_position,
             prefabs,
-            controller
+            controller,
+            owner
         );
 
         // determine which commander bishop this is

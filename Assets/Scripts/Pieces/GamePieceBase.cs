@@ -80,6 +80,10 @@ public abstract class GamePieceBase : MonoBehaviour {
     public void move(Definitions.BoardPosition position) {
         this.position = position;
     }
+
+    public abstract bool expend_energy(uint cost);
+
+    public abstract void kill();
     
     public virtual void set_inactive() {
         this.is_active = false;
