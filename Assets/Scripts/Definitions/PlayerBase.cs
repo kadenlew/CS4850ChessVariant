@@ -49,7 +49,7 @@ public class PlayerBase {
         // defines the list of commanders to spawn 
         var spawnList = new List<(GameObject, Definitions.BoardPosition)>()
         {
-            (prefabs_.King,     new Definitions.BoardPosition(5, is_white ? 2 : 7)),
+            (prefabs_.King,     new Definitions.BoardPosition(5, is_white ? 1 : 8)),
             (prefabs_.Bishop,   new Definitions.BoardPosition(3, is_white ? 1 : 8)),
             (prefabs_.Bishop,   new Definitions.BoardPosition(6, is_white ? 1 : 8))
         };

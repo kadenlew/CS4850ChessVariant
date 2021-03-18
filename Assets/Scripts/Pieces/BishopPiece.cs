@@ -36,9 +36,9 @@ public class BishopPiece : CommanderPiece {
         spawnList_ = new List<(GameObject, Definitions.BoardPosition)>()
         {
             (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 1 : 8, is_white ? 2 : 7)),
-            (prefabs_.Knight,     new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 2 : 7)),
+            (prefabs_.Knight,     new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 1 : 8)),
             (prefabs_.Pawn,     new Definitions.BoardPosition(is_left ? 3 : 6, is_white ? 2 : 7)),
-            (prefabs_.Pawn,   new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 1 : 8))
+            (prefabs_.Pawn,   new Definitions.BoardPosition(is_left ? 2 : 7, is_white ? 2 : 7))
         };
 
         // spawn those soldiers

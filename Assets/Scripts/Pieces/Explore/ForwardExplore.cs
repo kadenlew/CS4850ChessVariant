@@ -32,7 +32,10 @@ public class ForwardExplore {
         foreach(var move in moves)
         {
             // get the new position and check if its valid
-            var new_position = piece.GetComponent<GamePieceBase>().position + move;
+            var new_position = piece.GetComponent<GamePieceBase>().is_white ? 
+                    piece.GetComponent<GamePieceBase>().position + move :
+                    piece.GetComponent<GamePieceBase>().position - move;
+
             if(!new_position.is_valid)
                 continue;
             
