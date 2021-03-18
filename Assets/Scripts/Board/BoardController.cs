@@ -84,6 +84,8 @@ public class BoardController : MonoBehaviour {
             Debug.Log("Invalid Action!");
             return new Definitions.InvalidResult();
         }
+        Debug.Log($"{action}");
+
         // execute the action
         var result = action.Execute(this);
         Debug.Log($"{result}");

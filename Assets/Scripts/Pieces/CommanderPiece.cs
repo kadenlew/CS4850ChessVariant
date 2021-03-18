@@ -72,7 +72,7 @@ public abstract class CommanderPiece : GamePieceBase {
     public void commander_explore(ref HashSet<Definitions.Action> results) {
         // only search if we haven't moved our corp yet
         if(energy <= 0) {
-            Debug.Log($"{this} corp is out of energy!");
+            // Debug.Log($"{this} corp is out of energy!");
 
             foreach(var soldier in soldiers_)
             {
@@ -127,7 +127,7 @@ public abstract class CommanderPiece : GamePieceBase {
     }
 
     public void begin_turn() {
-        Debug.Log($"{this} refreshing energy");
+        // Debug.Log($"{this} refreshing energy");
     }
 
     public void remove_soldier(GameObject soldier) {

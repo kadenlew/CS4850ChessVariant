@@ -93,7 +93,7 @@ public class NPathExplore {
                             new Definitions.AttackAction(
                                 piece_ref,
                                 res,
-                                (move_and_attack && current_length > 1) ? -1 : 0
+                                current_length > 1 ? -1 : 0
                         ));
                     }
 

@@ -63,8 +63,8 @@ public class AttackAction : Action {
     public static AttackResult checkAttack(AttackAction attack) {
         int roll = Random.Range((int)1, (int)7);
         return new AttackResult(
-            roll,
-            roll >= captureTable[(
+            roll + attack.roll_modifer,
+            roll + attack.roll_modifer >= captureTable[(
                 attack.agent.GetComponent<Piece.GamePieceBase>().type, 
                 attack.target.GetComponent<Piece.GamePieceBase>().type
             )]   
@@ -122,6 +122,7 @@ public class AttackAction : Action {
 
     public override string ToString() => (
         $"{agent.GetComponent<Piece.GamePieceBase>()} attacks {target.GetComponent<Piece.GamePieceBase>()}" +
+        // $"with a roll modifer of {roll_modifer}"
         $"{((roll_modifer != 0) ? $" with a roll modifier of {roll_modifer}" : "")}"
     );
         
