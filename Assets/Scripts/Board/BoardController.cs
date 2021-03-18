@@ -69,6 +69,7 @@ public class BoardController : MonoBehaviour {
 
     public void end_turn() {
         // do end step 
+        players_[is_white_turn ? 0 : 1].end_turn();
 
         // flip to other person
         is_white_turn = !is_white_turn;
@@ -191,6 +192,15 @@ public class BoardController : MonoBehaviour {
         UnityEngine.Profiling.Profiler.EndSample();
         return false;
     } 
+
+    public HashSet<Definitions.Action> get_piece_actions(GameObject piece) {
+        var res = new HashSet<Definitions.Action>();
+        foreach(Definitions.Action action in possible_actions) {
+            if(Object.ReferenceEquals(action.agent, piece))
+                res.Add(action);
+        }
+        return res;
+    }
 }
 
 } // Chess

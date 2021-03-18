@@ -337,7 +337,7 @@ public class UIController : MonoBehaviour
     public void AttackMove()
     {
         uiStatus = UIState.PieceMoveAttack;
-        selected.Explore(ref actionList);
+        actionList = boardController.get_piece_actions(selected.gameObject);
         relevantPieces = GetRelevantMoveAttack(actionList);
         foreach (GameObject piece in relevantPieces)
         {

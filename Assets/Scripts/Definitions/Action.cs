@@ -24,6 +24,10 @@ public class InvalidResult : Result {
     public override string ToString() => "Action was Unsuccessful!";
 }
 
+public class GameOverResult : Result {
+    public override string ToString() => "Game Over!";
+}
+
 
 
 } // Definitions

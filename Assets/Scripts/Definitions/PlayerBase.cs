@@ -123,6 +123,11 @@ public class PlayerBase {
             commander.GetComponent<Piece.CommanderPiece>().begin_turn();
     }
 
+    public void end_turn() {
+        foreach(var commander in commanders_)
+            commander.GetComponent<Piece.CommanderPiece>().end_turn();
+    }
+
     public HashSet<Definitions.Action> get_possible_actions() => possible_actions;
 }
 
