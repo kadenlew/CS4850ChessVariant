@@ -31,6 +31,9 @@ public class AttackAction : Action {
     }
 
     public override Result Execute(BoardController controller) {
+        // use the corp energy
+        agent.GetComponent<Piece.GamePieceBase>().expend_energy(1);
+
         // do the roll
         var result = AttackAction.checkAttack(
             this
@@ -39,7 +42,13 @@ public class AttackAction : Action {
         // if we passed our check, kill
         if(result.was_successful)
         {
+            // move to the targets board position
+            agent.GetComponent<Piece.GamePieceBase>().move(
+                target.GetComponent<Piece.GamePieceBase>().position
+            );
 
+            // remove that target from the game
+            target.GetComponent<Piece.GamePieceBase>().kill();
         }
 
         return result;
@@ -113,7 +122,7 @@ public class AttackAction : Action {
 
     public override string ToString() => (
         $"{agent.GetComponent<Piece.GamePieceBase>()} attacks {target.GetComponent<Piece.GamePieceBase>()}" +
-        $"{((roll_modifer != 10) ? $" with a roll modifier of {roll_modifer}" : "")}"
+        $"{((roll_modifer != 0) ? $" with a roll modifier of {roll_modifer}" : "")}"
     );
         
 }
@@ -132,6 +141,10 @@ public class AttackResult : Result  {
         this.roll_result = roll_result;
         this.was_successful = was_successful;
     }
+
+    public override string ToString() => (
+        $"Rolled a {roll_result}. {(was_successful ? "Success!" : "Failed!")}" 
+    );
 }
 
 } // Definitions

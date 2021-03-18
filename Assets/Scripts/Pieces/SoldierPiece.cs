@@ -12,7 +12,7 @@ namespace Piece
 // does not require
 public abstract class SoldierPiece : GamePieceBase {
     // forwarding the abstract explore
-    public GameObject commander { get; protected set; }
+    public GameObject commander { get; set; }
 
     public void soldier_init(
         bool is_white, 
@@ -35,6 +35,16 @@ public abstract class SoldierPiece : GamePieceBase {
     {
         base.set_inactive();
         
+    }
+
+    public override bool expend_energy(uint cost)
+    {
+        return this.commander.GetComponent<CommanderPiece>().expend_energy(cost);
+    }
+
+    public override void kill()
+    {
+        commander.GetComponent<CommanderPiece>().remove_soldier(this.gameObject);
     }
 
     public override abstract void Explore(ref HashSet<Definitions.Action> results);

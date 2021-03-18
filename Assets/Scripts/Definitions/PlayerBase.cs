@@ -28,7 +28,15 @@ public class PlayerBase {
     public bool is_white { get; } 
     
     // A lookup table used by boardController associating each commanders soldiers to the commander itself
-    public List<(GameObject, List<GameObject>)> pieces { get; protected set; }
+    public List<(GameObject, List<GameObject>)> pieces { get {
+        List<(GameObject, List<GameObject>)> res = new List<(GameObject, List<GameObject>)>(commanders_.Count);
+        foreach(var commander in commanders_) {
+            res.Add(
+                (commander, commander.GetComponent<Piece.CommanderPiece>().soldiers_)
+            );
+        }
+        return res;
+    } }
 
     // constructor
     public PlayerBase(bool is_white, Definitions.PrefabCollection prefabs, BoardController controller) {
@@ -48,7 +56,6 @@ public class PlayerBase {
 
         // allocate the commanders and pieces lists
         commanders_ = new List<GameObject>(spawnList.Count);
-        pieces = new List<(GameObject, List<GameObject>)>(spawnList.Count);
 
         // spawn each commander specified above and call its init function
         // store references to all of the pieces that have been spawned grouped
@@ -60,18 +67,12 @@ public class PlayerBase {
                 GameObject.Instantiate(piece)
             );
 
-            // build the lookup table by calling this commanders commander init function
-            // which inturn spawns all of its soldiers and returns that list for reference
-            pieces.Add(
-                (
-                    commanders_[commanders_.Count - 1], 
-                    commanders_[commanders_.Count - 1].GetComponent<Piece.CommanderPiece>().commander_init(
-                        is_white,
-                        pos,
-                        prefabs_,
-                        controller
-                    )
-                )
+            commanders_[commanders_.Count - 1].GetComponent<Piece.CommanderPiece>().commander_init(
+                is_white,
+                pos,
+                prefabs_,
+                controller,
+                this
             );
         }
     } 
@@ -90,6 +91,44 @@ public class PlayerBase {
         UnityEngine.Profiling.Profiler.EndSample();
         // Debug.Log($"{possible_actions.Count}");
     }
+
+    public bool remove_commander(GameObject commander) {
+        Debug.Log($"{(is_white ? "WHITE" : "BLACK")}: killing commander {commander.GetComponent<Piece.GamePieceBase>()}");
+        // are we trying to kill our leader?
+        if(Object.ReferenceEquals(commander, commanders_[0]))
+            // yes, game over
+            return false;
+
+        // copy the soldiers to this players lead commander
+        foreach(var soldier in commander.GetComponent<Piece.CommanderPiece>().soldiers_) {
+            Debug.Log($"{this}: transfering soldier {soldier.GetComponent<Piece.GamePieceBase>()} to {commanders_[0].GetComponent<Piece.GamePieceBase>()}");
+            commanders_[0].GetComponent<Piece.CommanderPiece>().soldiers_.Add(
+                soldier
+            );
+
+            soldier.GetComponent<Piece.SoldierPiece>().commander = commanders_[0];
+        }
+
+        commanders_.Remove(commander);
+
+        // kill the game object itself
+        UnityEngine.Object.Destroy(commander);
+
+        // we transfered the pieces to the leader, continue the game
+        return true;
+    }
+
+    public void begin_turn() {
+        foreach(var commander in commanders_)
+            commander.GetComponent<Piece.CommanderPiece>().begin_turn();
+    }
+
+    public void end_turn() {
+        foreach(var commander in commanders_)
+            commander.GetComponent<Piece.CommanderPiece>().end_turn();
+    }
+
+    public HashSet<Definitions.Action> get_possible_actions() => possible_actions;
 }
 
 } // Control

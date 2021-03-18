@@ -19,7 +19,9 @@ public class BoardController : MonoBehaviour {
 
     protected List<Control.PlayerBase> players_;
 
-    public List<(bool, List<(GameObject, List<GameObject>)>)> piece_map { get; protected set; }
+    public HashSet<Definitions.Action> possible_actions { get {
+        return players_[is_white_turn ? 0 : 1].get_possible_actions();
+    }}
 
     public Dictionary<Definitions.BoardPosition, GameObject> board_tiles { get; protected set; }
     public Dictionary<Definitions.BoardPosition, GameObject> board_lookup { get; protected set; }
@@ -29,7 +31,6 @@ public class BoardController : MonoBehaviour {
     void Start() {
         // reserve storage structures
         players_ = new List<Control.PlayerBase>(2);
-        piece_map = new List<(bool, List<(GameObject, List<GameObject>)>)>(2);
         board_lookup = new Dictionary<Definitions.BoardPosition, GameObject>();
 
         players_.Add(
@@ -40,20 +41,12 @@ public class BoardController : MonoBehaviour {
             )
         );
 
-        piece_map.Add(
-            (true, players_[players_.Count - 1].pieces)
-        );
-
         players_.Add(
             new Control.PlayerBase(
                 false,
                 prefabs,
                 this
             )
-        );
-
-        piece_map.Add(
-            (false, players_[players_.Count - 1].pieces)
         );
 
         InitializeBoard();
@@ -68,12 +61,32 @@ public class BoardController : MonoBehaviour {
     }
 
     public void start_turn() {
-        player_explore();
+        // do start turn step for this player
+        players_[is_white_turn ? 0 : 1].begin_turn();
+
+        player_explore(); 
+    }
+
+    public void end_turn() {
+        // do end step 
+        players_[is_white_turn ? 0 : 1].end_turn();
+
+        // flip to other person
+        is_white_turn = !is_white_turn;
+
+        // start the next turn
+        start_turn();
     }
 
     public Definitions.Result execute_action(Definitions.Action action) {
+        if(!possible_actions.Contains(action))
+        {
+            Debug.Log("Invalid Action!");
+            return new Definitions.InvalidResult();
+        }
         // execute the action
         var result = action.Execute(this);
+        Debug.Log($"{result}");
 
         // the board state has change, update the lookup table
         update_lookup();
@@ -86,7 +99,9 @@ public class BoardController : MonoBehaviour {
     }
 
     public void player_explore() {
-        players_[is_white_turn ? 0 : 1].explore_actions();
+        // get all the actions
+        foreach(var player in players_)
+            player.explore_actions();
     }
 
     protected void set_transforms(){
@@ -147,10 +162,9 @@ public class BoardController : MonoBehaviour {
 
     private void update_lookup() {
         board_lookup.Clear();
-
-        foreach((bool color, List<(GameObject, List<GameObject>)> player_pieces) in piece_map)
+        foreach(Control.PlayerBase player in players_)
         {
-            foreach((GameObject commander, List<GameObject> soldiers) in player_pieces)
+            foreach((GameObject commander, List<GameObject> soldiers) in player.pieces)
             {
                 foreach(GameObject soldier in soldiers)
                 {
@@ -178,6 +192,15 @@ public class BoardController : MonoBehaviour {
         UnityEngine.Profiling.Profiler.EndSample();
         return false;
     } 
+
+    public HashSet<Definitions.Action> get_piece_actions(GameObject piece) {
+        var res = new HashSet<Definitions.Action>();
+        foreach(Definitions.Action action in possible_actions) {
+            if(Object.ReferenceEquals(action.agent, piece))
+                res.Add(action);
+        }
+        return res;
+    }
 }
 
 } // Chess

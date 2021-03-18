@@ -16,7 +16,17 @@ public abstract class Action {
     public abstract Result Execute(BoardController controller);
 }
 
-public abstract class Result {}
+public abstract class Result {
+    public override string ToString() => "Action was Successful!";
+}
+
+public class InvalidResult : Result {
+    public override string ToString() => "Action was Unsuccessful!";
+}
+
+public class GameOverResult : Result {
+    public override string ToString() => "Game Over!";
+}
 
 
 

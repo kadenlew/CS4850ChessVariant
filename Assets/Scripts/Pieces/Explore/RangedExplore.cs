@@ -71,7 +71,7 @@ public class RangedExplore {
                         results.Add(
                             new Definitions.MoveAction(
                             piece_ref,
-                            pos
+                            new_pos
                         ));
                     }
                 }
