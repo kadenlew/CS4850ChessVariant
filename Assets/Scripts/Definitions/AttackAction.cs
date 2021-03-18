@@ -72,7 +72,7 @@ public class AttackAction : Action {
     }
 
     // the Roll table which defines what rolls are required when <AttackingPieceType> is attacking <DefendingPieceType>
-    static IDictionary<(Piece.PieceType, Piece.PieceType), int> captureTable = new Dictionary<(Piece.PieceType, Piece.PieceType), int>() {
+    public static IDictionary<(Piece.PieceType, Piece.PieceType), int> captureTable = new Dictionary<(Piece.PieceType, Piece.PieceType), int>() {
         {(Piece.PieceType.King,     Piece.PieceType.King),      4}, {(Piece.PieceType.King,     Piece.PieceType.Queen),     4}, 
         {(Piece.PieceType.King,     Piece.PieceType.Knight),    4}, {(Piece.PieceType.King,     Piece.PieceType.Bishop),    4}, 
         {(Piece.PieceType.King,     Piece.PieceType.Rook),      5}, {(Piece.PieceType.King,     Piece.PieceType.Pawn),      1},

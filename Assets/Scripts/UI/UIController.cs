@@ -16,19 +16,29 @@ enum UIState
 
 public class UIController : MonoBehaviour
 {
+    private UIState uiStatus = UIState.NoSelect;
+
+    // This is defined at runtime
+    private Chess.BoardController boardController;
+
     //As long as the numbers of colors don't change this shouldn't cause huge issues
     public Color[] HighlightColors;
 
-    public GameObject transferNotification;
-    
-    public GameObject tooltipImage;
+    // Camera stuff
+    public Transform cameraPivot;
+    private Vector3 originalPosition;
+    public GameObject CameraResetButton;
+
+    // General Stuff
     public Image whiteTurn;
     public Image blackTurn;
 
+    // Variables for adjusting UI
     public int buttonOffset;
     public int buttonSize;
     public int infoPanelOffset;
 
+    // Bottom UI Buttons
     public GameObject informationPanel;
     public GameObject moveButton;
     public GameObject attackButton;
@@ -37,32 +47,34 @@ public class UIController : MonoBehaviour
     public GameObject cancelButton;
     public GameObject endTurnButton;
 
+    // Information Panel Buttons
+    public Text infoPName;
 
-    Chess.Definitions.Action gameAction_;
+    // DynamicPopUpTable
+    public GameObject tableBase;
+    public Text tableHeader;
+    public Text tableRolls;
 
-    private UIState uiStatus = UIState.NoSelect;
-    private bool activeAction = false;
+    // Internal vairables for selections and highlights
+    private Chess.Definitions.Action gameAction_; 
     private GamePieceBase selected = null;
-    public List<GameObject> relevantPieces = new List<GameObject>();
-    public List<GameObject> relevantTiles = new List<GameObject>();
-    public HashSet<Chess.Definitions.Action> actionList = new HashSet<Chess.Definitions.Action>();
-
+    private List<GameObject> relevantPieces = new List<GameObject>();
+    private List<GameObject> relevantTiles = new List<GameObject>();
+    private HashSet<Chess.Definitions.Action> actionList = new HashSet<Chess.Definitions.Action>();
     private GameObject selectedBoard = null;
+    private GameObject targetPiece = null;
 
-    private Chess.BoardController boardController;
-
-    private bool transferMode = false;
+    
 
     //false is black, true is white
-
     private bool tooltip = false;
 
 
     // Start is called before the first frame update
     void Start()
     {
+        originalPosition = cameraPivot.position;
         boardController = GameObject.FindGameObjectWithTag("GameController").GetComponent<Chess.BoardController>();
-        tooltipImage.SetActive(false);
         UpdateUI();
     }
 
@@ -78,8 +90,8 @@ public class UIController : MonoBehaviour
         {
             Confirm();
         }
-
         RayCastSelector();
+        CheckCamera();
     }
 
     // This moves around the UI and toggles on and off elements as the UI state changes
@@ -87,6 +99,7 @@ public class UIController : MonoBehaviour
     {
         if(uiStatus == UIState.NoSelect)
         {
+            tableBase.SetActive(false);
             informationPanel.SetActive(false);
             moveButton.SetActive(false);
             attackButton.SetActive(false);
@@ -98,6 +111,15 @@ public class UIController : MonoBehaviour
         }
         if(uiStatus == UIState.PieceMainSelect)
         {
+            if (selected)
+                infoPName.text = selected.type.ToString();
+            if (tooltip)
+            {
+                tableBase.SetActive(true);
+                PopulateAttackTable();
+            }
+            else
+                tableBase.SetActive(false);
             informationPanel.SetActive(true);
             confirmButton.SetActive(false);
             moveButton.SetActive(true);
@@ -113,6 +135,13 @@ public class UIController : MonoBehaviour
         }
         if (uiStatus == UIState.PieceLeadership)
         {
+            if (tooltip)
+            {
+                tableBase.SetActive(true);
+                PopulateAttackTable();
+            }
+            else
+                tableBase.SetActive(false);
             informationPanel.SetActive(true);
             moveButton.SetActive(false);
             attackButton.SetActive(false);
@@ -124,7 +153,14 @@ public class UIController : MonoBehaviour
         }
         if (uiStatus == UIState.PieceMoveAttack)
         {
-            if(selectedBoard)
+            if (tooltip)
+            {
+                tableBase.SetActive(true);
+                PopulateAttackTable();
+            }
+            else
+                tableBase.SetActive(false);
+            if (selectedBoard || targetPiece)
             {
                 informationPanel.SetActive(true);
                 moveButton.SetActive(false);
@@ -172,6 +208,18 @@ public class UIController : MonoBehaviour
             return new Vector3(buttonOffset * (1 + index) + buttonSize * index, buttonOffset, 0);
     }
 
+    // Checks if the camera has left the center of the board
+    private void CheckCamera()
+    {
+        if (Vector3.Distance(cameraPivot.position, originalPosition) > 0.001f)
+        {
+            CameraResetButton.SetActive(true);
+        }
+        else
+        {
+            CameraResetButton.SetActive(false);
+        }
+    }
 
     private void RayCastSelector()
     {
@@ -201,10 +249,31 @@ public class UIController : MonoBehaviour
                     {
                         if (relevantTiles.Contains(objectHit.gameObject))
                         {
+                            if (targetPiece)
+                            {
+                                targetPiece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
+                                targetPiece = null;
+                            }
                             if (selectedBoard)
                                 selectedBoard.GetComponent<Chess.Definitions.Tile>().Select();
                             selectedBoard = objectHit.gameObject;
                             selectedBoard.GetComponent<Chess.Definitions.Tile>().SelectMove();
+                            UpdateUI();
+                        }
+                    }
+                    if (uiStatus == UIState.PieceMoveAttack && objectHit.gameObject.CompareTag("Player") && selected)
+                    {
+                        if (relevantPieces.Contains(objectHit.gameObject))
+                        {
+                            if (selectedBoard)
+                            {
+                                selectedBoard.GetComponent<Chess.Definitions.Tile>().Select();
+                                selectedBoard = null;
+                            }
+                            if (targetPiece)
+                                targetPiece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
+                            targetPiece = objectHit.gameObject;
+                            targetPiece.GetComponent<GamePieceBase>().Select(HighlightColors[3]);
                             UpdateUI();
                         }
                     }
@@ -217,6 +286,39 @@ public class UIController : MonoBehaviour
     {
         boardController.end_turn();
         UpdateUI();
+    }
+
+    private void PopulateAttackTable()
+    {
+        tableHeader.text = selected.type.ToString() + "'s Attack Rolls";
+        string display = "";
+        display += RollsForPiece(selected.type, Chess.Piece.PieceType.King) + "\n";
+        display += RollsForPiece(selected.type, Chess.Piece.PieceType.Queen) + "\n";
+        display += RollsForPiece(selected.type, Chess.Piece.PieceType.Knight) + "\n";
+        display += RollsForPiece(selected.type, Chess.Piece.PieceType.Bishop) + "\n";
+        display += RollsForPiece(selected.type, Chess.Piece.PieceType.Rook) + "\n";
+        display += RollsForPiece(selected.type, Chess.Piece.PieceType.Pawn) + "\n";
+        tableRolls.text = display;
+
+    }
+
+    private string RollsForPiece(Chess.Piece.PieceType attacker, Chess.Piece.PieceType defender)
+    {
+        int tableRoll = 0;
+        tableRoll = Chess.Definitions.AttackAction.captureTable[(attacker, defender)];
+        if (tableRoll == 1)
+            return "Automatic";
+        else
+        {
+            string temp = "6";
+            for (int i = 5; i >= tableRoll; i--)
+            {
+                temp += "," + i.ToString();
+            }
+            return temp;
+        }
+
+        return null;
     }
 
     // Used by UI Button
@@ -254,13 +356,19 @@ public class UIController : MonoBehaviour
     {
         if (uiStatus == UIState.PieceMoveAttack)
         {
-            if (selectedBoard)
+            if (selectedBoard || targetPiece)
             {
-                boardController.execute_action(
-                    new Chess.Definitions.MoveAction(
-                        selected.gameObject,
-                        selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
+                if (selectedBoard)
+                    boardController.execute_action(
+                        new Chess.Definitions.MoveAction(
+                            selected.gameObject,
+                            selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
 
+                if(targetPiece)
+                    boardController.execute_action(
+                        new Chess.Definitions.AttackAction(
+                            selected.gameObject,
+                            targetPiece));
                 uiStatus = UIState.NoSelect;
                 DeselectAll();
                 selected.Deselect();
@@ -293,7 +401,12 @@ public class UIController : MonoBehaviour
     public void Tooltip()
     {
         tooltip = !tooltip;
-        tooltipImage.SetActive(tooltip);
+        UpdateUI();
+    }
+
+    public void ResetCameraButton()
+    {
+        cameraPivot.position = originalPosition;
     }
 
     // Tool for quickly deselecting all objects. Note it doesn't deselect the selected piece
@@ -311,6 +424,7 @@ public class UIController : MonoBehaviour
         relevantTiles.Clear();
         actionList.Clear();
         selectedBoard = null;
+        targetPiece = null;
     }
 
     // Gets targets for attack/move
@@ -349,8 +463,6 @@ public class UIController : MonoBehaviour
             }
             return tiles;
         }
-
-
         return null;
     }
 
