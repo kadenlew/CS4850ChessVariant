@@ -73,18 +73,6 @@ public abstract class CommanderPiece : GamePieceBase {
         // only search if we haven't moved our corp yet
         if(energy <= 0) {
             Debug.Log($"{this} corp is out of energy!");
-
-            foreach(var soldier in soldiers_)
-            {
-                soldier.GetComponent<GamePieceBase>().Select(
-                    new Color(1f, 0f, 0f)
-                );
-            }
-
-            this.Select(
-                new Color(1f, 0f, 0f)
-            );
- 
             return;
         }
 
