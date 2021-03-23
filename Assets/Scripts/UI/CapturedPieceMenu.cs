@@ -46,7 +46,8 @@ public class CapturedPieceMenu : MonoBehaviour
     public Text BlackCaptures;
 
     // Materiel Elements
-    public Image Advantage;
+    public Image AdvantageW;
+    public Image AdvantageB;
     public Text WhiteMaterielLossText;
     public Text BlackMaterielLossText;
 
@@ -168,14 +169,21 @@ public class CapturedPieceMenu : MonoBehaviour
     // Fill, Rotate, and Color the advantage bar
     private void UpdateAdvantageBar()
     {
-        if (BlackLossCount > WhiteLossCount)
-            Advantage.GetComponent<RectTransform>().rotation = Quaternion.Euler(new Vector3(0f, 0f, 180f));
-        else
-            Advantage.GetComponent<RectTransform>().rotation = Quaternion.Euler(new Vector3(0f, 0f, 0f));
-
         float advantageSize = Mathf.Clamp((float)(Mathf.Abs(BlackLossCount - WhiteLossCount)) / (float)CriticalMaterielDelta, 0f, 1f);
-
-        Advantage.fillAmount = advantageSize;
-        Advantage.color = Color.Lerp(Color.white, Color.green, advantageSize);
+        if (BlackLossCount > WhiteLossCount)
+        {
+            AdvantageW.color = Color.Lerp(Color.white, Color.green, advantageSize);
+            AdvantageB.color = Color.Lerp(Color.white, Color.red, advantageSize);
+            AdvantageW.fillAmount = 0.5f + advantageSize/2;
+            AdvantageB.fillAmount = 0.5f - advantageSize / 2;
+        }
+            
+        else
+        {
+            AdvantageW.color = Color.Lerp(Color.white, Color.red, advantageSize);
+            AdvantageB.color = Color.Lerp(Color.white, Color.green, advantageSize);
+            AdvantageW.fillAmount = 0.5f - advantageSize / 2;
+            AdvantageB.fillAmount = 0.5f + advantageSize / 2;
+        }
     }
 }
