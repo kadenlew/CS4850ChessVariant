@@ -69,7 +69,9 @@ public class UIController : MonoBehaviour
     private GameObject selectedBoard = null;
     private GameObject targetPiece = null;
 
-    
+    // Other UI
+    private CapturedPieceMenu capturedUI;
+
 
     //false is black, true is white
     private bool tooltip = false;
@@ -78,6 +80,7 @@ public class UIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        capturedUI = gameObject.GetComponentInChildren<CapturedPieceMenu>();
         originalPosition = cameraPivot.position;
         boardController = GameObject.FindGameObjectWithTag("GameController").GetComponent<Chess.BoardController>();
         UpdateUI();
@@ -401,6 +404,7 @@ public class UIController : MonoBehaviour
 
                 if (targetPiece)
                 {
+                    PieceType tempType = targetPiece.GetComponent<GamePieceBase>().type;
                     Chess.Definitions.Result result = boardController.execute_action(
                         new Chess.Definitions.AttackAction(
                             selected.gameObject,
@@ -410,7 +414,10 @@ public class UIController : MonoBehaviour
                     {
                         Chess.Definitions.AttackResult attackResult = (Chess.Definitions.AttackResult)result;
                         if (attackResult.was_successful)
+                        {
                             ChangeVeterancy(selected, 1, 0);
+                            capturedUI.CapturedCounterIncrement(tempType, !boardController.is_white_turn);
+                        }
                         else
                             ChangeVeterancy(targetPiece.GetComponent<GamePieceBase>(), 0, 1);
                     }
