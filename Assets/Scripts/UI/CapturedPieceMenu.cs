@@ -174,16 +174,16 @@ public class CapturedPieceMenu : MonoBehaviour
         {
             AdvantageW.color = Color.Lerp(Color.white, Color.green, advantageSize);
             AdvantageB.color = Color.Lerp(Color.white, Color.red, advantageSize);
-            AdvantageW.fillAmount = 0.5f + advantageSize/2;
-            AdvantageB.fillAmount = 0.5f - advantageSize / 2;
+            AdvantageW.fillAmount = Mathf.Clamp(0.5f + advantageSize / 2, 0.1f, 0.9f);
+            AdvantageB.fillAmount = Mathf.Clamp(0.5f - advantageSize / 2, 0.1f, 0.9f);
         }
             
         else
         {
             AdvantageW.color = Color.Lerp(Color.white, Color.red, advantageSize);
             AdvantageB.color = Color.Lerp(Color.white, Color.green, advantageSize);
-            AdvantageW.fillAmount = 0.5f - advantageSize / 2;
-            AdvantageB.fillAmount = 0.5f + advantageSize / 2;
+            AdvantageW.fillAmount = Mathf.Clamp(0.5f - advantageSize / 2, 0.1f, 0.9f);
+            AdvantageB.fillAmount = Mathf.Clamp(0.5f + advantageSize / 2, 0.1f, 0.9f);
         }
     }
 }
