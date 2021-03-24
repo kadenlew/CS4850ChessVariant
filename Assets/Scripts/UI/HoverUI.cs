@@ -23,4 +23,9 @@ public class HoverUI : MonoBehaviour
     {
         gameObject.GetComponent<Text>().text = newText;
     }
+
+    public void SetColor(Color newColor)
+    {
+        gameObject.GetComponent<Text>().color = newColor;
+    }
 }

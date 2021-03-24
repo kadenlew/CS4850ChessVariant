@@ -148,8 +148,8 @@ public class CapturedPieceMenu : MonoBehaviour
     {
         WhiteCaptures.text = UpdateList(true);
         BlackCaptures.text = UpdateList(false);
-        WhiteMaterielLossText.text = "-" + WhiteLossCount.ToString();
-        BlackMaterielLossText.text = "-" + BlackLossCount.ToString();
+        WhiteMaterielLossText.text = WhiteLossCount.ToString();
+        BlackMaterielLossText.text = BlackLossCount.ToString();
         UpdateAdvantageBar();
     }
 

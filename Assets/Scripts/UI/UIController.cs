@@ -534,6 +534,18 @@ public class UIController : MonoBehaviour
                 IScript.SetText(WinProbability(selected.type, targetPiece.GetComponent<GamePieceBase>().type));
                 IScript.target = new Vector3(targetPiece.transform.position.x, 1f, targetPiece.transform.position.z);
                 IScript.adapt = true;
+
+                if(targetPiece.GetComponent<GamePieceBase>().type == PieceType.King)
+                {
+                    GameObject K = Instantiate(floatingTextPrefab, transform);
+                    HoverUI KScript = K.GetComponent<HoverUI>();
+                    floatingText.Add(KScript);
+                    KScript.SetText(WinProbability(targetPiece.GetComponent<GamePieceBase>().type, selected.type));
+                    KScript.target = new Vector3(targetPiece.transform.position.x, 1f, targetPiece.transform.position.z);
+                    KScript.SetColor(Color.red);
+                    KScript.offset = -15;
+                    KScript.adapt = true;
+                }
             }
         }
     }
