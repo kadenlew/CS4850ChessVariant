@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Chess.Piece;
+using UnityEngine.EventSystems;
 
 enum UIState
 {
@@ -61,7 +62,7 @@ public class UIController : MonoBehaviour
     public Text tableRolls;
 
     // Internal vairables for selections and highlights
-    private Chess.Definitions.Action gameAction_; 
+    private Chess.Definitions.Action gameAction_;
     private GamePieceBase selected = null;
     private List<GameObject> relevantPieces = new List<GameObject>();
     private List<GameObject> relevantTiles = new List<GameObject>();
@@ -72,6 +73,10 @@ public class UIController : MonoBehaviour
     // Other UI
     private CapturedPieceMenu capturedUI;
 
+    // Hover Probabilities
+    private List<HoverUI> floatingText = new List<HoverUI>();
+    public GameObject floatingTextPrefab;
+    public Toggle probabilityCheck;
 
     //false is black, true is white
     private bool tooltip = false;
@@ -98,14 +103,17 @@ public class UIController : MonoBehaviour
         {
             Confirm();
         }
-        RayCastSelector();
+
+        // Prevents clicking through UI
+        if (!EventSystem.current.IsPointerOverGameObject())
+            RayCastSelector();
         CheckCamera();
     }
 
     // This moves around the UI and toggles on and off elements as the UI state changes
     private void UpdateUI()
     {
-        if(uiStatus == UIState.NoSelect)
+        if (uiStatus == UIState.NoSelect)
         {
             tableBase.SetActive(false);
             informationPanel.SetActive(false);
@@ -117,7 +125,7 @@ public class UIController : MonoBehaviour
             endTurnButton.SetActive(true);
             endTurnButton.transform.position = ButtonPositionToVector(false, 0);
         }
-        if(uiStatus == UIState.PieceMainSelect)
+        if (uiStatus == UIState.PieceMainSelect)
         {
             if (selected)
             {
@@ -181,7 +189,7 @@ public class UIController : MonoBehaviour
                 confirmButton.transform.position = ButtonPositionToVector(true, 0);
                 cancelButton.SetActive(true);
                 cancelButton.transform.position = ButtonPositionToVector(true, 1);
-            } 
+            }
             else
             {
                 informationPanel.SetActive(true);
@@ -209,11 +217,11 @@ public class UIController : MonoBehaviour
     }
 
     // A tool for placing UI elements correctly
-    private Vector3 ButtonPositionToVector (bool infoPanel, int index)
+    private Vector3 ButtonPositionToVector(bool infoPanel, int index)
     {
-        if(infoPanel)
-        
-            return new Vector3(infoPanelOffset + buttonOffset * (2+index) + buttonSize * index, buttonOffset, 0);
+        if (infoPanel)
+
+            return new Vector3(infoPanelOffset + buttonOffset * (2 + index) + buttonSize * index, buttonOffset, 0);
         else
             return new Vector3(buttonOffset * (1 + index) + buttonSize * index, buttonOffset, 0);
     }
@@ -327,7 +335,7 @@ public class UIController : MonoBehaviour
         {
             CommanderPiece temp = (CommanderPiece)piece;
             return temp.energy;
-        
+
         }
         if (piece is SoldierPiece)
         {
@@ -386,6 +394,8 @@ public class UIController : MonoBehaviour
         {
             tile.GetComponent<Chess.Definitions.Tile>().Select();
         }
+        if (probabilityCheck.isOn)
+            CreateFloatingProbability();
         UpdateUI();
     }
 
@@ -410,7 +420,7 @@ public class UIController : MonoBehaviour
                             selected.gameObject,
                             targetPiece));
 
-                    if(result is Chess.Definitions.AttackResult)
+                    if (result is Chess.Definitions.AttackResult)
                     {
                         Chess.Definitions.AttackResult attackResult = (Chess.Definitions.AttackResult)result;
                         if (attackResult.was_successful)
@@ -503,11 +513,75 @@ public class UIController : MonoBehaviour
         {
             tile.GetComponent<Chess.Definitions.Tile>().Deselect();
         }
+        DestroyFloatingText();
         relevantPieces.Clear();
         relevantTiles.Clear();
         actionList.Clear();
         selectedBoard = null;
         targetPiece = null;
+    }
+
+    // Produces floating text for each piece in the list of relevant pieces compated to selected
+    private void CreateFloatingProbability()
+    {
+        if (selected)
+        {
+            foreach (GameObject targetPiece in relevantPieces)
+            {
+                GameObject I = Instantiate(floatingTextPrefab, transform);
+                HoverUI IScript = I.GetComponent<HoverUI>();
+                floatingText.Add(IScript);
+                IScript.SetText(WinProbability(selected.type, targetPiece.GetComponent<GamePieceBase>().type));
+                IScript.target = new Vector3(targetPiece.transform.position.x, 1f, targetPiece.transform.position.z);
+                IScript.adapt = true;
+
+                if(targetPiece.GetComponent<GamePieceBase>().type == PieceType.King)
+                {
+                    GameObject K = Instantiate(floatingTextPrefab, transform);
+                    HoverUI KScript = K.GetComponent<HoverUI>();
+                    floatingText.Add(KScript);
+                    KScript.SetText(WinProbability(targetPiece.GetComponent<GamePieceBase>().type, selected.type));
+                    KScript.target = new Vector3(targetPiece.transform.position.x, 1f, targetPiece.transform.position.z);
+                    KScript.SetColor(Color.red);
+                    KScript.offset = -15;
+                    KScript.adapt = true;
+                }
+            }
+        }
+    }
+
+    // Destroys all floating text elements
+    private void DestroyFloatingText()
+    {
+        foreach (HoverUI element in floatingText)
+        {
+            Destroy(element.gameObject);
+        }
+        floatingText.Clear();
+    }
+
+    // For updating when toggle is switched
+    public void ProbabilityToggleChanged()
+    {
+        if (probabilityCheck.isOn)
+        {
+            if (uiStatus == UIState.PieceMoveAttack || uiStatus == UIState.PieceSpecialAttack)
+                CreateFloatingProbability();
+        }
+        else
+            DestroyFloatingText();
+    }
+
+    // Creates string of the probability
+    private string WinProbability(PieceType attacker, PieceType defender)
+    {
+        int tableRoll = 0;
+        tableRoll = Chess.Definitions.AttackAction.captureTable[(attacker, defender)];
+
+        // invert
+        tableRoll = (7 - tableRoll);
+        return ((int)((float)tableRoll / 6f * 100)).ToString() + "%";
+
     }
 
     // Gets targets for attack/move
