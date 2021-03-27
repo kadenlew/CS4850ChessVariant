@@ -35,6 +35,8 @@ public abstract class GamePieceBase : MonoBehaviour {
     // reference the the BoardController for access to the board searching functions
     public BoardController controller_ref { get; set; }
 
+    public HashSet<Definitions.Action> possible_actions { get; protected set; }
+
     // Unity prefabs and materials used to correctly represent a piece
     protected Definitions.PrefabCollection prefabs_;
 

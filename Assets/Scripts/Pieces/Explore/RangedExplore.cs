@@ -16,10 +16,6 @@ namespace Exploring
     
     
 public class RangedExplore {
-    
-    public static HashSet<Definitions.Action> results { get; protected set; } = new HashSet<Definitions.Action>();
-    
-    public static Piece.GamePieceBase piece_ref { get; protected set; }
 
     // explore function called by the pieces, it can be assumed that the actions
     // appended to results are all valid AND that every possible action is 
@@ -29,18 +25,19 @@ public class RangedExplore {
         int gap,
         ref HashSet<Definitions.Action> results
     ){
-        RangedExplore.results = results;
-        piece_ref = p;
-
         explore_radius(
             p.position,
-            gap
+            gap,
+            ref p,
+            ref results
         );
     }
 
     public static void explore_radius(
         Definitions.BoardPosition pos,
-        int gap
+        int gap,
+        ref Piece.GamePieceBase piece_ref,
+        ref HashSet<Definitions.Action> results
     ){
         for(int x = -(gap + 1); x <= (gap + 1); x++){
             for(int y = -(gap + 1);  y <= (gap + 1); y++){

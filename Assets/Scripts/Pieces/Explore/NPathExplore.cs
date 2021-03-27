@@ -32,12 +32,6 @@ public class NPathExplore {
 
     };
 
-    // cache the results object to prevent copying during the recursion 
-    public static HashSet<Definitions.Action> results { get; protected set; } = new HashSet<Definitions.Action>();
-
-    // cache the piece in question to prevent copying during recusion
-    public static Piece.GamePieceBase piece_ref { get; protected set; }
-    
     // explore function that guarentees that all actions added to results are valid, and that
     // every possible action is added to results
     public static void Explore(
@@ -46,16 +40,14 @@ public class NPathExplore {
         ref HashSet<Definitions.Action> results,
         bool move_and_attack = false
     ) {
-        // cache the relevant information
-        NPathExplore.results = results;
-        piece_ref = piece;   
-        
         // start DFS where this piece currently is
         explore_adjacent(
             piece.position,
             n,
             0,
-            move_and_attack
+            move_and_attack,
+            ref piece,
+            ref results
         );
     }
 
@@ -65,7 +57,9 @@ public class NPathExplore {
         Definitions.BoardPosition pos,
         int max_length,
         int current_length,
-        bool move_and_attack
+        bool move_and_attack,
+        ref Piece.GamePieceBase piece_ref,
+        ref HashSet<Definitions.Action> results
     ) {
         // only search paths that are of max_length
         if (current_length > max_length) {
@@ -118,7 +112,9 @@ public class NPathExplore {
                 pos + move,
                 max_length,
                 current_length + 1, // increment the path length
-                move_and_attack
+                move_and_attack,
+                ref piece_ref,
+                ref results
             );
         }
     }
