@@ -14,11 +14,11 @@ public class KingPiece : CommanderPiece {
     // the king can move in any direction as long as the path is 3 tiles or shorter,
     // and it can only attack adjacent pieces
     public override void Explore(ref HashSet<Definitions.Action> results) {
-        Exploring.NPathExplore.Explore(this.gameObject, 3, ref results);
+        Exploring.NPathExplore.Explore(this, 3, ref results);
     }
 
     // define the soldiers this king will command
-    public override List<GameObject> commander_init(
+    public override void commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
         Definitions.PrefabCollection prefabs,
@@ -46,9 +46,6 @@ public class KingPiece : CommanderPiece {
 
         // spawn the soldiers
         this.spawn_units(controller); 
-
-        return soldiers_;
-
     }
 
 }

@@ -13,7 +13,7 @@ public class BishopPiece : CommanderPiece {
 
     // Extend the base commander initing to indicate what soldiers 
     // this piece has under it, and where they spawn
-    public override List<GameObject> commander_init(
+    public override void commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
         Definitions.PrefabCollection prefabs,
@@ -43,14 +43,11 @@ public class BishopPiece : CommanderPiece {
 
         // spawn those soldiers
         this.spawn_units(controller); 
-
-        // return for the lookup tables
-        return soldiers_;
     }
 
     // Bishop specific exploring 
     public override void Explore(ref HashSet<Definitions.Action> results) {
-        Exploring.ForwardExplore.Explore(this.gameObject, ref results);
+        Exploring.ForwardExplore.Explore(this, ref results);
     }
 
 }

@@ -15,7 +15,7 @@ public class RookPiece : SoldierPiece {
     // if the rook is adjacent to what is attacking, it can move to that square. Otherwise, it will not move after it attacks.
     // it can move to any adjacent square as well
     public override void Explore(ref HashSet<Definitions.Action> results) {
-        Exploring.RangedExplore.Explore(this.gameObject, 2, ref results);
+        Exploring.RangedExplore.Explore(this, 2, ref results);
     }
 
 }

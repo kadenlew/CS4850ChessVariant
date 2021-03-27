@@ -36,12 +36,12 @@ public class NPathExplore {
     public static HashSet<Definitions.Action> results { get; protected set; } = new HashSet<Definitions.Action>();
 
     // cache the piece in question to prevent copying during recusion
-    public static GameObject piece_ref { get; protected set; }
+    public static Piece.GamePieceBase piece_ref { get; protected set; }
     
     // explore function that guarentees that all actions added to results are valid, and that
     // every possible action is added to results
     public static void Explore(
-        GameObject piece, 
+        Piece.GamePieceBase piece, 
         int n, 
         ref HashSet<Definitions.Action> results,
         bool move_and_attack = false
@@ -52,7 +52,7 @@ public class NPathExplore {
         
         // start DFS where this piece currently is
         explore_adjacent(
-            piece.GetComponent<GamePieceBase>().position,
+            piece.position,
             n,
             0,
             move_and_attack
@@ -80,11 +80,11 @@ public class NPathExplore {
             }
 
             // is this position occupied?
-            GameObject res;
-            if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(pos, out res)) {
+            Piece.GamePieceBase res;
+            if(piece_ref.controller_ref.checkPosition(pos, out res)) {
                 // it is, is that piece an opponent's piece?
                 if ( 
-                    piece_ref.GetComponent<GamePieceBase>().is_white != res.GetComponent<GamePieceBase>().is_white
+                    piece_ref.is_white != res.is_white
                 ) {
                     // it is, can we attack given our current path length?
                     if(current_length == 1 || move_and_attack) {

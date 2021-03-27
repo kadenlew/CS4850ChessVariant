@@ -24,7 +24,7 @@ public class ForwardExplore {
     // the function called by a pieces' explore, ensured that all actions appended to results
     // are valid and that all possible actions are appended to results
     public static void Explore(
-        GameObject piece,
+        Piece.GamePieceBase piece,
         ref HashSet<Definitions.Action> results, 
         int distance = 1
     ) {
@@ -32,22 +32,22 @@ public class ForwardExplore {
         foreach(var move in moves)
         {
             // get the new position and check if its valid
-            var new_position = piece.GetComponent<GamePieceBase>().is_white ? 
-                    piece.GetComponent<GamePieceBase>().position + move :
-                    piece.GetComponent<GamePieceBase>().position - move;
+            var new_position = piece.is_white ? 
+                    piece.position + move :
+                    piece.position - move;
 
             if(!new_position.is_valid)
                 continue;
             
             // see if the space is occupied
-            GameObject res;
-            if(piece.GetComponent<GamePieceBase>().controller_ref.checkPosition(
+            Piece.GamePieceBase res;
+            if(piece.controller_ref.checkPosition(
                 new_position,
                 out res
             )) {
                 // the space is occupied, is it by us or the enemy 
                 if(
-                    res.GetComponent<GamePieceBase>().is_white != piece.GetComponent<GamePieceBase>().is_white
+                    res.is_white != piece.is_white
                 ) {
                     // its occupied by the enemy, so we can attack it
                     results.Add(

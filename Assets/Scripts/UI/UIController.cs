@@ -383,7 +383,7 @@ public class UIController : MonoBehaviour
     public void AttackMove()
     {
         uiStatus = UIState.PieceMoveAttack;
-        actionList = boardController.get_piece_actions(selected.gameObject);
+        actionList = boardController.get_piece_actions(selected);
         relevantPieces = GetRelevantMoveAttack(actionList);
         foreach (GameObject piece in relevantPieces)
         {
@@ -409,7 +409,7 @@ public class UIController : MonoBehaviour
                 if (selectedBoard)
                     boardController.execute_action(
                         new Chess.Definitions.MoveAction(
-                            selected.gameObject,
+                            selected,
                             selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
 
                 if (targetPiece)
@@ -417,8 +417,8 @@ public class UIController : MonoBehaviour
                     PieceType tempType = targetPiece.GetComponent<GamePieceBase>().type;
                     Chess.Definitions.Result result = boardController.execute_action(
                         new Chess.Definitions.AttackAction(
-                            selected.gameObject,
-                            targetPiece));
+                            selected,
+                            targetPiece.GetComponent<GamePieceBase>()));
 
                     if (result is Chess.Definitions.AttackResult)
                     {
@@ -439,9 +439,9 @@ public class UIController : MonoBehaviour
                     CommanderPiece temp = (CommanderPiece)(selected);
                     if (temp.energy == 0)
                     {
-                        foreach (GameObject soldier in temp.soldiers_)
+                        foreach (Chess.Piece.SoldierPiece soldier in temp.soldiers_)
                         {
-                            soldier.GetComponent<GamePieceBase>().Select(HighlightColors[4]);
+                            soldier.Select(HighlightColors[4]);
                         }
                         temp.Select(HighlightColors[4]);
                     }
@@ -449,13 +449,13 @@ public class UIController : MonoBehaviour
                 else if (selected is SoldierPiece)
                 {
                     SoldierPiece temp = (SoldierPiece)selected;
-                    if (temp.commander.GetComponent<CommanderPiece>().energy == 0)
+                    if (temp.commander.energy == 0)
                     {
-                        foreach (GameObject soldier in temp.commander.GetComponent<CommanderPiece>().soldiers_)
+                        foreach (Chess.Piece.SoldierPiece soldier in temp.commander.soldiers_)
                         {
-                            soldier.GetComponent<GamePieceBase>().Select(HighlightColors[4]);
+                            soldier.Select(HighlightColors[4]);
                         }
-                        temp.commander.GetComponent<CommanderPiece>().Select(HighlightColors[4]);
+                        temp.commander.Select(HighlightColors[4]);
                     }
                 }
                 selected.Select(HighlightColors[0]);
@@ -595,7 +595,7 @@ public class UIController : MonoBehaviour
                 if(action is Chess.Definitions.AttackAction)
                 {
                     Chess.Definitions.AttackAction attack = (Chess.Definitions.AttackAction)action;
-                    targets.Add(attack.target);
+                    targets.Add(attack.target.gameObject);
                 }
             }
             return targets;
@@ -614,7 +614,7 @@ public class UIController : MonoBehaviour
                 if (action is Chess.Definitions.MoveAction)
                 {
                     Chess.Definitions.MoveAction move = (Chess.Definitions.MoveAction)action;
-                    tiles.Add(boardController.board_tiles[move.target]);
+                    tiles.Add(boardController.board_tiles[move.target].gameObject);
                 }
                 
             }
@@ -631,14 +631,14 @@ public class UIController : MonoBehaviour
             List<GameObject> relatedPieces = new List<GameObject>();
             if (selected.GetComponent<SoldierPiece>())
             {
-                relatedPieces.Add(selected.GetComponent<SoldierPiece>().commander);
+                relatedPieces.Add(selected.GetComponent<SoldierPiece>().commander.gameObject);
             }
             else if(selected.GetComponent<CommanderPiece>())
             {
                 CommanderPiece p = selected.GetComponent<CommanderPiece>();
-                foreach (GameObject soldier in p.soldiers_)
+                foreach (Chess.Piece.SoldierPiece soldier in p.soldiers_)
                 {
-                    relatedPieces.Add(soldier);
+                    relatedPieces.Add(soldier.gameObject);
                 }
             }
             else

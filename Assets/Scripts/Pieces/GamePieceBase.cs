@@ -22,16 +22,12 @@ public enum PieceType {
 // the abstract base structure of a GamePiece which includes all of the required 
 // methods and members of a GamePiece for interaction in a generic collection.
 public abstract class GamePieceBase : MonoBehaviour {
-    // Material for the renderer to use for white/black
-    public Material standard;
     // the physical space this piece occupies; abstracts the Vector3d of unity 
     // to keep all logic within "Board Space"
     public Definitions.BoardPosition position { get; protected set; }
     
     // determines what side this piece is on
     public bool is_white { get; protected set; }
-
-    public bool is_active { get; protected set; }
     
     // the type this piece is for use in dictionary lookups
     public abstract PieceType type { get; }
@@ -72,9 +68,9 @@ public abstract class GamePieceBase : MonoBehaviour {
 
         // unity related items
         this.prefabs_ = prefabs;
-        this.standard = prefabs_.pieceColors[is_white ? 0 : 1];
 
-        this.GetComponentInChildren<Renderer>().material = this.standard;
+        // set the material color
+        this.GetComponentInChildren<Renderer>().material = prefabs_.pieceColors[is_white ? 0 : 1];
     }
 
     public void move(Definitions.BoardPosition position) {
@@ -84,12 +80,8 @@ public abstract class GamePieceBase : MonoBehaviour {
     public abstract bool expend_energy(uint cost);
 
     public abstract void kill();
-    
-    public virtual void set_inactive() {
-        this.is_active = false;
-    }
 
-    public override string ToString() => $"{(this.is_white ? "White" : "Black")} {this.type} {this.position}";
+    public override string ToString() => $"{(is_white ? "White" : "Black")} {type} {position}";
         
 }
 

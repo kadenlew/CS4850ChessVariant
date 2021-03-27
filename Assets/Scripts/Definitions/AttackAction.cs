@@ -15,14 +15,14 @@ namespace Definitions
 // an intersection table provided below
 public class AttackAction : Action {
     // the target piece that is under attack
-    public GameObject target { get; }
+    public Piece.GamePieceBase target { get; }
     // represents any positive or negative bonus applied to the random roll before checking that value with the roll table
     int roll_modifer { get; } = 0;
 
     // constructor
     public AttackAction(
-        GameObject agent, 
-        GameObject target,
+        Piece.GamePieceBase agent, 
+        Piece.GamePieceBase target,
         int roll_modifer = 0
     ) {
         this.agent = agent;
@@ -32,23 +32,21 @@ public class AttackAction : Action {
 
     public override Result Execute(BoardController controller) {
         // use the corp energy
-        agent.GetComponent<Piece.GamePieceBase>().expend_energy(1);
+        agent.expend_energy(1);
 
         // do the roll
-        var result = AttackAction.checkAttack(
-            this
-        );
+        var result = checkAttack();
 
         // if we passed our check, kill
         if(result.was_successful)
         {
             // move to the targets board position
-            agent.GetComponent<Piece.GamePieceBase>().move(
-                target.GetComponent<Piece.GamePieceBase>().position
+            agent.move(
+                target.position
             );
 
             // remove that target from the game
-            target.GetComponent<Piece.GamePieceBase>().kill();
+            target.kill();
         }
 
         return result;
@@ -60,13 +58,13 @@ public class AttackAction : Action {
 
     // given an AttackAction object, check what roll is required for that attack to succeed.
     // if return whether the attack succeeded, and what roll was gotten
-    public static AttackResult checkAttack(AttackAction attack) {
+    public AttackResult checkAttack() {
         int roll = Random.Range((int)1, (int)7);
         return new AttackResult(
-            roll + attack.roll_modifer,
-            roll + attack.roll_modifer >= captureTable[(
-                attack.agent.GetComponent<Piece.GamePieceBase>().type, 
-                attack.target.GetComponent<Piece.GamePieceBase>().type
+            roll + roll_modifer,
+            roll + roll_modifer >= captureTable[(
+                agent.type, 
+                target.type
             )]   
         );
     }
@@ -98,8 +96,8 @@ public class AttackAction : Action {
 ///////////////////////////////////////////////////////////////////////////
 
     public static bool operator== (AttackAction a, AttackAction b) => (
-        GameObject.ReferenceEquals(a.agent, b.agent) &&
-        GameObject.ReferenceEquals(a.target, b.target)
+        ReferenceEquals(a.agent, b.agent) &&
+        ReferenceEquals(a.target, b.target)
     );
     
     public static bool operator!= (AttackAction a, AttackAction b) => (
@@ -116,12 +114,12 @@ public class AttackAction : Action {
     }
 
     public override int GetHashCode() => (
-        agent.GetComponent<Piece.GamePieceBase>().position.GetHashCode() * 1000 +
-        target.GetComponent<Piece.GamePieceBase>().position.GetHashCode()
+        agent.position.GetHashCode() * 1000 +
+        target.position.GetHashCode()
     );
 
     public override string ToString() => (
-        $"{agent.GetComponent<Piece.GamePieceBase>()} attacks {target.GetComponent<Piece.GamePieceBase>()}" +
+        $"{agent} attacks {target}" +
         // $"with a roll modifer of {roll_modifer}"
         $"{((roll_modifer != 0) ? $" with a roll modifier of {roll_modifer}" : "")}"
     );
