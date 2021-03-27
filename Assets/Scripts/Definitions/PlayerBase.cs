@@ -128,6 +128,7 @@ public class PlayerBase {
     }
 
     public void end_turn() {
+        // do the end turn step ofr each corp
         foreach(var commander in commanders_)
             commander.end_turn();
     }
