@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Chess.Piece;
+using UnityEngine.EventSystems;
 
 enum UIState
 {
@@ -47,8 +48,13 @@ public class UIController : MonoBehaviour
     public GameObject cancelButton;
     public GameObject endTurnButton;
 
-    // Information Panel Buttons
+    // Information Panel Stuff
     public Text infoPName;
+    public Text infoPTurns;
+    public Text infoPKills;
+    public Text infoPSurvival;
+    private Dictionary<GamePieceBase, Veterancy> pieceVeterancy = new Dictionary<GamePieceBase, Veterancy>();
+
 
     // DynamicPopUpTable
     public GameObject tableBase;
@@ -56,7 +62,7 @@ public class UIController : MonoBehaviour
     public Text tableRolls;
 
     // Internal vairables for selections and highlights
-    private Chess.Definitions.Action gameAction_; 
+    private Chess.Definitions.Action gameAction_;
     private GamePieceBase selected = null;
     private List<GameObject> relevantPieces = new List<GameObject>();
     private List<GameObject> relevantTiles = new List<GameObject>();
@@ -64,7 +70,13 @@ public class UIController : MonoBehaviour
     private GameObject selectedBoard = null;
     private GameObject targetPiece = null;
 
-    
+    // Other UI
+    private CapturedPieceMenu capturedUI;
+
+    // Hover Probabilities
+    private List<HoverUI> floatingText = new List<HoverUI>();
+    public GameObject floatingTextPrefab;
+    public Toggle probabilityCheck;
 
     //false is black, true is white
     private bool tooltip = false;
@@ -73,6 +85,7 @@ public class UIController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        capturedUI = gameObject.GetComponentInChildren<CapturedPieceMenu>();
         originalPosition = cameraPivot.position;
         boardController = GameObject.FindGameObjectWithTag("GameController").GetComponent<Chess.BoardController>();
         UpdateUI();
@@ -90,14 +103,17 @@ public class UIController : MonoBehaviour
         {
             Confirm();
         }
-        RayCastSelector();
+
+        // Prevents clicking through UI
+        if (!EventSystem.current.IsPointerOverGameObject())
+            RayCastSelector();
         CheckCamera();
     }
 
     // This moves around the UI and toggles on and off elements as the UI state changes
     private void UpdateUI()
     {
-        if(uiStatus == UIState.NoSelect)
+        if (uiStatus == UIState.NoSelect)
         {
             tableBase.SetActive(false);
             informationPanel.SetActive(false);
@@ -109,10 +125,12 @@ public class UIController : MonoBehaviour
             endTurnButton.SetActive(true);
             endTurnButton.transform.position = ButtonPositionToVector(false, 0);
         }
-        if(uiStatus == UIState.PieceMainSelect)
+        if (uiStatus == UIState.PieceMainSelect)
         {
             if (selected)
-                infoPName.text = selected.type.ToString();
+            {
+                SetInfoPanel(selected);
+            }
             if (tooltip)
             {
                 tableBase.SetActive(true);
@@ -171,7 +189,7 @@ public class UIController : MonoBehaviour
                 confirmButton.transform.position = ButtonPositionToVector(true, 0);
                 cancelButton.SetActive(true);
                 cancelButton.transform.position = ButtonPositionToVector(true, 1);
-            } 
+            }
             else
             {
                 informationPanel.SetActive(true);
@@ -199,11 +217,11 @@ public class UIController : MonoBehaviour
     }
 
     // A tool for placing UI elements correctly
-    private Vector3 ButtonPositionToVector (bool infoPanel, int index)
+    private Vector3 ButtonPositionToVector(bool infoPanel, int index)
     {
-        if(infoPanel)
-        
-            return new Vector3(infoPanelOffset + buttonOffset * (2+index) + buttonSize * index, buttonOffset, 0);
+        if (infoPanel)
+
+            return new Vector3(infoPanelOffset + buttonOffset * (2 + index) + buttonSize * index, buttonOffset, 0);
         else
             return new Vector3(buttonOffset * (1 + index) + buttonSize * index, buttonOffset, 0);
     }
@@ -221,6 +239,7 @@ public class UIController : MonoBehaviour
         }
     }
 
+    // Called every frame to see if player is clicking on things
     private void RayCastSelector()
     {
         if (Input.GetMouseButtonDown(0))
@@ -237,8 +256,12 @@ public class UIController : MonoBehaviour
                         if (objectHit.gameObject.CompareTag("Player") && objectHit.gameObject.GetComponent<GamePieceBase>().is_white == boardController.is_white_turn)
                         {
                             if (selected)
-                                selected.Deselect();
-
+                            {
+                                if (PieceHasTurn(selected) > 0)
+                                    selected.Deselect();
+                                else
+                                    selected.Select(HighlightColors[4]);
+                            }
                             selected = objectHit.GetComponent<GamePieceBase>();
                             selected.Select(HighlightColors[0]);
                             uiStatus = UIState.PieceMainSelect;
@@ -282,12 +305,15 @@ public class UIController : MonoBehaviour
         }
     }
 
+    // Used by button only for now
     public void endTurn()
     {
         boardController.end_turn();
         UpdateUI();
+        selected = null;
     }
 
+    // Sets UI with Dynamic Probabilities
     private void PopulateAttackTable()
     {
         tableHeader.text = selected.type.ToString() + "'s Attack Rolls";
@@ -302,6 +328,28 @@ public class UIController : MonoBehaviour
 
     }
 
+    // Tool to determine if a piece has a turn
+    private uint PieceHasTurn(GamePieceBase piece)
+    {
+        if (piece is CommanderPiece)
+        {
+            CommanderPiece temp = (CommanderPiece)piece;
+            return temp.energy;
+
+        }
+        if (piece is SoldierPiece)
+        {
+            SoldierPiece temp = (SoldierPiece)piece;
+            return temp.commander.GetComponent<CommanderPiece>().energy;
+        }
+
+        Debug.LogError("seleteced piece is nothing?");
+        return 0;
+
+
+    }
+
+    // Calculates probabilities
     private string RollsForPiece(Chess.Piece.PieceType attacker, Chess.Piece.PieceType defender)
     {
         int tableRoll = 0;
@@ -317,8 +365,6 @@ public class UIController : MonoBehaviour
             }
             return temp;
         }
-
-        return null;
     }
 
     // Used by UI Button
@@ -348,6 +394,8 @@ public class UIController : MonoBehaviour
         {
             tile.GetComponent<Chess.Definitions.Tile>().Select();
         }
+        if (probabilityCheck.isOn)
+            CreateFloatingProbability();
         UpdateUI();
     }
 
@@ -364,20 +412,57 @@ public class UIController : MonoBehaviour
                             selected.gameObject,
                             selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
 
-                if(targetPiece)
-                    boardController.execute_action(
+                if (targetPiece)
+                {
+                    PieceType tempType = targetPiece.GetComponent<GamePieceBase>().type;
+                    Chess.Definitions.Result result = boardController.execute_action(
                         new Chess.Definitions.AttackAction(
                             selected.gameObject,
                             targetPiece));
-                uiStatus = UIState.NoSelect;
+
+                    if (result is Chess.Definitions.AttackResult)
+                    {
+                        Chess.Definitions.AttackResult attackResult = (Chess.Definitions.AttackResult)result;
+                        if (attackResult.was_successful)
+                        {
+                            ChangeVeterancy(selected, 1, 0);
+                            capturedUI.CapturedCounterIncrement(tempType, !boardController.is_white_turn);
+                        }
+                        else
+                            ChangeVeterancy(targetPiece.GetComponent<GamePieceBase>(), 0, 1);
+                    }
+                }
+                uiStatus = UIState.PieceMainSelect;
                 DeselectAll();
-                selected.Deselect();
-                selected = null;
+                if (selected is CommanderPiece)
+                {
+                    CommanderPiece temp = (CommanderPiece)(selected);
+                    if (temp.energy == 0)
+                    {
+                        foreach (GameObject soldier in temp.soldiers_)
+                        {
+                            soldier.GetComponent<GamePieceBase>().Select(HighlightColors[4]);
+                        }
+                        temp.Select(HighlightColors[4]);
+                    }
+                }
+                else if (selected is SoldierPiece)
+                {
+                    SoldierPiece temp = (SoldierPiece)selected;
+                    if (temp.commander.GetComponent<CommanderPiece>().energy == 0)
+                    {
+                        foreach (GameObject soldier in temp.commander.GetComponent<CommanderPiece>().soldiers_)
+                        {
+                            soldier.GetComponent<GamePieceBase>().Select(HighlightColors[4]);
+                        }
+                        temp.commander.GetComponent<CommanderPiece>().Select(HighlightColors[4]);
+                    }
+                }
+                selected.Select(HighlightColors[0]);
                 UpdateUI();
             }
         }
     }
-
 
     // Used by UI button and hotkey
     public void Cancel()
@@ -385,7 +470,12 @@ public class UIController : MonoBehaviour
         if (uiStatus == UIState.PieceMainSelect)
         {
             if (selected)
-                selected.Deselect();
+            {
+                if (PieceHasTurn(selected) > 0)
+                    selected.Deselect();
+                else
+                    selected.Select(HighlightColors[4]);
+            }
             uiStatus = UIState.NoSelect;
             UpdateUI();
         }
@@ -414,17 +504,84 @@ public class UIController : MonoBehaviour
     {
         foreach (GameObject piece in relevantPieces)
         {
-            piece.GetComponent<GamePieceBase>().Deselect();
+            if (PieceHasTurn(piece.GetComponent<GamePieceBase>()) > 0)
+                piece.GetComponent<GamePieceBase>().Deselect();
+            else
+                piece.GetComponent<GamePieceBase>().Select(HighlightColors[4]);
         }
         foreach (GameObject tile in relevantTiles)
         {
             tile.GetComponent<Chess.Definitions.Tile>().Deselect();
         }
+        DestroyFloatingText();
         relevantPieces.Clear();
         relevantTiles.Clear();
         actionList.Clear();
         selectedBoard = null;
         targetPiece = null;
+    }
+
+    // Produces floating text for each piece in the list of relevant pieces compated to selected
+    private void CreateFloatingProbability()
+    {
+        if (selected)
+        {
+            foreach (GameObject targetPiece in relevantPieces)
+            {
+                GameObject I = Instantiate(floatingTextPrefab, transform);
+                HoverUI IScript = I.GetComponent<HoverUI>();
+                floatingText.Add(IScript);
+                IScript.SetText(WinProbability(selected.type, targetPiece.GetComponent<GamePieceBase>().type));
+                IScript.target = new Vector3(targetPiece.transform.position.x, 1f, targetPiece.transform.position.z);
+                IScript.adapt = true;
+
+                if(targetPiece.GetComponent<GamePieceBase>().type == PieceType.King)
+                {
+                    GameObject K = Instantiate(floatingTextPrefab, transform);
+                    HoverUI KScript = K.GetComponent<HoverUI>();
+                    floatingText.Add(KScript);
+                    KScript.SetText(WinProbability(targetPiece.GetComponent<GamePieceBase>().type, selected.type));
+                    KScript.target = new Vector3(targetPiece.transform.position.x, 1f, targetPiece.transform.position.z);
+                    KScript.SetColor(Color.red);
+                    KScript.offset = -15;
+                    KScript.adapt = true;
+                }
+            }
+        }
+    }
+
+    // Destroys all floating text elements
+    private void DestroyFloatingText()
+    {
+        foreach (HoverUI element in floatingText)
+        {
+            Destroy(element.gameObject);
+        }
+        floatingText.Clear();
+    }
+
+    // For updating when toggle is switched
+    public void ProbabilityToggleChanged()
+    {
+        if (probabilityCheck.isOn)
+        {
+            if (uiStatus == UIState.PieceMoveAttack || uiStatus == UIState.PieceSpecialAttack)
+                CreateFloatingProbability();
+        }
+        else
+            DestroyFloatingText();
+    }
+
+    // Creates string of the probability
+    private string WinProbability(PieceType attacker, PieceType defender)
+    {
+        int tableRoll = 0;
+        tableRoll = Chess.Definitions.AttackAction.captureTable[(attacker, defender)];
+
+        // invert
+        tableRoll = (7 - tableRoll);
+        return ((int)((float)tableRoll / 6f * 100)).ToString() + "%";
+
     }
 
     // Gets targets for attack/move
@@ -492,5 +649,38 @@ public class UIController : MonoBehaviour
             return relatedPieces;
         }
         return null;
+    }
+
+    // Sets information in the info panel
+    private void SetInfoPanel(GamePieceBase piece)
+    {
+        Veterancy tempVet = GetVeterancy(piece);
+        infoPName.text = piece.type.ToString();
+        infoPTurns.text = PieceHasTurn(piece).ToString();
+        infoPKills.text = tempVet.kills.ToString();
+        infoPSurvival.text = tempVet.survival.ToString();
+    }
+
+    // Gets or creates a veterancy for the proper piece
+    private Veterancy GetVeterancy(GamePieceBase piece)
+    {
+        try
+        {
+            return pieceVeterancy[piece];
+        }
+        catch (KeyNotFoundException)
+        {
+            pieceVeterancy.Add(piece, new Veterancy(piece));
+            return pieceVeterancy[piece];
+        }
+
+    }
+
+    // Changes a pieces veterancy kills or survival
+    private void ChangeVeterancy(GamePieceBase piece, uint deltaKill, uint deltaSurvive)
+    {
+        Veterancy tempVeterancy = GetVeterancy(piece);
+        tempVeterancy.kills += deltaKill;
+        tempVeterancy.survival += deltaSurvive;
     }
 }
