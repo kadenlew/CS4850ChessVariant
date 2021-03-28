@@ -16,31 +16,28 @@ namespace Exploring
     
     
 public class RangedExplore {
-    
-    public static HashSet<Definitions.Action> results { get; protected set; } = new HashSet<Definitions.Action>();
-    
-    public static GameObject piece_ref { get; protected set; }
 
     // explore function called by the pieces, it can be assumed that the actions
     // appended to results are all valid AND that every possible action is 
     // appended to results
     public static void Explore(
-        GameObject p,
+        Piece.GamePieceBase p,
         int gap,
         ref HashSet<Definitions.Action> results
     ){
-        RangedExplore.results = results;
-        piece_ref = p;
-
         explore_radius(
-            p.GetComponent<GamePieceBase>().position,
-            gap
+            p.position,
+            gap,
+            ref p,
+            ref results
         );
     }
 
     public static void explore_radius(
         Definitions.BoardPosition pos,
-        int gap
+        int gap,
+        ref Piece.GamePieceBase piece_ref,
+        ref HashSet<Definitions.Action> results
     ){
         for(int x = -(gap + 1); x <= (gap + 1); x++){
             for(int y = -(gap + 1);  y <= (gap + 1); y++){
@@ -56,10 +53,10 @@ public class RangedExplore {
                     continue;
 
 
-                GameObject res;
+                Piece.GamePieceBase res;
                 if(mag <= 1){
-                    if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(new_pos, out res)){
-                        if(piece_ref.GetComponent<GamePieceBase>().is_white != res.GetComponent<GamePieceBase>().is_white){
+                    if(piece_ref.controller_ref.checkPosition(new_pos, out res)){
+                        if(piece_ref.is_white != res.is_white){
                             results.Add(
                                 new Definitions.AttackAction(
                                 piece_ref,
@@ -76,8 +73,8 @@ public class RangedExplore {
                     }
                 }
                 else if(mag > 1){
-                    if(piece_ref.GetComponent<GamePieceBase>().controller_ref.checkPosition(new_pos, out res)){
-                        if(piece_ref.GetComponent<GamePieceBase>().is_white != res.GetComponent<GamePieceBase>().is_white){
+                    if(piece_ref.controller_ref.checkPosition(new_pos, out res)){
+                        if(piece_ref.is_white != res.is_white){
                             results.Add(
                                 new Definitions.AttackAction(
                                 piece_ref,

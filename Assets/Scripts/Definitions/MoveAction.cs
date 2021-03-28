@@ -15,19 +15,20 @@ public class MoveAction : Action
     public BoardPosition target { get; }
 
     // constructor
-    public MoveAction(GameObject agent, BoardPosition target) {
+    public MoveAction(Piece.GamePieceBase agent, BoardPosition target) {
        this.agent = agent;
        this.target = target;
     }
     public override Result Execute(BoardController controller) {
         // spend the energy
-        agent.GetComponent<Piece.GamePieceBase>().expend_energy(1);
+        agent.expend_energy(1);
 
         // move
-        agent.GetComponent<Piece.GamePieceBase>().move(
+        agent.move(
             target
         );
 
+        // return default move result
         return new MoveResult();
     }
 
@@ -37,7 +38,7 @@ public class MoveAction : Action
 //////////////////////////////////////////////////////////////////////////
 
     public static bool operator== (MoveAction a, MoveAction b) => (
-        GameObject.ReferenceEquals(a.agent, b.agent) &&
+        ReferenceEquals(a.agent, b.agent) &&
         a.target == b.target
     );
     
@@ -55,11 +56,11 @@ public class MoveAction : Action
     }
 
     public override int GetHashCode() => (
-        agent.GetComponent<Piece.GamePieceBase>().position.GetHashCode() * 1000 + target.GetHashCode()
+        agent.position.GetHashCode() * 1000 + target.GetHashCode()
     );
 
     public override string ToString() => (
-        $"{agent.GetComponent<Piece.GamePieceBase>()} to {target}"
+        $"{agent} to {target}"
     );
 }
 

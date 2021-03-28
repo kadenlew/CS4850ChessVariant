@@ -12,12 +12,12 @@ namespace Piece
 // does not require
 public abstract class SoldierPiece : GamePieceBase {
     // forwarding the abstract explore
-    public GameObject commander { get; set; }
+    public Piece.CommanderPiece commander { get; set; }
 
     public void soldier_init(
         bool is_white, 
         Definitions.BoardPosition starting_position, 
-        GameObject commander,
+        Piece.CommanderPiece commander,
         BoardController controller, 
         Definitions.PrefabCollection prefabs
     ) {
@@ -31,20 +31,14 @@ public abstract class SoldierPiece : GamePieceBase {
         this.commander = commander;
     }
 
-    public override void set_inactive()
-    {
-        base.set_inactive();
-        
-    }
-
     public override bool expend_energy(uint cost)
     {
-        return this.commander.GetComponent<CommanderPiece>().expend_energy(cost);
+        return commander.expend_energy(cost);
     }
 
     public override void kill()
     {
-        commander.GetComponent<CommanderPiece>().remove_soldier(this.gameObject);
+        commander.remove_soldier(this);
     }
 
     public override abstract void Explore(ref HashSet<Definitions.Action> results);

@@ -11,19 +11,21 @@ namespace Piece
 // over the standard piece
 public abstract class CommanderPiece : GamePieceBase {
     // the list of soliders this commander owns
-    public List<GameObject> soldiers_ { get; protected set; }
+    public List<Piece.SoldierPiece> soldiers_ { get; protected set; }
 
     // a list that is used on object creation to indicate which soliders 
     // this piece will own, and is used to spawn each of those soliders in
     protected List<(GameObject, Definitions.BoardPosition)> spawnList_;
 
+    // energy for this corp
     public uint energy { get; protected set; } 
 
+    // owner of this corp
     public Control.PlayerBase owner { get; protected set; } 
 
     // Object init specific to commanders, allowing each of them to 
     // specify what pieces they will command and spawn them in
-    public virtual List<GameObject> commander_init(
+    public virtual void commander_init(
         bool is_white, 
         Definitions.BoardPosition starting_position,
         Definitions.PrefabCollection prefabs,
@@ -36,31 +38,28 @@ public abstract class CommanderPiece : GamePieceBase {
         this.energy = 1;
 
         this.owner = owner;
-
-        // required, but does not return anything
-        return soldiers_;
     }
 
     // given the spawnList set during commander init, spawn in each soldier 
     // specified
     protected void spawn_units(BoardController controller) {
         // reset the soldier list and reserve enough space for our units
-        soldiers_ = new List<GameObject>(spawnList_.Count);
+        soldiers_ = new List<Piece.SoldierPiece>(spawnList_.Count);
 
         // for each unit thats been defined, spawn it in and call its init function 
         // with the board position specified
         foreach((GameObject piece, Definitions.BoardPosition pos) in spawnList_)
         {
-            // spawn the soldier
+            // spawn the soldier and store the reference to its script
             soldiers_.Add(
-                GameObject.Instantiate(piece)
+                GameObject.Instantiate(piece).GetComponent<Piece.SoldierPiece>()
             );
 
             // call its init function to sync it with the board
-            soldiers_[soldiers_.Count - 1].GetComponent<Piece.SoldierPiece>().soldier_init(
+            soldiers_[soldiers_.Count - 1].soldier_init(
                 is_white,
                 pos,
-                this.gameObject,
+                this,
                 controller,
                 prefabs_
             );
@@ -72,16 +71,26 @@ public abstract class CommanderPiece : GamePieceBase {
     public void commander_explore(ref HashSet<Definitions.Action> results) {
         // only search if we haven't moved our corp yet
         if(energy <= 0) {
-            Debug.Log($"{this} corp is out of energy!");
+            // foreach(var soldier in soldiers_)
+            // {
+            //     soldier.GetComponent<GamePieceBase>().Select(
+            //         new Color(1f, 0f, 0f)
+            //     );
+            // }
+
+            // this.Select(
+            //     new Color(1f, 0f, 0f)
+            // );
+ 
             return;
         }
 
         // search the entire corp
         foreach(var soldier in soldiers_)
-            soldier.GetComponent<GamePieceBase>().Explore(ref results);
+            soldier.Explore(ref results);
 
         // search ourself as well
-        this.Explore(ref results);
+        Explore(ref results);
 
     }
 
@@ -93,15 +102,9 @@ public abstract class CommanderPiece : GamePieceBase {
         return false;
     }
 
-    public override void set_inactive()
-    {
-        // cause this piece to become inactive
-        base.set_inactive();
-    }
-
     public override void kill()
     {
-        owner.remove_commander(this.gameObject);
+        owner.remove_commander(this);
     }
 
     public void end_turn() {
@@ -110,22 +113,22 @@ public abstract class CommanderPiece : GamePieceBase {
             soldier.GetComponent<GamePieceBase>().Deselect();
         }
         this.energy = 1;
-
         this.Deselect();
     }
 
     public void begin_turn() {
-        Debug.Log($"{this} refreshing energy");
     }
 
-    public void remove_soldier(GameObject soldier) {
-        Debug.Log($"{this}: killing soldier {soldier.GetComponent<Piece.GamePieceBase>()}");
+    public void remove_soldier(Piece.SoldierPiece soldier) {
+        Debug.Log($"{this}: killing soldier {soldier}");
 
+        // we no longer have this soldier
         soldiers_.Remove(
             soldier
         );
 
-        Destroy(soldier);
+        // kill the game object that represents it
+        Destroy(soldier.gameObject);
     }
 
     // forwarding the abstract piece explore function

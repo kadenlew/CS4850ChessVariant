@@ -13,7 +13,7 @@ public class QueenPiece : SoldierPiece {
     // the queen can move in any direction as long as the path is 3 tiles or shorter,
     // and it can only attack adjacent pieces
     public override void Explore(ref HashSet<Definitions.Action> results) {
-        Exploring.NPathExplore.Explore(this.gameObject, 3, ref results);
+        Exploring.NPathExplore.Explore(this, 3, ref results);
     }
 
 }

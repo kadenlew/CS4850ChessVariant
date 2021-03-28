@@ -23,15 +23,15 @@ public class BoardController : MonoBehaviour {
         return players_[is_white_turn ? 0 : 1].get_possible_actions();
     }}
 
-    public Dictionary<Definitions.BoardPosition, GameObject> board_tiles { get; protected set; }
-    public Dictionary<Definitions.BoardPosition, GameObject> board_lookup { get; protected set; }
+    public Dictionary<Definitions.BoardPosition, Definitions.Tile> board_tiles { get; protected set; }
+    public Dictionary<Definitions.BoardPosition, Piece.GamePieceBase> board_lookup { get; protected set; }
 
     //comment
     // Start is called before the first frame update
     void Start() {
         // reserve storage structures
         players_ = new List<Control.PlayerBase>(2);
-        board_lookup = new Dictionary<Definitions.BoardPosition, GameObject>();
+        board_lookup = new Dictionary<Definitions.BoardPosition, Piece.GamePieceBase>();
 
         players_.Add(
             new Control.PlayerBase(
@@ -79,11 +79,14 @@ public class BoardController : MonoBehaviour {
     }
 
     public Definitions.Result execute_action(Definitions.Action action) {
+        // check if this is a valid action
         if(!possible_actions.Contains(action))
         {
             Debug.Log("Invalid Action!");
             return new Definitions.InvalidResult();
         }
+        Debug.Log($"{action}");
+
         // execute the action
         var result = action.Execute(this);
         Debug.Log($"{result}");
@@ -105,31 +108,41 @@ public class BoardController : MonoBehaviour {
     }
 
     protected void set_transforms(){
-        UnityEngine.Profiling.Profiler.BeginSample("Set Piece Transforms");
+        // set the positions for pieces of each player
         foreach(Control.PlayerBase player in players_)
         {
-            foreach((GameObject commander, List<GameObject> soldiers) in player.pieces)
+            // set the positions of each corp
+            foreach((Piece.CommanderPiece commander, List<Piece.SoldierPiece> soldiers) in player.pieces)
             {
-                foreach(GameObject piece in soldiers)
+                // update the soldiers of this corp
+                foreach(Piece.SoldierPiece piece in soldiers)
                 {
-                    piece.transform.position = compute_transform(
-                        piece.GetComponent<GamePieceBase>().position
+                    // update the position in unity space
+                    piece.gameObject.transform.position = compute_transform(
+                        // given the piece's position in board space
+                        piece.position
                     );
                     
                 }
-                commander.transform.position = compute_transform(
-                    commander.GetComponent<GamePieceBase>().position
+
+                // update the commander as well
+                // update the position in unity space
+                commander.gameObject.transform.position = compute_transform(
+                    // given the piece's position in board space
+                    commander.position
                 );
             }
         }
-        foreach(KeyValuePair<Definitions.BoardPosition, GameObject> kvp in board_tiles)
+
+        // set the positions of each game tile
+        foreach(KeyValuePair<Definitions.BoardPosition, Definitions.Tile> kvp in board_tiles)
         {
-            kvp.Value.transform.position = compute_transform(
-                kvp.Value.GetComponent<Definitions.Tile>().position
+            // update the position in unity space
+            kvp.Value.gameObject.transform.position = compute_transform(
+                // given the position in board space
+                kvp.Value.position
             );
         }
-
-        UnityEngine.Profiling.Profiler.EndSample();
     }
 
     protected Vector3 compute_transform(Definitions.BoardPosition pos) {
@@ -141,19 +154,20 @@ public class BoardController : MonoBehaviour {
     }
 
     private void InitializeBoard() {
-        board_tiles = new Dictionary<Definitions.BoardPosition, GameObject>();
+        board_tiles = new Dictionary<Definitions.BoardPosition, Definitions.Tile>();
         for (int i = 1; i <= dimensions; i++)
         {
             for (int k = 1; k <= dimensions; k++)
             {
+                // create the key for this dictionary position
                 var pos = new Definitions.BoardPosition(i, k);
-                // create and init the board
-                board_tiles[pos] = Instantiate(prefabs.Tile);
 
-                board_tiles[pos].GetComponent<Definitions.Tile>().init(
-                    new Definitions.BoardPosition(
-                        i, k
-                    ),
+                // create the board tile using the prefab, and store a reference to the script component
+                board_tiles[pos] = Instantiate(prefabs.Tile).GetComponent<Definitions.Tile>();
+
+                // initialize the script for this tile
+                board_tiles[pos].init(
+                    pos,
                     prefabs
                 );
             }
@@ -164,36 +178,26 @@ public class BoardController : MonoBehaviour {
         board_lookup.Clear();
         foreach(Control.PlayerBase player in players_)
         {
-            foreach((GameObject commander, List<GameObject> soldiers) in player.pieces)
+            foreach((Piece.CommanderPiece commander, List<Piece.SoldierPiece> soldiers) in player.pieces)
             {
-                foreach(GameObject soldier in soldiers)
+                foreach(Piece.SoldierPiece soldier in soldiers)
                 {
-                    board_lookup[soldier.GetComponent<GamePieceBase>().position] = soldier;
+                    board_lookup[soldier.position] = soldier;
                 }
 
-                board_lookup[commander.GetComponent<GamePieceBase>().position] = commander;
+                board_lookup[commander.position] = commander;
             }
         }
     }
 
-    public void remove_piece(
-        GameObject piece,
-        GameObject pieces_commander
-    ) {
-
-    }
-
-    public bool checkPosition(Definitions.BoardPosition pos, out GameObject result) {
-        UnityEngine.Profiling.Profiler.BeginSample("Search for Position DICT");
+    public bool checkPosition(Definitions.BoardPosition pos, out Piece.GamePieceBase result) {
         if(this.board_lookup.TryGetValue(pos, out result))  {
-            UnityEngine.Profiling.Profiler.EndSample();
             return true;
         }   
-        UnityEngine.Profiling.Profiler.EndSample();
         return false;
     } 
 
-    public HashSet<Definitions.Action> get_piece_actions(GameObject piece) {
+    public HashSet<Definitions.Action> get_piece_actions(Piece.GamePieceBase piece) {
         var res = new HashSet<Definitions.Action>();
         foreach(Definitions.Action action in possible_actions) {
             if(Object.ReferenceEquals(action.agent, piece))
