@@ -13,7 +13,7 @@ public class KingPiece : CommanderPiece {
     public override PieceType type { get; } = PieceType.King;
     // the king can move in any direction as long as the path is 3 tiles or shorter,
     // and it can only attack adjacent pieces
-    public override void Explore(ref HashSet<Definitions.Action> results) {
+    public override void Explore(ref Definitions.ActionDatabase results) {
         Exploring.NPathExplore.Explore(this, 3, ref results);
     }
 

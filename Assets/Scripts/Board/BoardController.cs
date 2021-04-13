@@ -19,9 +19,7 @@ public class BoardController : MonoBehaviour {
 
     protected List<Control.PlayerBase> players_;
 
-    public HashSet<Definitions.Action> possible_actions { get {
-        return players_[is_white_turn ? 0 : 1].get_possible_actions();
-    }}
+    public Definitions.ActionDatabase possible_actions { get; protected set; }
 
     public Dictionary<Definitions.BoardPosition, Definitions.Tile> board_tiles { get; protected set; }
     public Dictionary<Definitions.BoardPosition, Piece.GamePieceBase> board_lookup { get; protected set; }
@@ -32,12 +30,14 @@ public class BoardController : MonoBehaviour {
         // reserve storage structures
         players_ = new List<Control.PlayerBase>(2);
         board_lookup = new Dictionary<Definitions.BoardPosition, Piece.GamePieceBase>();
+        possible_actions = new Definitions.ActionDatabase();
 
         players_.Add(
             new Control.PlayerBase(
                 true,
                 prefabs,
-                this
+                this,
+                possible_actions
             )
         );
 
@@ -45,18 +45,25 @@ public class BoardController : MonoBehaviour {
             new Control.PlayerBase(
                 false,
                 prefabs,
-                this
+                this,
+                possible_actions
             )
         );
 
+
+        // create the physical board with entitites for clicking and storing positions in them
         InitializeBoard();
-        set_transforms();
+
+        // create the board look up table used to query whether a space is occupied and by who
         update_lookup();
+
+        // start the turn for white
         start_turn();
     }
 
     // Update is called once per frame
     void Update(){
+        // set the piece and board tile unity transforms according to board space configuration
         set_transforms();
     }
 
@@ -80,7 +87,7 @@ public class BoardController : MonoBehaviour {
 
     public Definitions.Result execute_action(Definitions.Action action) {
         // check if this is a valid action
-        if(!possible_actions.Contains(action))
+        if(!possible_actions.contains_value(action))
         {
             Debug.Log("Invalid Action!");
             return new Definitions.InvalidResult();
@@ -197,13 +204,13 @@ public class BoardController : MonoBehaviour {
         return false;
     } 
 
-    public HashSet<Definitions.Action> get_piece_actions(Piece.GamePieceBase piece) {
-        var res = new HashSet<Definitions.Action>();
-        foreach(Definitions.Action action in possible_actions) {
-            if(Object.ReferenceEquals(action.agent, piece))
-                res.Add(action);
-        }
-        return res;
+    public HashSet<Definitions.Action> get_piece_actions(Piece.GamePieceBase agent) {
+        // get the possible actions for the specified agent piece
+        HashSet<Definitions.Action> results;
+        possible_actions.get_actions(agent, out results); 
+
+        // return those results
+        return results;
     }
 }
 

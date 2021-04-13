@@ -68,7 +68,7 @@ public abstract class CommanderPiece : GamePieceBase {
 
     // function dealing with delegating out a command for each of its soldiers to explore its space
     // also calls its own explore function itself
-    public void commander_explore(ref HashSet<Definitions.Action> results) {
+    public void commander_explore(ref Definitions.ActionDatabase results) {
         // only search if we haven't moved our corp yet
         if(energy <= 0) {
             // foreach(var soldier in soldiers_)
@@ -132,7 +132,7 @@ public abstract class CommanderPiece : GamePieceBase {
     }
 
     // forwarding the abstract piece explore function
-    public override abstract void Explore(ref HashSet<Definitions.Action> results);
+    public override abstract void Explore(ref Definitions.ActionDatabase results);
 }
 
 

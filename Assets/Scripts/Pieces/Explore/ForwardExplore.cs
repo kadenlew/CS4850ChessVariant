@@ -25,7 +25,7 @@ public class ForwardExplore {
     // are valid and that all possible actions are appended to results
     public static void Explore(
         Piece.GamePieceBase piece,
-        ref HashSet<Definitions.Action> results, 
+        ref Definitions.ActionDatabase results, 
         int distance = 1
     ) {
         // try each potential change in position
@@ -50,7 +50,7 @@ public class ForwardExplore {
                     res.is_white != piece.is_white
                 ) {
                     // its occupied by the enemy, so we can attack it
-                    results.Add(
+                    results.add_action(
                        new Definitions.AttackAction(
                            piece,
                            res
@@ -59,7 +59,7 @@ public class ForwardExplore {
             }
             else {
                 // the space is empty, we can move there
-                results.Add(
+                results.add_action(
                     new Definitions.MoveAction(
                         piece,
                         new_position

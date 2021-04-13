@@ -41,7 +41,7 @@ public abstract class SoldierPiece : GamePieceBase {
         commander.remove_soldier(this);
     }
 
-    public override abstract void Explore(ref HashSet<Definitions.Action> results);
+    public override abstract void Explore(ref Definitions.ActionDatabase results);
 }
 
 } // Piece

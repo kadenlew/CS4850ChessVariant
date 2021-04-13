@@ -1,0 +1,30 @@
+@startuml
+skinparam Linetype ortho
+
+start
+
+while (corp still has actions)
+    partition Exploration {
+        while (corp not explored AND has action)
+            while(soldiers not explored)
+                :Call Piece Explore Function;
+                :Add actions to database;
+            endwhile
+        endwhile
+    }
+
+    Partition Evaluation {
+        while (corp move not selected)
+            while (soldier move not selected)
+                while (not all actions tested)
+                    :generate action score;
+                endwhile
+            endwhile
+        endwhile
+    }
+
+    :Pick corp with best score;
+endwhile
+:next turn;
+stop
+@enduml

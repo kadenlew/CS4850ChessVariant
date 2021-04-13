@@ -23,7 +23,7 @@ public class RangedExplore {
     public static void Explore(
         Piece.GamePieceBase p,
         int gap,
-        ref HashSet<Definitions.Action> results
+        ref Definitions.ActionDatabase results
     ){
         explore_radius(
             p.position,
@@ -37,7 +37,7 @@ public class RangedExplore {
         Definitions.BoardPosition pos,
         int gap,
         ref Piece.GamePieceBase piece_ref,
-        ref HashSet<Definitions.Action> results
+        ref Definitions.ActionDatabase results
     ){
         for(int x = -(gap + 1); x <= (gap + 1); x++){
             for(int y = -(gap + 1);  y <= (gap + 1); y++){
@@ -57,7 +57,7 @@ public class RangedExplore {
                 if(mag <= 1){
                     if(piece_ref.controller_ref.checkPosition(new_pos, out res)){
                         if(piece_ref.is_white != res.is_white){
-                            results.Add(
+                            results.add_action(
                                 new Definitions.AttackAction(
                                 piece_ref,
                                 res
@@ -65,7 +65,7 @@ public class RangedExplore {
                         } 
                     }
                     else{
-                        results.Add(
+                        results.add_action(
                             new Definitions.MoveAction(
                             piece_ref,
                             new_pos
@@ -75,7 +75,7 @@ public class RangedExplore {
                 else if(mag > 1){
                     if(piece_ref.controller_ref.checkPosition(new_pos, out res)){
                         if(piece_ref.is_white != res.is_white){
-                            results.Add(
+                            results.add_action(
                                 new Definitions.AttackAction(
                                 piece_ref,
                                 res

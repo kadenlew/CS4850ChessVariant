@@ -37,7 +37,7 @@ public class NPathExplore {
     public static void Explore(
         Piece.GamePieceBase piece, 
         int n, 
-        ref HashSet<Definitions.Action> results,
+        ref Definitions.ActionDatabase results,
         bool move_and_attack = false
     ) {
         // start DFS where this piece currently is
@@ -59,7 +59,7 @@ public class NPathExplore {
         int current_length,
         bool move_and_attack,
         ref Piece.GamePieceBase piece_ref,
-        ref HashSet<Definitions.Action> results
+        ref Definitions.ActionDatabase results
     ) {
         // only search paths that are of max_length
         if (current_length > max_length) {
@@ -83,7 +83,7 @@ public class NPathExplore {
                     // it is, can we attack given our current path length?
                     if(current_length == 1 || move_and_attack) {
                         // yes, we can attack
-                        results.Add(
+                        results.add_action(
                             new Definitions.AttackAction(
                                 piece_ref,
                                 res,
@@ -97,7 +97,7 @@ public class NPathExplore {
             } 
             else {
                 // the space is empty, we can move there
-                results.Add(
+                results.add_action(
                     new Definitions.MoveAction(
                         piece_ref,
                         pos
