@@ -33,7 +33,7 @@ public class BoardController : MonoBehaviour {
         possible_actions = new Definitions.ActionDatabase();
 
         players_.Add(
-            new Control.PlayerBase(
+            new Control.PlayerAI(
                 true,
                 prefabs,
                 this,
@@ -41,8 +41,9 @@ public class BoardController : MonoBehaviour {
             )
         );
 
+        // Second player is AI for testing for now        
         players_.Add(
-            new Control.PlayerBase(
+            new Control.PlayerAI(
                 false,
                 prefabs,
                 this,
@@ -68,10 +69,11 @@ public class BoardController : MonoBehaviour {
     }
 
     public void start_turn() {
-        // do start turn step for this player
-        players_[is_white_turn ? 0 : 1].begin_turn();
-
+        // explore the current board state
         player_explore(); 
+
+        // inidicate to this player that they may start their turn
+        players_[is_white_turn ? 0 : 1].begin_turn();
     }
 
     public void end_turn() {
@@ -109,6 +111,7 @@ public class BoardController : MonoBehaviour {
     }
 
     public void player_explore() {
+        possible_actions.clear();
         // get all the actions
         foreach(var player in players_)
             player.explore_actions();

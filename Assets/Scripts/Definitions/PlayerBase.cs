@@ -22,7 +22,7 @@ public class PlayerBase {
     protected Definitions.PrefabCollection prefabs_;
 
     // whether this player owns the white pieces or the black pieces
-    public bool is_white { get; } 
+    public bool is_white { get; protected set; } 
     
     // A lookup table used by boardController associating each commanders soldiers to the commander itself
     public List<(Piece.CommanderPiece, List<Piece.SoldierPiece>)> pieces { get {
@@ -122,13 +122,13 @@ public class PlayerBase {
         return true;
     }
 
-    public void begin_turn() {
+    public virtual void begin_turn() {
         // do the begin turn step for each corp
         foreach(var commander in commanders_)
             commander.begin_turn();
     }
 
-    public void end_turn() {
+    public virtual void end_turn() {
         // do the end turn step ofr each corp
         foreach(var commander in commanders_)
             commander.end_turn();
