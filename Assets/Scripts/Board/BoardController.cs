@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
-
+using Chess.AI;
 
 using Chess.Piece;
 using Chess.Control;
@@ -24,9 +24,116 @@ public class BoardController : MonoBehaviour {
     public Dictionary<Definitions.BoardPosition, Definitions.Tile> board_tiles { get; protected set; }
     public Dictionary<Definitions.BoardPosition, Piece.GamePieceBase> board_lookup { get; protected set; }
 
+    public bool do_update = true;
+
     //comment
     // Start is called before the first frame update
     void Start() {
+        
+        // // define the controller
+        // FuzzyController fc = new FuzzyController();
+
+        // // here are all of the input variables and the output variable
+        // FuzzyVariable distance = fc.add_input_variable("DistanceToTarget", 0, 400);
+        // FuzzyVariable ammo = fc.add_input_variable("AmmoStatus", 0, 40);
+        // FuzzyVariable desire = fc.create_output_variable("Desireability", 0, 100);
+
+        // // first input variable sets
+        // FT_Set distance_close = distance.add_set_left_shoulder("Close", 25, 150);
+        // FT_Set distance_medium = distance.add_set_triangular("Medium", 25, 150, 300);
+        // FT_Set distance_far = distance.add_set_right_shoulder("Far", 150, 300);
+
+        // // second input sets
+        // FT_Set ammo_low = ammo.add_set_left_shoulder("Low", 0, 10);
+        // FT_Set ammo_okay = ammo.add_set_triangular("Okay", 0, 10, 30);
+        // FT_Set ammo_loads = ammo.add_set_right_shoulder("Loads", 10, 30);
+
+        // // output sets
+        // FT_Set desire_low = desire.add_set_left_shoulder("low", 25, 50);
+        // FT_Set desire_good = desire.add_set_triangular("good", 25, 50, 75);
+        // FT_Set desire_great = desire.add_set_right_shoulder("great", 50, 75);
+        
+        // // Far distance
+        // fc.add_rule(
+        //     new FT_And(
+        //         distance_far, 
+        //         ammo_loads
+        //     ),
+        //     desire_good
+        // );
+
+        // fc.add_rule(
+        //     new FT_And(
+        //         distance_far, 
+        //         ammo_okay
+        //     ),
+        //     desire_low
+        // );
+
+        // fc.add_rule(
+        //     new FT_And(
+        //         distance_far, 
+        //         ammo_low
+        //     ),
+        //     desire_low
+        // );
+
+        // // Medium Distance
+        // fc.add_rule(
+        //     new FT_And(
+        //         distance_medium, 
+        //         ammo_loads
+        //     ),
+        //     desire_great
+        // );
+
+        // fc.add_rule(
+        //     new FT_And(
+        //         distance_medium, 
+        //         ammo_okay
+        //     ),
+        //     desire_great
+        // );
+
+        // fc.add_rule(
+        //     new FT_And(
+        //         distance_medium, 
+        //         ammo_low
+        //     ),
+        //     desire_good
+        // );
+
+        // // Close Distance
+        // fc.add_rule(
+        //     new FT_And(
+        //         distance_close, 
+        //         ammo_loads
+        //     ),
+        //     desire_low
+        // );
+
+        // fc.add_rule(
+        //     new FT_And(
+        //         distance_close, 
+        //         ammo_okay
+        //     ),
+        //     desire_low
+        // );
+
+        // fc.add_rule(
+        //     new FT_And(
+        //         distance_close, 
+        //         ammo_low
+        //     ),
+        //     desire_low
+        // );
+
+
+        // fc.set_input(distance, 200);
+        // fc.set_input(ammo, 8);
+
+        // Debug.Log($"The output is: {fc.get_output()}");
+
         // reserve storage structures
         players_ = new List<Control.PlayerBase>(2);
         board_lookup = new Dictionary<Definitions.BoardPosition, Piece.GamePieceBase>();
@@ -64,11 +171,14 @@ public class BoardController : MonoBehaviour {
 
     // Update is called once per frame
     void Update(){
-        // set the piece and board tile unity transforms according to board space configuration
-        set_transforms();
+        if(do_update)
+            // set the piece and board tile unity transforms according to board space configuration
+            set_transforms();
     }
 
     public void start_turn() {
+        if(!do_update)
+            return;
         // explore the current board state
         player_explore(); 
 
@@ -85,6 +195,11 @@ public class BoardController : MonoBehaviour {
 
         // start the next turn
         start_turn();
+    }
+
+    public void end_game(bool is_white) {
+        // do_update = false;
+        Debug.Log($"{(is_white ? "White" : "Black")} Wins!");
     }
 
     public Definitions.Result execute_action(Definitions.Action action) {

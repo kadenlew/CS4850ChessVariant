@@ -28,6 +28,8 @@ public abstract class GamePieceBase : MonoBehaviour {
     
     // determines what side this piece is on
     public bool is_white { get; protected set; }
+
+    public abstract int material_value { get; }
     
     // the type this piece is for use in dictionary lookups
     public abstract PieceType type { get; }
