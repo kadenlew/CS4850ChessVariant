@@ -20,6 +20,7 @@ public class PlayerBase {
 
     // Unity prefab information for piece spawning
     protected Definitions.PrefabCollection prefabs_;
+    protected BoardController controller_ref { get; set; }
 
     // whether this player owns the white pieces or the black pieces
     public bool is_white { get; protected set; } 
@@ -85,6 +86,7 @@ public class PlayerBase {
         }
 
         possible_actions = action_database;
+        controller_ref = controller;
     } 
 
     // function called by external sources to update its possible actions lookup table
@@ -99,8 +101,11 @@ public class PlayerBase {
 
         // are we trying to kill our leader?
         if(ReferenceEquals(commander, commanders_[0]))
+        {
+            controller_ref.end_game(is_white);
             // yes, game over
             return false;
+        }
 
         // copy the soldiers to this players lead commander
         foreach(var soldier in commander.soldiers_) {

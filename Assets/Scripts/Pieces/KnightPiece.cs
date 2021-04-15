@@ -10,6 +10,7 @@ namespace Piece
 public class KnightPiece : SoldierPiece {
     // the piece type for dictionary lookup
     public override PieceType type { get; } = PieceType.Knight;
+    public override int material_value { get; } = 10;
     
     // knights can move in any direction with a path length of 5 or less. They can also
     // move and attack any pice up to a path length of 5 away, however the its roll with

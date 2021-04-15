@@ -10,6 +10,7 @@ namespace Piece
 public class QueenPiece : SoldierPiece {
     // piece type for dictionary lookup
     public override PieceType type { get; } = PieceType.Queen;
+    public override int material_value { get; } = 5;
     // the queen can move in any direction as long as the path is 3 tiles or shorter,
     // and it can only attack adjacent pieces
     public override void Explore(ref Definitions.ActionDatabase results) {
