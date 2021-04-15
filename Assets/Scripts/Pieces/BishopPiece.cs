@@ -46,7 +46,7 @@ public class BishopPiece : CommanderPiece {
     }
 
     // Bishop specific exploring 
-    public override void Explore(ref HashSet<Definitions.Action> results) {
+    public override void Explore(ref Definitions.ActionDatabase results) {
         Exploring.ForwardExplore.Explore(this, ref results);
     }
 

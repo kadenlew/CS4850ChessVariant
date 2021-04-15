@@ -35,8 +35,6 @@ public abstract class GamePieceBase : MonoBehaviour {
     // reference the the BoardController for access to the board searching functions
     public BoardController controller_ref { get; set; }
 
-    public HashSet<Definitions.Action> possible_actions { get; protected set; }
-
     // Unity prefabs and materials used to correctly represent a piece
     protected Definitions.PrefabCollection prefabs_;
 
@@ -44,7 +42,7 @@ public abstract class GamePieceBase : MonoBehaviour {
     // It can be assumed that only valid moves are appended to results, and the collection
     // of moves added is Exhuastive, meaning that it represents every potential valid move
     // this piece can make
-    public abstract void Explore(ref HashSet<Definitions.Action> results);
+    public abstract void Explore(ref Definitions.ActionDatabase results);
 
     public void Select(Color highlight_color) {
         this.GetComponent<Outline>().enabled = true;

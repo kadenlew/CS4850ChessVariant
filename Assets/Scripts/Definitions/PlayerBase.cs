@@ -16,16 +16,13 @@ public class PlayerBase {
     // those pieces by association
     protected List<Piece.CommanderPiece> commanders_;
 
-    // a cache of all the possible actions the pieces this player owns can currently execute. It can
-    // be safely assumed that all actions in here are valid, and represent the complete set of all
-    // possible actions the pieces this player owns can execute
-    protected HashSet<Definitions.Action> possible_actions = new HashSet<Definitions.Action>();
+    protected Definitions.ActionDatabase possible_actions;
 
     // Unity prefab information for piece spawning
     protected Definitions.PrefabCollection prefabs_;
 
     // whether this player owns the white pieces or the black pieces
-    public bool is_white { get; } 
+    public bool is_white { get; protected set; } 
     
     // A lookup table used by boardController associating each commanders soldiers to the commander itself
     public List<(Piece.CommanderPiece, List<Piece.SoldierPiece>)> pieces { get {
@@ -44,7 +41,12 @@ public class PlayerBase {
     } }
 
     // constructor
-    public PlayerBase(bool is_white, Definitions.PrefabCollection prefabs, BoardController controller) {
+    public PlayerBase(
+        bool is_white, 
+        Definitions.PrefabCollection prefabs, 
+        BoardController controller,
+        Definitions.ActionDatabase action_database
+    ) {
         // board space information
         this.is_white = is_white;
 
@@ -81,13 +83,12 @@ public class PlayerBase {
                 this            // owner information
             );
         }
+
+        possible_actions = action_database;
     } 
 
     // function called by external sources to update its possible actions lookup table
     public void explore_actions() {
-        // mark the previous actions invalid
-        possible_actions.Clear();
-
         // get the actions each commander knows of (which inturn gets the actions those soldiers know of)
         foreach(var commander in commanders_)
             commander.commander_explore(ref possible_actions);
@@ -121,19 +122,17 @@ public class PlayerBase {
         return true;
     }
 
-    public void begin_turn() {
+    public virtual void begin_turn() {
         // do the begin turn step for each corp
         foreach(var commander in commanders_)
             commander.begin_turn();
     }
 
-    public void end_turn() {
+    public virtual void end_turn() {
         // do the end turn step ofr each corp
         foreach(var commander in commanders_)
             commander.end_turn();
     }
-
-    public HashSet<Definitions.Action> get_possible_actions() => possible_actions;
 }
 
 } // Control

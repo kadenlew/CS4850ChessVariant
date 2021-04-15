@@ -12,7 +12,7 @@ public class PawnPiece : SoldierPiece {
     public override PieceType type { get; } = PieceType.Pawn;
     
     // pawns can only move forward, and can only attack in front of it or diagonally forward 
-    public override void Explore(ref HashSet<Definitions.Action> results) {
+    public override void Explore(ref Definitions.ActionDatabase results) {
         Exploring.ForwardExplore.Explore(this, ref results);
     }
 

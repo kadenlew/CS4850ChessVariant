@@ -108,6 +108,18 @@ public class UIController : MonoBehaviour
         if (!EventSystem.current.IsPointerOverGameObject())
             RayCastSelector();
         CheckCamera();
+
+        // temperary fix
+        if (boardController.is_white_turn)
+        {
+            whiteTurn.color = new Color(whiteTurn.color.r, whiteTurn.color.g, whiteTurn.color.b, 1f);
+            blackTurn.color = new Color(blackTurn.color.r, blackTurn.color.g, blackTurn.color.b, 0f);
+        }
+        else
+        {
+            whiteTurn.color = new Color(whiteTurn.color.r, whiteTurn.color.g, whiteTurn.color.b, 0f);
+            blackTurn.color = new Color(blackTurn.color.r, blackTurn.color.g, blackTurn.color.b, 1f);
+        }
     }
 
     // This moves around the UI and toggles on and off elements as the UI state changes
@@ -204,16 +216,7 @@ public class UIController : MonoBehaviour
         }
 
 
-        if (boardController.is_white_turn)
-        {
-            whiteTurn.color = new Color(whiteTurn.color.r, whiteTurn.color.g, whiteTurn.color.b, 1f);
-            blackTurn.color = new Color(blackTurn.color.r, blackTurn.color.g, blackTurn.color.b, 0f);
-        }
-        else
-        {
-            whiteTurn.color = new Color(whiteTurn.color.r, whiteTurn.color.g, whiteTurn.color.b, 0f);
-            blackTurn.color = new Color(blackTurn.color.r, blackTurn.color.g, blackTurn.color.b, 1f);
-        }
+        
     }
 
     // A tool for placing UI elements correctly
