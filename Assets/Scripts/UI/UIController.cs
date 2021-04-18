@@ -123,7 +123,7 @@ public class UIController : MonoBehaviour
             blackTurn.color = new Color(blackTurn.color.r, blackTurn.color.g, blackTurn.color.b, 1f);
         }
 
-        boardController.setPositions = !bezierMover.animating;
+        // boardController.setPositions = !bezierMover.animating;
 
         // This needs to be a lot more robust
         UIEnabled = !bezierMover.animating;
@@ -468,8 +468,8 @@ public class UIController : MonoBehaviour
                         new Chess.Definitions.MoveAction(
                             selected,
                             selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
-                    bezierMover.ConfigureBezier(selected.transform.position, selectedBoard.transform.position);
-                    bezierMover.Animate(selected.gameObject);
+                    // bezierMover.ConfigureBezier(selected.transform.position, selectedBoard.transform.position);
+                    // bezierMover.Animate(selected.gameObject);
                 }
 
                 if (targetPiece)

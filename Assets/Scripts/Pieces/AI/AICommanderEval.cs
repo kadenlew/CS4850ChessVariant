@@ -9,15 +9,11 @@ namespace Piece
 namespace AI
 {
 
-public class AICommanderEval : AIActionEval 
+class AICommanderEval : AIActionEval 
 {
     public List<Piece.SoldierPiece> soldier_pieces { get; protected set; }
     public List<AI.AIActionEval> soldier_AI { get; protected set; }
     // Start is called before the first frame update
-    void Start()
-    {
-       Debug.Log($"You've added an Commander AI Component to {GetComponent<GamePieceBase>()}");
-    }
 
     public void commander_init() {
         // init the soldier AI data structure
@@ -60,11 +56,6 @@ public class AICommanderEval : AIActionEval
         if(my_result.desireability > desireability) {
             desireability = my_result.desireability;
             corp_action = my_result.action;
-        }
-
-        if((piece_ref as CommanderPiece).energy == 0)
-        {
-            Debug.Log($"I have no energy, as a result my best move is {corp_action}");
         }
 
         // signal the best corp move

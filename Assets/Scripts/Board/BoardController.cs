@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Profiling;
-
+using Chess.AI;
 
 using Chess.Piece;
 using Chess.Control;
@@ -28,7 +28,10 @@ public class BoardController : MonoBehaviour
 
     public bool setPositions = true;
 
+    public bool do_update = true;
+
     public UIController UIController;
+    public BezierMovement bezierMover;
 
 
     // Start is called before the first frame update
@@ -72,13 +75,20 @@ public class BoardController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // renable positon control after the animation is finished
+        if(!setPositions && !bezierMover.animating)
+            setPositions = true;
+
         // set the piece and board tile unity transforms according to board space configuration
-        if (setPositions)
+        if (setPositions && do_update)
             set_transforms();
     }
 
     public void start_turn()
     {
+        if(!do_update)
+            return;
+
         // explore the current board state
         player_explore();
 
@@ -98,6 +108,11 @@ public class BoardController : MonoBehaviour
         start_turn();
     }
 
+    public void end_game(bool is_white) {
+        // do_update = false;
+        Debug.Log($"{(is_white ? "White" : "Black")} Wins!");
+    }
+
     public Definitions.Result execute_action(Definitions.Action action)
     {
         // check if this is a valid action
@@ -108,9 +123,28 @@ public class BoardController : MonoBehaviour
         }
         Debug.Log($"{action}");
 
+        // prepare the controller for animation
+        this.setPositions = false;
+        var start_position = compute_transform(action.agent.position);
+
         // execute the action
         var result = action.Execute(this);
         Debug.Log($"{result}");
+
+        // store out ending position to send off the the animator
+        var end_position = compute_transform(action.agent.position); 
+
+        // only execute if the move caused a change to board state
+        if(result.was_successful)
+        {
+            bezierMover.ConfigureBezier(start_position, end_position);
+            bezierMover.Animate(action.agent.gameObject);
+        }
+        // nothing changed, reenable piece position control
+        else
+        {
+            this.setPositions = true;
+        }
 
         // the board state has change, update the lookup table
         update_lookup();

@@ -4,6 +4,8 @@ using UnityEngine;
 
 using System.Linq;
 
+using Chess.AI;
+
 namespace Chess
 {
 namespace Piece
@@ -11,35 +13,46 @@ namespace Piece
 namespace AI
 {
 
-public class AIActionEval : MonoBehaviour
+class AIActionEval : MonoBehaviour
 {
     protected Piece.GamePieceBase piece_ref { get; set; }
+
+    protected FuzzyController logic_controller { get; set; }
     // Start is called before the first frame update
-    void Start()
-    {
-       Debug.Log($"You've added a Standard AI Component to {GetComponent<GamePieceBase>()}");
-    }
 
     public void init () {
         // store a reference to the game piece information
         piece_ref = GetComponent<GamePieceBase>();
+
+        // initialize the controller
+        logic_controller = new FuzzyController();
+
     }
 
     public (Definitions.Action action, double desireability) eval(ref Definitions.ActionDatabase database) {
-        
+        Definitions.Action best_action = null;
+        double best_desireability = double.MinValue;
+
         // get the actions we need to evaluate for this piece  
         HashSet<Definitions.Action> possible_actions;
         if(database.get_actions(piece_ref, out possible_actions))
         {
-            // Do the evaluation, for now we randomly select 
-            return (
-                possible_actions.ElementAt(Random.Range(0, possible_actions.Count)),
-                Random.Range(0f, 10f)
-            );
+            foreach(Definitions.Action action in possible_actions)
+            {
+                double desireability = AIReward.compute_reward(database, action);
+                AIRisk.compute_base_risk(database, piece_ref);
+
+                // double desireability = Random.Range(0f, 10f);
+                if(desireability > best_desireability)
+                {
+                    best_desireability = desireability;
+                    best_action = action;
+                }
+            }
         }
 
         // there are no actions this piece can take, return
-        return (null, double.MinValue);
+        return (best_action, best_desireability);
     }
 
 }

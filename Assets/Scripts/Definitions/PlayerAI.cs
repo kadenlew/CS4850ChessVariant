@@ -7,12 +7,11 @@ namespace Chess
 namespace Control
 {
 
-public class PlayerAI : PlayerBase {
+class PlayerAI : PlayerBase {
     protected List<Piece.AI.AICommanderEval> commander_AI { get; set; }
 
-    protected BoardController controller_ref { get; set; }
 
-    public float move_delay = 0.25f;
+    public float move_delay = .25f;
 
     // echo the base constructor and execute the base constructor
     public PlayerAI(
@@ -40,10 +39,6 @@ public class PlayerAI : PlayerBase {
             // call its init function 
             commander_AI[commander_AI.Count - 1].commander_init();
         }
-
-        // save a reference to the board controller for sending it moves
-        // to execute
-        controller_ref = controller;
     }
 
     public override void begin_turn()
@@ -63,6 +58,9 @@ public class PlayerAI : PlayerBase {
             Definitions.Action player_action = null;
             double desireability = double.MinValue;
 
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
+
             // see what the best move is out of all the corps
             foreach(Piece.AI.AICommanderEval commander_ai in commander_AI) {
                 var corp_result = commander_ai.commander_eval(ref possible_actions);
@@ -72,6 +70,9 @@ public class PlayerAI : PlayerBase {
                     player_action = corp_result.action;
                 }
             }
+
+            watch.Stop();
+            Debug.Log($"Finished in {watch.ElapsedMilliseconds} ms.");
 
             // we have exhausted all of the moves, and must end turn
             if(player_action == null)
@@ -83,8 +84,10 @@ public class PlayerAI : PlayerBase {
             // request that the board execute the action
             var result = controller_ref.execute_action(player_action); 
 
+            // wait until the animation has completed
+            while(!controller_ref.setPositions) yield return new WaitForSeconds(0.5f);
+
             Debug.Log($"I did my action, with a result of {result}");
-            yield return new WaitForSeconds(move_delay);
         }
 
         Debug.Log("I've used all my moves, I'm ending my turn!");

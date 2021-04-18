@@ -64,7 +64,11 @@ public class MoveAction : Action
     );
 }
 
-public class MoveResult : Result {}
+public class MoveResult : Result {
+    public MoveResult() {
+        was_successful = true;
+    }
+}
 
 } // Definitions
 } // Chess

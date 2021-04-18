@@ -17,7 +17,8 @@ public abstract class Action {
 }
 
 public abstract class Result {
-    public override string ToString() => "Action was Successful!";
+    public bool was_successful { get; protected set; }
+    public override string ToString() => $"Action {(was_successful ? "was" : "not")} Successful!";
 }
 
 public class InvalidResult : Result {

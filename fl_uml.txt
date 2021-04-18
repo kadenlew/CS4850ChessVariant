@@ -1,0 +1,87 @@
+@startuml
+skinparam groupInheritance 2
+
+' Class Definitions of Main Fuzzy Logic 
+class FuzzySet {
+
+}
+
+class FuzzyVariable {
+    fuzzy_sets
+    range
+}
+
+class FuzzyModule {
+    variables
+    rules
+}
+
+class FuzzyRule {
+    antecent
+    consequent
+}
+
+class FuzzyTerm {
+
+}
+
+' Class Definitions for Specialization of FuzzyTerm
+class FzOr {
+
+}
+
+class FzAnd {
+
+}
+
+class FzVery {
+
+}
+
+class FzFairly {
+
+}
+
+class FzSet {
+
+}
+
+' Class Definitions for Specialization of FuzzySet
+class Triangle {
+
+}
+
+class RightShoulder {
+
+}
+
+class LeftShoulder {
+
+}
+
+class Singleton {
+
+}
+
+' General relationships related to the fuzzy logic system
+FuzzyVariable *-- FuzzySet 
+FuzzyModule *-right- FuzzyVariable 
+FuzzyModule *-left- FuzzyRule 
+FuzzyRule *-- "2" FuzzyTerm 
+
+' Specializations of FuzzyTerm
+FuzzyTerm <|-- FzOr
+FuzzyTerm <|-- FzAnd
+FuzzyTerm <|-- FzVery
+FuzzyTerm <|-- FzFairly
+FuzzyTerm <|-- FzSet
+
+FzSet -right- FuzzySet : shadows
+
+' Specialization of FuzzySet
+FuzzySet <|-- Triangle
+FuzzySet <|-- LeftShoulder
+FuzzySet <|-- RightShoulder
+FuzzySet <|-- Singleton
+
+@enduml

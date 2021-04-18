@@ -11,6 +11,7 @@ namespace Piece
 // over the standard piece
 public abstract class CommanderPiece : GamePieceBase {
     // the list of soliders this commander owns
+
     public List<Piece.SoldierPiece> soldiers_ { get; protected set; }
 
     // a list that is used on object creation to indicate which soliders 
