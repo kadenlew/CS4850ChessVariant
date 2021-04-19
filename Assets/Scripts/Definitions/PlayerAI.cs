@@ -84,8 +84,10 @@ class PlayerAI : PlayerBase {
             // request that the board execute the action
             var result = controller_ref.execute_action(player_action); 
 
+            // wait until the animation has completed
+            while(!controller_ref.setPositions) yield return new WaitForSeconds(0.5f);
+
             Debug.Log($"I did my action, with a result of {result}");
-            yield return new WaitForSeconds(move_delay);
         }
 
         Debug.Log("I've used all my moves, I'm ending my turn!");

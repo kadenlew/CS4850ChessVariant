@@ -130,7 +130,6 @@ public class AttackResult : Result  {
     // what the d6 (plus any modifer) resulted in
     public int roll_result { get; }
     // whether that roll was successful, given the roll table
-    public bool was_successful { get; }
 
     // constructor
     public AttackResult(

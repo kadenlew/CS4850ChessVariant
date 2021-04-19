@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 enum UIState
 {
     NoSelect,
+    EnemySelect,
     PieceMainSelect,
     PieceLeadership,
     PieceMoveAttack,
@@ -18,6 +19,7 @@ enum UIState
 public class UIController : MonoBehaviour
 {
     private UIState uiStatus = UIState.NoSelect;
+    public bool UIEnabled = true;
 
     // This is defined at runtime
     private Chess.BoardController boardController;
@@ -72,16 +74,16 @@ public class UIController : MonoBehaviour
 
     // Other UI
     private CapturedPieceMenu capturedUI;
+    private bool tooltip = false;
 
     // Hover Probabilities
     private List<HoverUI> floatingText = new List<HoverUI>();
     public GameObject floatingTextPrefab;
     public Toggle probabilityCheck;
 
-    //false is black, true is white
-    private bool tooltip = false;
-
-
+    // Animation controller
+    public BezierMovement bezierMover;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -105,7 +107,7 @@ public class UIController : MonoBehaviour
         }
 
         // Prevents clicking through UI
-        if (!EventSystem.current.IsPointerOverGameObject())
+        if (!EventSystem.current.IsPointerOverGameObject() && UIEnabled)
             RayCastSelector();
         CheckCamera();
 
@@ -120,90 +122,61 @@ public class UIController : MonoBehaviour
             whiteTurn.color = new Color(whiteTurn.color.r, whiteTurn.color.g, whiteTurn.color.b, 0f);
             blackTurn.color = new Color(blackTurn.color.r, blackTurn.color.g, blackTurn.color.b, 1f);
         }
+
+        // boardController.setPositions = !bezierMover.animating;
+
+        // This needs to be a lot more robust
+        UIEnabled = !bezierMover.animating;
     }
 
     // This moves around the UI and toggles on and off elements as the UI state changes
     private void UpdateUI()
     {
-        if (uiStatus == UIState.NoSelect)
+        switch (uiStatus)
         {
-            tableBase.SetActive(false);
-            informationPanel.SetActive(false);
-            moveButton.SetActive(false);
-            attackButton.SetActive(false);
-            leadershipButton.SetActive(false);
-            confirmButton.SetActive(false);
-            cancelButton.SetActive(false);
-            endTurnButton.SetActive(true);
-            endTurnButton.transform.position = ButtonPositionToVector(false, 0);
-        }
-        if (uiStatus == UIState.PieceMainSelect)
-        {
-            if (selected)
-            {
-                SetInfoPanel(selected);
-            }
-            if (tooltip)
-            {
-                tableBase.SetActive(true);
-                PopulateAttackTable();
-            }
-            else
+            case UIState.NoSelect:
                 tableBase.SetActive(false);
-            informationPanel.SetActive(true);
-            confirmButton.SetActive(false);
-            moveButton.SetActive(true);
-            moveButton.transform.position = ButtonPositionToVector(true, 0);
-            //attackButton.SetActive(true);
-            //attackButton.transform.position = ButtonPositionToVector(true, 1);
-            leadershipButton.SetActive(true);
-            leadershipButton.transform.position = ButtonPositionToVector(true, 1);
-            cancelButton.SetActive(true);
-            cancelButton.transform.position = ButtonPositionToVector(true, 2);
-
-            endTurnButton.SetActive(false);
-        }
-        if (uiStatus == UIState.PieceLeadership)
-        {
-            if (tooltip)
-            {
-                tableBase.SetActive(true);
-                PopulateAttackTable();
-            }
-            else
-                tableBase.SetActive(false);
-            informationPanel.SetActive(true);
-            moveButton.SetActive(false);
-            attackButton.SetActive(false);
-            leadershipButton.SetActive(false);
-            confirmButton.SetActive(false);
-            endTurnButton.SetActive(false);
-            cancelButton.SetActive(true);
-            cancelButton.transform.position = ButtonPositionToVector(true, 0);
-        }
-        if (uiStatus == UIState.PieceMoveAttack)
-        {
-            if (tooltip)
-            {
-                tableBase.SetActive(true);
-                PopulateAttackTable();
-            }
-            else
-                tableBase.SetActive(false);
-            if (selectedBoard || targetPiece)
-            {
-                informationPanel.SetActive(true);
+                informationPanel.SetActive(false);
                 moveButton.SetActive(false);
                 attackButton.SetActive(false);
                 leadershipButton.SetActive(false);
-                endTurnButton.SetActive(false);
-                confirmButton.SetActive(true);
-                confirmButton.transform.position = ButtonPositionToVector(true, 0);
+                confirmButton.SetActive(false);
+                cancelButton.SetActive(false);
+                endTurnButton.SetActive(true);
+                endTurnButton.transform.position = ButtonPositionToVector(false, 0);
+                break;
+
+            case UIState.PieceMainSelect:
+                if (selected)
+                {
+                    SetInfoPanel(selected);
+                }
+                if (tooltip)
+                {
+                    tableBase.SetActive(true);
+                    PopulateAttackTable();
+                }
+                else
+                    tableBase.SetActive(false);
+                informationPanel.SetActive(true);
+                confirmButton.SetActive(false);
+                moveButton.SetActive(true);
+                moveButton.transform.position = ButtonPositionToVector(true, 0);
+                leadershipButton.SetActive(true);
+                leadershipButton.transform.position = ButtonPositionToVector(true, 1);
                 cancelButton.SetActive(true);
-                cancelButton.transform.position = ButtonPositionToVector(true, 1);
-            }
-            else
-            {
+                cancelButton.transform.position = ButtonPositionToVector(true, 2);
+                endTurnButton.SetActive(false);
+                break;
+
+            case UIState.PieceLeadership:
+                if (tooltip)
+                {
+                    tableBase.SetActive(true);
+                    PopulateAttackTable();
+                }
+                else
+                    tableBase.SetActive(false);
                 informationPanel.SetActive(true);
                 moveButton.SetActive(false);
                 attackButton.SetActive(false);
@@ -212,11 +185,66 @@ public class UIController : MonoBehaviour
                 endTurnButton.SetActive(false);
                 cancelButton.SetActive(true);
                 cancelButton.transform.position = ButtonPositionToVector(true, 0);
-            }
-        }
+                break;
 
+            case UIState.PieceMoveAttack:
+                if (tooltip)
+                {
+                    tableBase.SetActive(true);
+                    PopulateAttackTable();
+                }
+                else
+                    tableBase.SetActive(false);
+                if (selectedBoard || targetPiece)
+                {
+                    informationPanel.SetActive(true);
+                    moveButton.SetActive(false);
+                    attackButton.SetActive(false);
+                    leadershipButton.SetActive(false);
+                    endTurnButton.SetActive(false);
+                    confirmButton.SetActive(true);
+                    confirmButton.transform.position = ButtonPositionToVector(true, 0);
+                    cancelButton.SetActive(true);
+                    cancelButton.transform.position = ButtonPositionToVector(true, 1);
+                }
+                else
+                {
+                    informationPanel.SetActive(true);
+                    moveButton.SetActive(false);
+                    attackButton.SetActive(false);
+                    leadershipButton.SetActive(false);
+                    confirmButton.SetActive(false);
+                    endTurnButton.SetActive(false);
+                    cancelButton.SetActive(true);
+                    cancelButton.transform.position = ButtonPositionToVector(true, 0);
+                }
+                break;
 
-        
+            case UIState.EnemySelect:
+                if (selected)
+                {
+                    SetInfoPanel(selected);
+                }
+                if (tooltip)
+                {
+                    tableBase.SetActive(true);
+                    PopulateAttackTable();
+                }
+                else
+                    tableBase.SetActive(false);
+                informationPanel.SetActive(true);
+                confirmButton.SetActive(false);
+                moveButton.SetActive(false);
+                leadershipButton.SetActive(false);
+                cancelButton.SetActive(true);
+                cancelButton.transform.position = ButtonPositionToVector(true, 0);
+                endTurnButton.SetActive(false);
+                break;
+
+            default:
+                Debug.LogError("Unrecognized UI State");
+                break;
+        }    
     }
 
     // A tool for placing UI elements correctly
@@ -254,21 +282,38 @@ public class UIController : MonoBehaviour
             {
                 GameObject objectHit = hit.transform.gameObject;
                 {
-                    if (uiStatus == UIState.NoSelect || uiStatus == UIState.PieceMainSelect)
+                    if (uiStatus == UIState.NoSelect || uiStatus == UIState.PieceMainSelect || uiStatus == UIState.EnemySelect)
                     {
-                        if (objectHit.gameObject.CompareTag("Player") && objectHit.gameObject.GetComponent<GamePieceBase>().is_white == boardController.is_white_turn)
+                        if (objectHit.gameObject.CompareTag("Player"))
                         {
-                            if (selected)
+                            if (objectHit.gameObject.GetComponent<GamePieceBase>().is_white == boardController.is_white_turn)
                             {
-                                if (PieceHasTurn(selected) > 0)
-                                    selected.Deselect();
-                                else
-                                    selected.Select(HighlightColors[4]);
+                                if (selected)
+                                {
+                                    if (PieceHasTurn(selected) > 0)
+                                        selected.Deselect();
+                                    else
+                                        selected.Select(HighlightColors[4]);
+                                }
+                                selected = objectHit.GetComponent<GamePieceBase>();
+                                selected.Select(HighlightColors[0]);
+                                uiStatus = UIState.PieceMainSelect;
+                                UpdateUI();
                             }
-                            selected = objectHit.GetComponent<GamePieceBase>();
-                            selected.Select(HighlightColors[0]);
-                            uiStatus = UIState.PieceMainSelect;
-                            UpdateUI();
+                            else
+                            {
+                                if (selected)
+                                {
+                                    if (PieceHasTurn(selected) > 0)
+                                        selected.Deselect();
+                                    else
+                                        selected.Select(HighlightColors[4]);
+                                }
+                                selected = objectHit.GetComponent<GamePieceBase>();
+                                selected.Select(HighlightColors[3]);
+                                uiStatus = UIState.EnemySelect;
+                                UpdateUI();
+                            }
                         }
                     }
                     if (uiStatus == UIState.PieceMoveAttack && objectHit.gameObject.CompareTag("Board") && selected)
@@ -303,6 +348,13 @@ public class UIController : MonoBehaviour
                             UpdateUI();
                         }
                     }
+                }
+            }
+            else
+            {
+                if(selected)
+                {
+                    Cancel();
                 }
             }
         }
@@ -410,31 +462,25 @@ public class UIController : MonoBehaviour
             if (selectedBoard || targetPiece)
             {
                 if (selectedBoard)
+                {
+                    boardController.setPositions = false;
                     boardController.execute_action(
                         new Chess.Definitions.MoveAction(
                             selected,
                             selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
+                    // bezierMover.ConfigureBezier(selected.transform.position, selectedBoard.transform.position);
+                    // bezierMover.Animate(selected.gameObject);
+                }
 
                 if (targetPiece)
                 {
                     PieceType tempType = targetPiece.GetComponent<GamePieceBase>().type;
-                    Chess.Definitions.Result result = boardController.execute_action(
+                    boardController.execute_action(
                         new Chess.Definitions.AttackAction(
                             selected,
                             targetPiece.GetComponent<GamePieceBase>()));
-
-                    if (result is Chess.Definitions.AttackResult)
-                    {
-                        Chess.Definitions.AttackResult attackResult = (Chess.Definitions.AttackResult)result;
-                        if (attackResult.was_successful)
-                        {
-                            ChangeVeterancy(selected, 1, 0);
-                            capturedUI.CapturedCounterIncrement(tempType, !boardController.is_white_turn);
-                        }
-                        else
-                            ChangeVeterancy(targetPiece.GetComponent<GamePieceBase>(), 0, 1);
-                    }
                 }
+
                 uiStatus = UIState.PieceMainSelect;
                 DeselectAll();
                 if (selected is CommanderPiece)
@@ -470,7 +516,7 @@ public class UIController : MonoBehaviour
     // Used by UI button and hotkey
     public void Cancel()
     {
-        if (uiStatus == UIState.PieceMainSelect)
+        if (uiStatus == UIState.PieceMainSelect || uiStatus == UIState.EnemySelect)
         {
             if (selected)
             {
@@ -500,6 +546,21 @@ public class UIController : MonoBehaviour
     public void ResetCameraButton()
     {
         cameraPivot.position = originalPosition;
+    }
+
+    public void HandleCombatResult(Chess.Definitions.Result result, PieceType tempType)
+    {
+        if (result is Chess.Definitions.AttackResult)
+        {
+            Chess.Definitions.AttackResult attackResult = (Chess.Definitions.AttackResult)result;
+            if (attackResult.was_successful)
+            {
+                ChangeVeterancy(selected, 1, 0);
+                capturedUI.CapturedCounterIncrement(tempType, !boardController.is_white_turn);
+            }
+            else
+                ChangeVeterancy(targetPiece.GetComponent<GamePieceBase>(), 0, 1);
+        }
     }
 
     // Tool for quickly deselecting all objects. Note it doesn't deselect the selected piece
@@ -537,18 +598,6 @@ public class UIController : MonoBehaviour
                 IScript.SetText(WinProbability(selected.type, targetPiece.GetComponent<GamePieceBase>().type));
                 IScript.target = new Vector3(targetPiece.transform.position.x, 1f, targetPiece.transform.position.z);
                 IScript.adapt = true;
-
-                if(targetPiece.GetComponent<GamePieceBase>().type == PieceType.King)
-                {
-                    GameObject K = Instantiate(floatingTextPrefab, transform);
-                    HoverUI KScript = K.GetComponent<HoverUI>();
-                    floatingText.Add(KScript);
-                    KScript.SetText(WinProbability(targetPiece.GetComponent<GamePieceBase>().type, selected.type));
-                    KScript.target = new Vector3(targetPiece.transform.position.x, 1f, targetPiece.transform.position.z);
-                    KScript.SetColor(Color.red);
-                    KScript.offset = -15;
-                    KScript.adapt = true;
-                }
             }
         }
     }
