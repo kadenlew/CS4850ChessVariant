@@ -19,11 +19,11 @@ class FuzzyController {
     // list of all the rules that are to be applied when using this controller
     // each rule will be applied sequentially, affecting the confidence of the sets within
     // the output variable
-    public List<FuzzyRule> rule_base { get; protected set; }
+    public FuzzyRuleBase rule_base { get; set; }
 
     public FuzzyController() {
         input_variables = new Dictionary<string, FuzzyVariable>();
-        rule_base = new List<FuzzyRule>();
+        rule_base = new FuzzyRuleBase(); 
     }
 
     // will call the fuzzify function of the input variable specified
@@ -63,6 +63,12 @@ class FuzzyController {
 
     public void add_rule(FuzzyTerm condition, FT_Set output_set) {
         rule_base.Add(new FuzzyRule(condition, output_set));
+    }
+
+    // can be used to change the desired behavior depending on
+    // various external factors, IE early / mid / late game
+    public void swap_rule_base(FuzzyRuleBase rule_base) {
+        this.rule_base = rule_base;
     }
 }
 

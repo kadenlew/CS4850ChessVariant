@@ -11,6 +11,8 @@ public class FT_Fairly : FuzzyTermUnary {
         this.operand = operand;
     }
 
+    internal FT_Fairly() {}
+
     public override double compute_confidence() { 
         return Math.Sqrt(operand.compute_confidence());
     }

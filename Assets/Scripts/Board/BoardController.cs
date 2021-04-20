@@ -7,6 +7,12 @@ using Chess.AI;
 using Chess.Piece;
 using Chess.Control;
 
+using System.Xml.Serialization;
+using System.Xml;
+using System.IO;
+
+using Newtonsoft.Json;
+
 namespace Chess
 {
 
@@ -37,6 +43,43 @@ public class BoardController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+        FuzzyController fc = new FuzzyController();
+        var t1 = fc.add_input_variable("test_1", 0, 10);
+        var t2 = fc.add_input_variable("test_2", 0, 10);
+        var output = fc.create_output_variable("output", 0, 10);
+
+        var t1_s = t1.add_set_triangular("main", 0, 5, 10);
+        var t2_s = t2.add_set_triangular("main", 0, 5, 10);
+        var output_s = output.add_set_triangular("main", 0, 5, 10);
+
+        fc.add_rule(
+            new FT_And(t1_s, t2_s),
+            output_s
+        );
+
+        fc.add_rule(
+            new FT_Or(t1_s, t2_s),
+            output_s
+        );
+
+        // XmlSerializer xs = new XmlSerializer(typeof(FuzzyRuleBase));
+        // using (var sww = new StringWriter())
+        // {
+        //     using (XmlWriter writer = XmlWriter.Create(sww))
+        //     {
+        //         xs.Serialize(writer, fc.rule_base);
+        //         File.WriteAllText("output.xml", sww.ToString());
+        //     }
+        // }
+
+        Dictionary<string, string> test = new Dictionary<string, string>();
+        test["hello"] = "world";
+        test["foo"] = "bar";
+
+        Debug.Log(JsonConvert.SerializeObject(test));
+
+
         // reserve storage structures
         players_ = new List<Control.PlayerBase>(2);
         board_lookup = new Dictionary<Definitions.BoardPosition, Piece.GamePieceBase>();
@@ -76,8 +119,8 @@ public class BoardController : MonoBehaviour
     void Update()
     {
         // renable positon control after the animation is finished
-        if(!setPositions && !bezierMover.animating)
-            setPositions = true;
+        // if(!setPositions && !bezierMover.animating)
+            // setPositions = true;
 
         // set the piece and board tile unity transforms according to board space configuration
         if (setPositions && do_update)

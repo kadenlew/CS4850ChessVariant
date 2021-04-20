@@ -11,6 +11,8 @@ public class FT_Not : FuzzyTermUnary {
         this.operand = operand;
     }
 
+    internal FT_Not() {}
+
     public override double compute_confidence() { 
         return 1 - operand.compute_confidence();
     }

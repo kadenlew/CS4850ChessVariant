@@ -15,11 +15,13 @@ namespace AI
 public class FT_Set : FuzzyTerm {
 
     // the surrogate set that this object is shadowing
-    private FuzzySet surrogate;
+    public FuzzySet surrogate;
 
     public FT_Set(FuzzySet surrogate) {
         this.surrogate = surrogate;
     }
+
+    internal FT_Set() {}
     
     public override double compute_confidence() { 
         return surrogate.confidence;

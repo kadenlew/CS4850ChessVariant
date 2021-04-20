@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using System.Xml.Serialization;
 
 namespace Chess
 {
@@ -12,6 +13,8 @@ public class FT_And : FuzzyTermBinary {
         this.left_operand = left_operand;
         this.right_operand = right_operand;
     }
+
+    internal FT_And() {}
 
     public override double compute_confidence() { 
         return Math.Min(left_operand.compute_confidence(), right_operand.compute_confidence());

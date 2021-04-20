@@ -10,6 +10,8 @@ public class FT_Very : FuzzyTermUnary {
     public FT_Very(FuzzyTerm operand) {
         this.operand = operand;
     } 
+    
+    internal FT_Very() {}
 
     public override double compute_confidence() { 
         return Math.Pow(operand.compute_confidence(), 2);

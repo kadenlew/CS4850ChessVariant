@@ -12,6 +12,8 @@ public class FT_Or : FuzzyTermBinary {
         this.right_operand = right_operand;
     } 
 
+    internal FT_Or() {}
+
     public override double compute_confidence() { 
         return Math.Max(left_operand.compute_confidence(), right_operand.compute_confidence());
     }
