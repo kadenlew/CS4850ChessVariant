@@ -77,7 +77,7 @@ public class BoardController : MonoBehaviour
     void Update()
     {
         // renable positon control after the animation is finished
-        if(!setPositions && (!bezierMover.animating & !diceController.rolling))
+        if(!setPositions && bezierMover.animating && !diceController.rolling)
             setPositions = true;
 
         // set the piece and board tile unity transforms according to board space configuration
