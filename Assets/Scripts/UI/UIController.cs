@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using Chess.Piece;
 using UnityEngine.EventSystems;
 
@@ -79,7 +80,15 @@ public class UIController : MonoBehaviour
     // Hover Probabilities
     private List<HoverUI> floatingText = new List<HoverUI>();
     public GameObject floatingTextPrefab;
+
+    // Settings gizmos
+    private bool menuOpen = false;
+    public GameObject menuPanel;
+
     public Toggle probabilityCheck;
+    public Toggle animationPlay;
+    public Slider aiMoveSpeed;
+    public Text aiMoveSpeedText;
 
     // Animation controller
     public BezierMovement bezierMover;
@@ -90,6 +99,10 @@ public class UIController : MonoBehaviour
         capturedUI = gameObject.GetComponentInChildren<CapturedPieceMenu>();
         originalPosition = cameraPivot.position;
         boardController = GameObject.FindGameObjectWithTag("GameController").GetComponent<Chess.BoardController>();
+        probabilityCheck.isOn = Settings.dynamicProbabilities;
+        aiMoveSpeed.value = Settings.aiDelaySlider;
+        Debug.Log(Settings.dynamicProbabilities.ToString());
+        animationPlay.isOn = Settings.playAnimations;
         UpdateUI();
     }
 
@@ -242,7 +255,12 @@ public class UIController : MonoBehaviour
             default:
                 Debug.LogError("Unrecognized UI State");
                 break;
-        }    
+        }
+
+        if (menuOpen)
+            menuPanel.SetActive(true);
+        else
+            menuPanel.SetActive(false);
     }
 
     // A tool for placing UI elements correctly
@@ -284,7 +302,7 @@ public class UIController : MonoBehaviour
                     {
                         if (objectHit.gameObject.CompareTag("Player"))
                         {
-                            if (objectHit.gameObject.GetComponent<GamePieceBase>().is_white == boardController.is_white_turn)
+                            if (objectHit.gameObject.GetComponent<GamePieceBase>().is_white == boardController.is_white_turn && IsPlayerControllable(boardController.is_white_turn))
                             {
                                 if (selected)
                                 {
@@ -548,18 +566,41 @@ public class UIController : MonoBehaviour
         cameraPivot.position = originalPosition;
     }
 
-    public void HandleCombatResult(Chess.Definitions.Result result, PieceType tempType)
+    public void MenuButton()
+    {
+        menuOpen = !menuOpen;
+        UpdateUI();
+    }
+
+    public void RestartButton()
+    {
+        SceneManager.LoadScene(0);
+    }
+
+    public void MainMenuButton()
+    {
+        SceneManager.LoadScene(1);
+    }
+
+    public void ExitProgramButton()
+    {
+        Application.Quit();
+        Debug.Log("Game Ended through ingame menu");
+    }
+
+
+    public void HandleCombatResult(Chess.Definitions.Result result, GamePieceBase victor)
     {
         if (result is Chess.Definitions.AttackResult)
         {
             Chess.Definitions.AttackResult attackResult = (Chess.Definitions.AttackResult)result;
             if (attackResult.was_successful)
             {
-                ChangeVeterancy(selected, 1, 0);
-                capturedUI.CapturedCounterIncrement(tempType, !boardController.is_white_turn);
+                ChangeVeterancy(victor, 1, 0);
+                capturedUI.CapturedCounterIncrement(attackResult.targetType, !boardController.is_white_turn);
             }
             else
-                ChangeVeterancy(targetPiece.GetComponent<GamePieceBase>(), 0, 1);
+                ChangeVeterancy(victor, 0, 1);
         }
     }
 
@@ -614,6 +655,7 @@ public class UIController : MonoBehaviour
     // For updating when toggle is switched
     public void ProbabilityToggleChanged()
     {
+        Settings.dynamicProbabilities = probabilityCheck.isOn;
         if (probabilityCheck.isOn)
         {
             if (uiStatus == UIState.PieceMoveAttack || uiStatus == UIState.PieceSpecialAttack)
@@ -621,6 +663,22 @@ public class UIController : MonoBehaviour
         }
         else
             DestroyFloatingText();
+    }
+
+    public void AinmationToggleChanged()
+    {
+        Settings.playAnimations = animationPlay.isOn;
+    }
+
+    public void SpeedSliderChanged()
+    {
+        Settings.aiDelaySlider = aiMoveSpeed.value;
+        aiMoveSpeedText.text = (Settings.aiDelaySlider * 0.25f).ToString();
+        boardController.UpdateAIDelay(Settings.aiDelaySlider * 0.25f);
+        if (Settings.aiDelaySlider == 4)
+            aiMoveSpeedText.text += (" Second");
+        else
+            aiMoveSpeedText.text += (" Seconds");
     }
 
     // Creates string of the probability
@@ -733,5 +791,14 @@ public class UIController : MonoBehaviour
         Veterancy tempVeterancy = GetVeterancy(piece);
         tempVeterancy.kills += deltaKill;
         tempVeterancy.survival += deltaSurvive;
+    }
+
+    // Tool for selection
+    private bool IsPlayerControllable(bool whitePlayer)
+    {
+        if (whitePlayer)
+            return !Settings.player1AI;
+        else
+            return !Settings.player2AI;
     }
 }
