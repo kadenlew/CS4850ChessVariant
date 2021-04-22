@@ -32,6 +32,7 @@ public class BoardController : MonoBehaviour
 
     public UIController UIController;
     public BezierMovement bezierMover;
+    public DiceController diceController;
 
 
     // Start is called before the first frame update
@@ -76,7 +77,7 @@ public class BoardController : MonoBehaviour
     void Update()
     {
         // renable positon control after the animation is finished
-        if(!setPositions && !bezierMover.animating)
+        if(!setPositions && (!bezierMover.animating & !diceController.rolling))
             setPositions = true;
 
         // set the piece and board tile unity transforms according to board space configuration
@@ -135,6 +136,12 @@ public class BoardController : MonoBehaviour
         var end_position = compute_transform(action.agent.position); 
 
         // only execute if the move caused a change to board state
+        if(result is Definitions.AttackResult)
+        {
+            Definitions.AttackResult temp = (Definitions.AttackResult)result;
+            diceController.RollDice(temp.roll_result);
+        }
+
         if(result.was_successful)
         {
             bezierMover.ConfigureBezier(start_position, end_position);

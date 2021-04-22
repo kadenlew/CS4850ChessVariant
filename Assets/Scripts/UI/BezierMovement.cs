@@ -43,7 +43,7 @@ public class BezierMovement : MonoBehaviour
     {
         startTransform.position = startPosition;
         endTransform.position = endPosition;
-        movingTime = Mathf.Log(Vector3.Distance(startPosition, endPosition))/2;
+        movingTime = Mathf.Log((Vector3.Distance(startPosition, endPosition)) + 1.0f)/4;
     }
 
     public void Animate(GameObject piece)
