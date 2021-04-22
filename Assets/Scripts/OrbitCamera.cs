@@ -28,6 +28,7 @@ public class OrbitCamera : MonoBehaviour
         horizontalRot = transform.eulerAngles.y;
         cameraChild = transform.GetChild(0);
         zoomCurrent = zoomDefault;
+        verticalRot = 25f;
     }
 
     // Update is called once per frame

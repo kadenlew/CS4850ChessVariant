@@ -19,6 +19,9 @@ public class AttackAction : Action {
     // represents any positive or negative bonus applied to the random roll before checking that value with the roll table
     int roll_modifer { get; } = 0;
 
+    // used by UI for materiel tracking
+    public Piece.PieceType targetType;
+
     // constructor
     public AttackAction(
         Piece.GamePieceBase agent, 
@@ -28,6 +31,7 @@ public class AttackAction : Action {
         this.agent = agent;
         this.target = target;
         this.roll_modifer = roll_modifer;
+        targetType = target.type;
     }
 
     public override Result Execute(BoardController controller) {
@@ -65,7 +69,8 @@ public class AttackAction : Action {
             roll + roll_modifer >= captureTable[(
                 agent.type, 
                 target.type
-            )]   
+            )],
+            target.type
         );
     }
 
@@ -129,15 +134,18 @@ public class AttackAction : Action {
 public class AttackResult : Result  {
     // what the d6 (plus any modifer) resulted in
     public int roll_result { get; }
+    public Piece.PieceType targetType;
     // whether that roll was successful, given the roll table
 
     // constructor
     public AttackResult(
         int roll_result,
-        bool was_successful
+        bool was_successful,
+        Piece.PieceType targetType
     ) {
         this.roll_result = roll_result;
         this.was_successful = was_successful;
+        this.targetType = targetType;
     }
 
     public override string ToString() => (

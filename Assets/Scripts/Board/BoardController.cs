@@ -43,7 +43,17 @@ public class BoardController : MonoBehaviour
         board_lookup = new Dictionary<Definitions.BoardPosition, Piece.GamePieceBase>();
         possible_actions = new Definitions.ActionDatabase();
 
+            if(Settings.player1AI)
         players_.Add(
+            new Control.PlayerAI(
+                true,
+                prefabs,
+                this,
+                possible_actions
+            )
+        );
+            else
+                players_.Add(
             new Control.PlayerBase(
                 true,
                 prefabs,
@@ -52,9 +62,18 @@ public class BoardController : MonoBehaviour
             )
         );
 
-        // Second player is AI for testing for now        
+            if(Settings.player2AI)
         players_.Add(
             new Control.PlayerAI(
+                false,
+                prefabs,
+                this,
+                possible_actions
+            )
+        );
+            else
+                players_.Add(
+            new Control.PlayerBase(
                 false,
                 prefabs,
                 this,
@@ -68,6 +87,9 @@ public class BoardController : MonoBehaviour
 
         // create the board look up table used to query whether a space is occupied and by who
         update_lookup();
+
+            //This is to make sure the AI get set after it is created
+            UIController.SpeedSliderChanged();
 
         // start the turn for white
         start_turn();
@@ -141,26 +163,35 @@ public class BoardController : MonoBehaviour
         var end_position = compute_transform(action.agent.position);
 
         // Only bother rolling dice if it was an attack roll
-        if (result is Definitions.AttackResult)
+        if (result is Definitions.AttackResult && Settings.playAnimations)
         {
-            // I'm using this as a general AI disabler
             this.pauseAI = true;
             Definitions.AttackResult temp = (Definitions.AttackResult)result;
             diceController.RollDice(temp.roll_result);
         }
 
-        // only execute if the move caused a change to board state
-        if (result.was_successful)
-        {
-            this.pauseAI = true;
-            bezierMover.ConfigureBezier(start_position, end_position);
-            bezierMover.Animate(action.agent.gameObject);
-        }
-        // nothing changed, reenable piece position control
-        else
-        {
-            this.setPositions = true;
-        }
+            // only execute if the move caused a change to board state
+            if (result.was_successful)
+            {
+                UIController.HandleCombatResult(result, action.agent);
+                if (Settings.playAnimations)
+                {
+                    this.pauseAI = true;
+                    bezierMover.ConfigureBezier(start_position, end_position);
+                    bezierMover.Animate(action.agent.gameObject);
+                }
+
+            }
+            // nothing changed, reenable piece position control
+            else
+            {
+                this.setPositions = true;
+                if (action is Definitions.AttackAction)
+                {
+                    Definitions.AttackAction temp = (Definitions.AttackAction)action;
+                    UIController.HandleCombatResult(result, temp.target);
+                }
+            }
 
         // the board state has change, update the lookup table
         update_lookup();
@@ -285,6 +316,18 @@ public class BoardController : MonoBehaviour
         // return those results
         return results;
     }
+
+        public void UpdateAIDelay(float newDelay)
+        {
+            foreach (var player in players_)
+            {
+                if (player is PlayerAI)
+                {
+                    PlayerAI ai = (PlayerAI)player;
+                    ai.move_delay = newDelay;
+                }
+            }
+        }
 }
 
 } // Chess
