@@ -123,8 +123,6 @@ public class UIController : MonoBehaviour
             blackTurn.color = new Color(blackTurn.color.r, blackTurn.color.g, blackTurn.color.b, 1f);
         }
 
-        // boardController.setPositions = !bezierMover.animating;
-
         // This needs to be a lot more robust
         UIEnabled = !bezierMover.animating;
     }
@@ -439,15 +437,18 @@ public class UIController : MonoBehaviour
     {
         uiStatus = UIState.PieceMoveAttack;
         actionList = boardController.get_piece_actions(selected);
-        relevantPieces = GetRelevantMoveAttack(actionList);
-        foreach (GameObject piece in relevantPieces)
+        if (actionList != null)
         {
-            piece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
-        }
-        relevantTiles = GetRelevantMoveTiles(actionList);
-        foreach (GameObject tile in relevantTiles)
-        {
-            tile.GetComponent<Chess.Definitions.Tile>().Select();
+            relevantPieces = GetRelevantMoveAttack(actionList);
+            foreach (GameObject piece in relevantPieces)
+            {
+                piece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
+            }
+            relevantTiles = GetRelevantMoveTiles(actionList);
+            foreach (GameObject tile in relevantTiles)
+            {
+                tile.GetComponent<Chess.Definitions.Tile>().Select();
+            }
         }
         if (probabilityCheck.isOn)
             CreateFloatingProbability();
@@ -461,6 +462,7 @@ public class UIController : MonoBehaviour
         {
             if (selectedBoard || targetPiece)
             {
+                
                 if (selectedBoard)
                 {
                     boardController.setPositions = false;
@@ -468,8 +470,6 @@ public class UIController : MonoBehaviour
                         new Chess.Definitions.MoveAction(
                             selected,
                             selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
-                    // bezierMover.ConfigureBezier(selected.transform.position, selectedBoard.transform.position);
-                    // bezierMover.Animate(selected.gameObject);
                 }
 
                 if (targetPiece)
@@ -580,7 +580,6 @@ public class UIController : MonoBehaviour
         DestroyFloatingText();
         relevantPieces.Clear();
         relevantTiles.Clear();
-        actionList.Clear();
         selectedBoard = null;
         targetPiece = null;
     }
@@ -639,7 +638,7 @@ public class UIController : MonoBehaviour
     // Gets targets for attack/move
     private List<GameObject> GetRelevantMoveAttack(HashSet<Chess.Definitions.Action> localActions)
     {
-        if (selected)
+        if (selected && localActions != null)
         {
             List<GameObject> targets = new List<GameObject>();    
             foreach (Chess.Definitions.Action action in localActions)
