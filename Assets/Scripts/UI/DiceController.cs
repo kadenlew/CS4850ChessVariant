@@ -51,7 +51,7 @@ public class DiceController : MonoBehaviour
 
     public void RollDice(int roll)
     {
-        if(roll > 5 || roll < 1)
+        if(roll > 6 || roll < 1)
         {
             Debug.LogWarning("Dice cannot roll a " + roll.ToString());
             return;
