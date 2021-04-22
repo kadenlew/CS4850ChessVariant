@@ -27,7 +27,7 @@ public class BoardController : MonoBehaviour
     public Dictionary<Definitions.BoardPosition, Piece.GamePieceBase> board_lookup { get; protected set; }
 
     public bool setPositions = true;
-
+    public bool pauseAI = false;
     public bool do_update = true;
 
     public UIController UIController;
@@ -77,12 +77,17 @@ public class BoardController : MonoBehaviour
     void Update()
     {
         // renable positon control after the animation is finished
-        if(!setPositions && (!bezierMover.animating & !diceController.rolling))
+        if(!setPositions && !bezierMover.animating)
             setPositions = true;
 
         // set the piece and board tile unity transforms according to board space configuration
         if (setPositions && do_update)
             set_transforms();
+
+        if(pauseAI && !bezierMover.animating && !diceController.rolling)
+        {
+            pauseAI = false;
+        }
     }
 
     public void start_turn()
@@ -133,17 +138,21 @@ public class BoardController : MonoBehaviour
         Debug.Log($"{result}");
 
         // store out ending position to send off the the animator
-        var end_position = compute_transform(action.agent.position); 
+        var end_position = compute_transform(action.agent.position);
 
-        // only execute if the move caused a change to board state
-        if(result is Definitions.AttackResult)
+        // Only bother rolling dice if it was an attack roll
+        if (result is Definitions.AttackResult)
         {
+            // I'm using this as a general AI disabler
+            this.pauseAI = true;
             Definitions.AttackResult temp = (Definitions.AttackResult)result;
             diceController.RollDice(temp.roll_result);
         }
 
-        if(result.was_successful)
+        // only execute if the move caused a change to board state
+        if (result.was_successful)
         {
+            this.pauseAI = true;
             bezierMover.ConfigureBezier(start_position, end_position);
             bezierMover.Animate(action.agent.gameObject);
         }

@@ -85,7 +85,7 @@ class PlayerAI : PlayerBase {
             var result = controller_ref.execute_action(player_action); 
 
             // wait until the animation has completed
-            while(!controller_ref.setPositions) yield return new WaitForSeconds(0.5f);
+            while(controller_ref.pauseAI) yield return new WaitForSeconds(0.5f);
 
             Debug.Log($"I did my action, with a result of {result}");
         }
