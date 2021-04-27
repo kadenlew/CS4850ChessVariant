@@ -45,10 +45,12 @@ public class AttackAction : Action {
         if(result.was_successful)
         {
             // move to the targets board position
-            agent.move(
-                target.position
-            );
-
+            if (agent.type != Piece.PieceType.Rook)
+            {
+                agent.move(
+                    target.position
+                );
+            }
             // remove that target from the game
             target.kill();
         }
