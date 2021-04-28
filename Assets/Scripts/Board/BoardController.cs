@@ -6,6 +6,7 @@ using Chess.AI;
 
 using Chess.Piece;
 using Chess.Control;
+using TMPro;
 
 namespace Chess
 {
@@ -34,10 +35,14 @@ public class BoardController : MonoBehaviour
     public BezierMovement bezierMover;
     public DiceController diceController;
 
+    public GameObject endgameScreen;
+    public TMP_Text endgameText;
+
 
     // Start is called before the first frame update
     void Start()
     {
+        endgameScreen.SetActive(false);
         // reserve storage structures
         players_ = new List<Control.PlayerBase>(2);
         board_lookup = new Dictionary<Definitions.BoardPosition, Piece.GamePieceBase>();
@@ -138,7 +143,10 @@ public class BoardController : MonoBehaviour
 
     public void end_game(bool is_white) {
         // do_update = false;
-        Debug.Log($"{(is_white ? "White" : "Black")} Wins!");
+        Debug.Log($"{(is_white ? "Black" : "White")} Wins!");
+
+        endgameScreen.SetActive(true);
+        endgameText.text = $"{(is_white ? "Black" : "White")} Wins!";
     }
 
     public Definitions.Result execute_action(Definitions.Action action)
