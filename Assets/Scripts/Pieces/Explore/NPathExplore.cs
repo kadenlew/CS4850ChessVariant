@@ -43,6 +43,7 @@ public class NPathExplore {
         // start DFS where this piece currently is
         explore_adjacent(
             piece.position,
+            previous,
             n,
             0,
             move_and_attack,
@@ -55,6 +56,7 @@ public class NPathExplore {
     // will stop searching a branch if various conditions are met
     public static void explore_adjacent(   
         Definitions.BoardPosition pos,
+        Definitions.BoardPosition prev,
         int max_length,
         int current_length,
         bool move_and_attack,

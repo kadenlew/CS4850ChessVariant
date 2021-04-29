@@ -12,7 +12,7 @@ namespace Definitions
 // An action that involves 1 agent piece attacking a target piece, and reserves a failsafe space to move to
 // should the attack roll fail against the target
 public class AttackMoveAction : AttackAction {
-    // space that piece will move to should it fail an attack
+    // space that knight will move to should it fail a moving attack
     public BoardPosition failsafe { get; }
 
     // constructor
