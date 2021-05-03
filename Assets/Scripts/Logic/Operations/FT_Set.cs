@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml.Serialization;
 
 namespace Chess
 {
@@ -12,10 +13,15 @@ namespace AI
 // this acts as the sort of, acutal end point for the data in these sentences,
 // in a similar way to how EBNF for an interpreter is constructed for expressions
 // on variables and such
+[XmlRoot("Set")]
 public class FT_Set : FuzzyTerm {
 
     // the surrogate set that this object is shadowing
+    [XmlIgnore]
     private FuzzySet surrogate;
+
+    [XmlAttribute("name")]
+    private string surrogate_name;
 
     public FT_Set(FuzzySet surrogate) {
         this.surrogate = surrogate;

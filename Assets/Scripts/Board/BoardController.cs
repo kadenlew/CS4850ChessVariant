@@ -87,6 +87,9 @@ public class BoardController : MonoBehaviour
         );
 
 
+        AI.FuzzyRule rule = new AI.FuzzyRule();
+
+
         // create the physical board with entitites for clicking and storing positions in them
         InitializeBoard();
 

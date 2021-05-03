@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Xml.Serialization;
 
 namespace Chess
 {
 namespace AI
 {
 
+[XmlRoot("Rule")]
 class FuzzyRule {
     // the first portion of the IF THEN statement
     public FuzzyTerm condition { get; protected set; }
