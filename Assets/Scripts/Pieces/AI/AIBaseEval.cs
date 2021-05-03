@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 using System.Linq;
 
@@ -27,6 +28,23 @@ class AIActionEval : MonoBehaviour
         // initialize the controller
         logic_controller = new FuzzyController();
 
+        var risk = logic_controller.add_input_variable("risk", -1, 1);
+        risk.add_set_left_shoulder("low_risk", -0.5, 0);
+        risk.add_set_triangular("medium_risk", -0.5, 0, 0.5);
+        risk.add_set_right_shoulder("high_risk", 0, 0.5);
+
+        var reward = logic_controller.add_input_variable("reward", -10, 10);
+        reward.add_set_left_shoulder("low_reward", -5, 0);
+        reward.add_set_triangular("medium_reward", -5, 0, 5);
+        reward.add_set_right_shoulder("high_reward", 0, 5);
+
+        var desire = logic_controller.create_output_variable("desire", 0, 100); 
+        desire.add_set_left_shoulder("low_desire", 25, 50);
+        desire.add_set_triangular("medium_desire", 25, 50, 75);
+        desire.add_set_right_shoulder("high_desire", 50, 75);
+
+        // load the correct base
+        logic_controller.set_rules_from_xml(get_xml_file_path(0));
     }
 
     public (Definitions.Action action, double desireability) eval(ref Definitions.ActionDatabase database) {
@@ -39,8 +57,9 @@ class AIActionEval : MonoBehaviour
         {
             foreach(Definitions.Action action in possible_actions)
             {
-                double desireability = AIReward.compute_reward(database, action);
-                AIRisk.compute_base_risk(database, piece_ref);
+                logic_controller.set_input("reward", AIReward.compute_reward(database, action));
+                logic_controller.set_input("risk", AIRisk.compute_risk(database, action));
+                double desireability = logic_controller.get_output();
 
                 // double desireability = Random.Range(0f, 10f);
                 if(desireability > best_desireability)
@@ -53,6 +72,24 @@ class AIActionEval : MonoBehaviour
 
         // there are no actions this piece can take, return
         return (best_action, best_desireability);
+    }
+
+    private string get_xml_file_path(int game_state) {
+        string path = Path.Combine("ai_rules", piece_ref.type.ToString());
+
+        switch (game_state) {
+            case 0:
+                path = Path.Combine(path, "early.xml");
+                break;
+            case 1:
+                path = Path.Combine(path, "mid.xml");
+                break;
+            case 2:
+                path = Path.Combine(path, "late.xml");
+                break;
+        }
+
+        return path;
     }
 
 }

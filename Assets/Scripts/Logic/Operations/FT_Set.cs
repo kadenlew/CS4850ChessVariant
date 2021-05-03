@@ -13,19 +13,26 @@ namespace AI
 // this acts as the sort of, acutal end point for the data in these sentences,
 // in a similar way to how EBNF for an interpreter is constructed for expressions
 // on variables and such
-[XmlRoot("Set")]
+[XmlType("Set")]
 public class FT_Set : FuzzyTerm {
 
     // the surrogate set that this object is shadowing
     [XmlIgnore]
-    private FuzzySet surrogate;
+    public FuzzySet surrogate { get; set; }
 
     [XmlAttribute("name")]
-    private string surrogate_name;
+    public string surrogate_name { get; set; }
 
     public FT_Set(FuzzySet surrogate) {
         this.surrogate = surrogate;
+        this.surrogate_name = surrogate.name;
     }
+
+    public FT_Set(string name) {
+        this.surrogate_name = name;
+    }
+
+    internal FT_Set() {}
     
     public override double compute_confidence() { 
         return surrogate.confidence;

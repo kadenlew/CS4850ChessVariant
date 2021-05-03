@@ -10,7 +10,7 @@ namespace Piece
 public class BishopPiece : CommanderPiece {
     // Used in dictionary lookups
     public override PieceType type { get; } = PieceType.Bishop;
-    public override int material_value { get; } = 15;
+    public override int material_value { get; } = 5;
 
     // Extend the base commander initing to indicate what soldiers 
     // this piece has under it, and where they spawn

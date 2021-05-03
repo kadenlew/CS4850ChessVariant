@@ -19,11 +19,11 @@ class FuzzyController {
     // list of all the rules that are to be applied when using this controller
     // each rule will be applied sequentially, affecting the confidence of the sets within
     // the output variable
-    public List<FuzzyRule> rule_base { get; protected set; }
+    public FuzzyRuleSet rule_base { get; protected set; }
 
     public FuzzyController() {
         input_variables = new Dictionary<string, FuzzyVariable>();
-        rule_base = new List<FuzzyRule>();
+        rule_base = new FuzzyRuleSet(); 
     }
 
     // will call the fuzzify function of the input variable specified
@@ -42,7 +42,7 @@ class FuzzyController {
         output_variable.Value.clear_sets();
 
         // evaluate each rule
-        foreach(FuzzyRule rule in rule_base) {
+        foreach(FuzzyRule rule in rule_base.rules) {
             // Debug.Log($"{rule}"); 
             rule.eval();
         }
@@ -62,8 +62,60 @@ class FuzzyController {
     }
 
     public void add_rule(FuzzyTerm condition, FT_Set output_set) {
-        rule_base.Add(new FuzzyRule(condition, output_set));
+        rule_base.rules.Add(new FuzzyRule(condition, output_set));
     }
+
+    public FuzzySet find_set_by_name(string name) {
+        // try the inputs
+        foreach(KeyValuePair<string, FuzzyVariable> fv_name in input_variables) {
+            foreach(KeyValuePair<string, FuzzySet> fs_name in fv_name.Value.member_sets) {
+                if(fs_name.Key == name)
+                    return fs_name.Value;
+            }
+        }
+
+        // the the output
+        foreach(KeyValuePair<string, FuzzySet> fs_name in output_variable.Value.member_sets) {
+            if(fs_name.Key == name)
+                return fs_name.Value;
+        }
+        
+        // could not find
+        throw new System.ArgumentException("Could not find the specified set");
+    }
+
+    public void set_rules_from_xml(string file) {
+        this.rule_base = Helpers.XMLHelper.Deserialize<FuzzyRuleSet>(file);
+
+        // find each set reference and pair them up
+        foreach(FuzzyRule rule in this.rule_base.rules)
+        {
+            associate_with_ref(rule.condition);
+            associate_with_ref(rule.result);
+        }
+    }
+
+    public void associate_with_ref(FuzzyTerm ft) {
+
+        // recursively search for ft_sets
+        if(ft is FuzzyTermBinary) {
+            associate_with_ref((ft as FuzzyTermBinary).left_operand);
+            associate_with_ref((ft as FuzzyTermBinary).right_operand);
+        }
+
+        // recursively search for ft_sets
+        if(ft is FuzzyTermUnary) {
+            associate_with_ref((ft as FuzzyTermUnary).operand);
+        }
+
+        // associate ref with ft_set
+        if(ft is FT_Set) {
+            (ft as FT_Set).surrogate = find_set_by_name((ft as FT_Set).surrogate_name);
+            Debug.Log($"Associated set {(ft as FT_Set).surrogate_name}.");
+        }
+    }
+
+
 }
 
 } // AI

@@ -19,7 +19,7 @@ public class AIReward {
         {
             // the attack is worth as much as the material of that piece times how likely you are to kill it
             Definitions.AttackAction attack_action = action as Definitions.AttackAction; 
-            return attack_action.target.material_value * Definitions.AttackAction.captureTable[(attack_action.agent.type, attack_action.target.type)];
+            return attack_action.target.material_value * Definitions.AttackAction.get_roll_prob(attack_action.agent.type, attack_action.target.type);
         }
     }
 }

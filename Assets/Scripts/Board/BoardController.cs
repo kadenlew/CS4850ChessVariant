@@ -86,18 +86,14 @@ public class BoardController : MonoBehaviour
             )
         );
 
-
-        AI.FuzzyRule rule = new AI.FuzzyRule();
-
-
         // create the physical board with entitites for clicking and storing positions in them
         InitializeBoard();
 
         // create the board look up table used to query whether a space is occupied and by who
         update_lookup();
 
-            //This is to make sure the AI get set after it is created
-            UIController.SpeedSliderChanged();
+        //This is to make sure the AI get set after it is created
+        UIController.SpeedSliderChanged();
 
         // start the turn for white
         start_turn();

@@ -96,6 +96,10 @@ public class AttackAction : Action {
         {(Piece.PieceType.Pawn,     Piece.PieceType.Rook),      6}, {(Piece.PieceType.Pawn,     Piece.PieceType.Pawn),      4} 
     };
 
+    public static double get_roll_prob(Piece.PieceType attacking, Piece.PieceType defending) {
+        return (6 - captureTable[(attacking, defending)] + 1) / 6.0;
+    }
+
 ///////////////////////////////////////////////////////////////////////////
 //                              OPERATORS
 ///////////////////////////////////////////////////////////////////////////
