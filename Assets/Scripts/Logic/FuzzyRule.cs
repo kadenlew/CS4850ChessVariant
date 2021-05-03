@@ -28,7 +28,7 @@ public class FuzzyRule {
         // the resulting output is combined with the result of the condition
         result.combine_confidence(condition.compute_confidence());
 
-        // Debug.Log($"condition confidence: {condition.compute_confidence()}");
+        Debug.Log($"condition confidence: {condition.compute_confidence()}");
     }
 
     public override string ToString() => $"Rule: IF {condition} THEN {result}";

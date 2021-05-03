@@ -43,7 +43,7 @@ class FuzzyController {
 
         // evaluate each rule
         foreach(FuzzyRule rule in rule_base.rules) {
-            // Debug.Log($"{rule}"); 
+            Debug.Log($"{rule}"); 
             rule.eval();
         }
 

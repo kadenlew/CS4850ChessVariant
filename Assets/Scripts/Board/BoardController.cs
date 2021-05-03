@@ -143,6 +143,12 @@ public class BoardController : MonoBehaviour
     public void end_game(bool is_white) {
         // do_update = false;
         Debug.Log($"{(is_white ? "Black" : "White")} Wins!");
+        Debug.Log($"Reward: [{Piece.AI.AIActionEval.min_reward}, {Piece.AI.AIActionEval.max_reward}]");
+        Debug.Log($"risk: [{Piece.AI.AIActionEval.min_risk}, {Piece.AI.AIActionEval.max_risk}]");
+
+        pauseAI = true;
+        do_update = false;
+        setPositions = false;
 
         endgameScreen.SetActive(true);
         endgameText.text = $"{(is_white ? "Black" : "White")} Wins!";

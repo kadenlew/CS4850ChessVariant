@@ -33,13 +33,13 @@ public class AIRisk {
         if(database.get_actions(final_pos, out actions_moving_to_final))
         {
             // for each possible action, find the one with the highest chance of killing me
-            foreach(Definitions.AttackAction attack in actions_moving_to_final) {
+            foreach(Definitions.MoveAction potential_attack in actions_moving_to_final) {
                 // what is the chance that this attack succeeds
                 // note: Agent is the piece attacking OUR agent in this instance
-                double risk = Definitions.AttackAction.get_roll_prob(attack.agent.type, attack.target.type); 
+                double risk = Definitions.AttackAction.get_roll_prob(potential_attack.agent.type, action.agent.type); 
 
                 // determine which commander is commanding this agent
-                Piece.CommanderPiece commander = (attack.agent is Piece.SoldierPiece) ? (attack.agent as Piece.SoldierPiece).commander : attack.agent as Piece.CommanderPiece;
+                Piece.CommanderPiece commander = (potential_attack.agent is Piece.SoldierPiece) ? (potential_attack.agent as Piece.SoldierPiece).commander : potential_attack.agent as Piece.CommanderPiece;
 
                 // update with new maximum risk for this commander
                 if(total_risk.ContainsKey(commander)) {

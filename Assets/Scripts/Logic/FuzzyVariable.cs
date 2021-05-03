@@ -46,18 +46,18 @@ class FuzzyVariable {
         double numerator = 0;
         double denominator = 0;
         
-        // string output = $"{name}: {{";
+        string output = $"{name}: {{";
         // add each set to the initial sums
         foreach(FuzzySet set in member_sets.Values)
         {
-            // output += $"{set} ({set.rep_val}), ";
+            output += $"{set} ({set.rep_val}), ";
 
             numerator += set.rep_val * set.confidence;
             denominator += set.confidence;
         }
 
-        // output += $"}} => ({numerator} / {denominator}) => {numerator / denominator}";
-        // Debug.Log($"{output}");
+        output += $"}} => ({numerator} / {denominator}) => {numerator / denominator}";
+        Debug.Log($"{output}");
 
         // get the centroid
         return numerator / denominator;

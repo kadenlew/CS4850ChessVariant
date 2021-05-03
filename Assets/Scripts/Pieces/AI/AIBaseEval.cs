@@ -16,6 +16,12 @@ namespace AI
 
 class AIActionEval : MonoBehaviour
 {
+    public static double min_risk = double.MaxValue;
+    public static double max_risk = double.MinValue;
+
+    public static double min_reward = double.MaxValue;
+    public static double max_reward = double.MinValue;
+
     protected Piece.GamePieceBase piece_ref { get; set; }
 
     protected FuzzyController logic_controller { get; set; }
@@ -33,10 +39,10 @@ class AIActionEval : MonoBehaviour
         risk.add_set_triangular("medium_risk", -0.5, 0, 0.5);
         risk.add_set_right_shoulder("high_risk", 0, 0.5);
 
-        var reward = logic_controller.add_input_variable("reward", -10, 10);
-        reward.add_set_left_shoulder("low_reward", -5, 0);
-        reward.add_set_triangular("medium_reward", -5, 0, 5);
-        reward.add_set_right_shoulder("high_reward", 0, 5);
+        var reward = logic_controller.add_input_variable("reward", 0, 8);
+        reward.add_set_left_shoulder("low_reward", 2 , 4);
+        reward.add_set_triangular("medium_reward", 2, 4, 6);
+        reward.add_set_right_shoulder("high_reward", 4, 6);
 
         var desire = logic_controller.create_output_variable("desire", 0, 100); 
         desire.add_set_left_shoulder("low_desire", 25, 50);
@@ -57,11 +63,25 @@ class AIActionEval : MonoBehaviour
         {
             foreach(Definitions.Action action in possible_actions)
             {
-                logic_controller.set_input("reward", AIReward.compute_reward(database, action));
-                logic_controller.set_input("risk", AIRisk.compute_risk(database, action));
-                double desireability = logic_controller.get_output();
+                double reward = AIReward.compute_reward(database, action);
+                logic_controller.set_input("reward", reward);
 
-                // double desireability = Random.Range(0f, 10f);
+                double risk = AIRisk.compute_risk(database, action);
+                logic_controller.set_input("risk", risk);
+
+                // double desireability = logic_controller.get_output();
+                if(reward < min_reward)
+                    min_reward = reward;
+                if(reward > max_reward)
+                    max_reward = reward;
+                if(risk < min_risk)
+                    min_risk = risk;
+                if(risk > max_risk)
+                    max_risk = risk;
+
+                // Debug.Log($"Action: {action} | Risk {risk} | Reward {reward} | Desire {desireability}");
+
+                double desireability = Random.Range(0f, 10f);
                 if(desireability > best_desireability)
                 {
                     best_desireability = desireability;
