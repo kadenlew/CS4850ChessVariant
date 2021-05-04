@@ -114,6 +114,11 @@ public class UIController : MonoBehaviour
             Cancel();
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            MenuButton();
+        }
+
         if (Input.GetButtonDown("Jump") && confirmButton.activeSelf)
         {
             Confirm();
@@ -569,17 +574,21 @@ public class UIController : MonoBehaviour
     public void MenuButton()
     {
         menuOpen = !menuOpen;
+        if (menuOpen)
+            Time.timeScale = 0f;
+        else
+            Time.timeScale = 1f;
         UpdateUI();
     }
 
     public void RestartButton()
     {
-        SceneManager.LoadScene("GameScene");
+        SceneManager.LoadScene(0);
     }
 
     public void MainMenuButton()
     {
-        SceneManager.LoadScene("MenuScene");
+        SceneManager.LoadScene(1);
     }
 
     public void ExitProgramButton()
