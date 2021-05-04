@@ -28,6 +28,7 @@ public class ActionDatabase {
         agent_action_map = new Dictionary<Piece.GamePieceBase, HashSet<Action>>();
         defending_action_map = new Dictionary<Piece.GamePieceBase, HashSet<Action>>();
         total_action_set = new HashSet<Action>();
+        hypothetical_moves = new Dictionary<BoardPosition, HashSet<Action>>();
     }     
 
     public void clear() {
