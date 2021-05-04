@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Chess
 {
 namespace AI
 {
 
+[XmlInclude(typeof(FT_Set)), XmlInclude(typeof(FT_And)), XmlInclude(typeof(FT_Fairly)), XmlInclude(typeof(FT_Not)), XmlInclude(typeof(FT_Or)), XmlInclude(typeof(FT_Very)), ]
 public abstract class FuzzyTerm {
 
     // all of the specific operations will be defined as terms

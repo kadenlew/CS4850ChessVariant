@@ -42,9 +42,9 @@ public class RangedExplore {
         for(int x = -(gap + 1); x <= (gap + 1); x++){
             for(int y = -(gap + 1);  y <= (gap + 1); y++){
                 var move = new Definitions.BoardVector(x, y);
-                double mag = move.special_mag;
+                double mag = Mathf.Floor((float)move.special_mag);
 
-                if(mag > gap + 1){
+                if(mag > gap + 2){
                     continue;
                 }
 
@@ -63,6 +63,14 @@ public class RangedExplore {
                                 res
                             ));
                         } 
+                        else {
+                            results.add_hypothetical(
+                                new Definitions.MoveAction(
+                                    piece_ref,
+                                    res.position
+                                )
+                            );
+                        }
                     }
                     else{
                         results.add_action(
@@ -81,6 +89,14 @@ public class RangedExplore {
                                 res
                             ));
                         } 
+                        else {
+                            results.add_hypothetical(
+                                new Definitions.MoveAction(
+                                    piece_ref,
+                                    res.position
+                                )
+                            );
+                        }
                     }
                 }
             }

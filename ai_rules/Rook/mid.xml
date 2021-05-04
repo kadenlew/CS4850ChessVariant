@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<RuleBase xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <rules>
+    <!-- LOW RISK -->
+    <FuzzyRule>
+      <condition xsi:type="And">
+        <left_operand xsi:type="Set" name="low_risk" />
+        <right_operand xsi:type="Set" name="low_reward" />
+      </condition>
+      <result name="high_desire" />
+    </FuzzyRule>
+    <FuzzyRule>
+      <condition xsi:type="And">
+        <left_operand xsi:type="Set" name="low_risk" />
+        <right_operand xsi:type="Set" name="medium_reward" />
+      </condition>
+      <result name="high_desire" />
+    </FuzzyRule>
+    <FuzzyRule>
+      <condition xsi:type="And">
+        <left_operand xsi:type="Set" name="low_risk" />
+        <right_operand xsi:type="Set" name="high_reward" />
+      </condition>
+      <result name="high_desire" />
+    </FuzzyRule>
+
+    <!-- MEDIUM RISK -->
+    <FuzzyRule>
+      <condition xsi:type="And">
+        <left_operand xsi:type="Set" name="medium_risk" />
+        <right_operand xsi:type="Set" name="low_reward" />
+      </condition>
+      <result name="high_desire" />
+    </FuzzyRule>
+    <FuzzyRule>
+      <condition xsi:type="And">
+        <left_operand xsi:type="Set" name="medium_risk" />
+        <right_operand xsi:type="Set" name="medium_reward" />
+      </condition>
+      <result name="high_desire" />
+    </FuzzyRule>
+    <FuzzyRule>
+      <condition xsi:type="And">
+        <left_operand xsi:type="Set" name="medium_risk" />
+        <right_operand xsi:type="Set" name="high_reward" />
+      </condition>
+      <result name="high_desire" />
+    </FuzzyRule>
+
+    <!-- HIGH RISK -->
+    <FuzzyRule>
+      <condition xsi:type="And">
+        <left_operand xsi:type="Set" name="high_risk" />
+        <right_operand xsi:type="Set" name="low_reward" />
+      </condition>
+      <result name="low_desire" />
+    </FuzzyRule>
+    <FuzzyRule>
+      <condition xsi:type="And">
+        <left_operand xsi:type="Set" name="high_risk" />
+        <right_operand xsi:type="Set" name="medium_reward" />
+      </condition>
+      <result name="low_desire" />
+    </FuzzyRule>
+    <FuzzyRule>
+      <condition xsi:type="And">
+        <left_operand xsi:type="Set" name="high_risk" />
+        <right_operand xsi:type="Set" name="high_reward" />
+      </condition>
+      <result name="medium_desire" />
+    </FuzzyRule>
+  </rules>
+</RuleBase>

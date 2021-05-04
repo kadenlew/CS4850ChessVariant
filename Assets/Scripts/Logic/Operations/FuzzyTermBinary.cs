@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Chess
 {
@@ -8,8 +9,8 @@ namespace AI
 public abstract class FuzzyTermBinary : FuzzyTerm {
 
     // the two operands of this binary operation
-    protected FuzzyTerm left_operand;
-    protected FuzzyTerm right_operand;
+    public FuzzyTerm left_operand;
+    public FuzzyTerm right_operand;
 
     // all of the specific operations will be defined as terms
     // and the only requirement is that they can output a confidence

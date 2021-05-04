@@ -61,6 +61,14 @@ class AICommanderEval : AIActionEval
         // signal the best corp move
         return (corp_action, desireability);
     }
+    public void update_corp_rulebase(int game_state) {
+        // ask each soldier what his best move is
+        foreach(AIActionEval soldier_ai in soldier_AI) {
+           soldier_ai.update_rulebase(game_state);
+        }
+
+        update_rulebase(game_state);
+    }
 }
 
 } // AI

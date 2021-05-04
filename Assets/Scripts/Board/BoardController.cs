@@ -38,6 +38,8 @@ public class BoardController : MonoBehaviour
     public GameObject endgameScreen;
     public TMP_Text endgameText;
 
+    private float game_turn = 1f; 
+
 
     // Start is called before the first frame update
     void Start()
@@ -67,25 +69,24 @@ public class BoardController : MonoBehaviour
             )
         );
 
-            if(Settings.player2AI)
-        players_.Add(
-            new Control.PlayerAI(
-                false,
-                prefabs,
-                this,
-                possible_actions
-            )
-        );
-            else
-                players_.Add(
-            new Control.PlayerBase(
-                false,
-                prefabs,
-                this,
-                possible_actions
-            )
-        );
-
+        if(Settings.player2AI)
+            players_.Add(
+                new Control.PlayerAI(
+                    false,
+                    prefabs,
+                    this,
+                    possible_actions
+                )
+            );
+        else
+            players_.Add(
+                new Control.PlayerBase(
+                    false,
+                    prefabs,
+                    this,
+                    possible_actions
+                )
+            );
 
         // create the physical board with entitites for clicking and storing positions in them
         InitializeBoard();
@@ -93,8 +94,8 @@ public class BoardController : MonoBehaviour
         // create the board look up table used to query whether a space is occupied and by who
         update_lookup();
 
-            //This is to make sure the AI get set after it is created
-            UIController.SpeedSliderChanged();
+        //This is to make sure the AI get set after it is created
+        UIController.SpeedSliderChanged();
 
         // start the turn for white
         start_turn();
@@ -137,6 +138,8 @@ public class BoardController : MonoBehaviour
         // flip to other person
         is_white_turn = !is_white_turn;
 
+        game_turn += 0.5f;
+
         // start the next turn
         start_turn();
     }
@@ -144,6 +147,12 @@ public class BoardController : MonoBehaviour
     public void end_game(bool is_white) {
         // do_update = false;
         Debug.Log($"{(is_white ? "Black" : "White")} Wins!");
+        Debug.Log($"Reward: [{Piece.AI.AIActionEval.min_reward}, {Piece.AI.AIActionEval.max_reward}]");
+        Debug.Log($"risk: [{Piece.AI.AIActionEval.min_risk}, {Piece.AI.AIActionEval.max_risk}]");
+
+        pauseAI = true;
+        do_update = false;
+        setPositions = false;
 
         endgameScreen.SetActive(true);
         endgameText.text = $"{(is_white ? "Black" : "White")} Wins!";
@@ -325,17 +334,21 @@ public class BoardController : MonoBehaviour
         return results;
     }
 
-        public void UpdateAIDelay(float newDelay)
+    public void UpdateAIDelay(float newDelay)
+    {
+        foreach (var player in players_)
         {
-            foreach (var player in players_)
+            if (player is PlayerAI)
             {
-                if (player is PlayerAI)
-                {
-                    PlayerAI ai = (PlayerAI)player;
-                    ai.move_delay = newDelay;
-                }
+                PlayerAI ai = (PlayerAI)player;
+                ai.move_delay = newDelay;
             }
         }
+    }
+
+    public int get_game_turn() {
+        return (int) Mathf.Floor(game_turn);
+    }
 }
 
 } // Chess

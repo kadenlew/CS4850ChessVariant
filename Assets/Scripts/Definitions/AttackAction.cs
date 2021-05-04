@@ -45,10 +45,12 @@ public class AttackAction : Action {
         if(result.was_successful)
         {
             // move to the targets board position
-            agent.move(
-                target.position
-            );
-
+            if (agent.type != Piece.PieceType.Rook)
+            {
+                agent.move(
+                    target.position
+                );
+            }
             // remove that target from the game
             target.kill();
         }
@@ -70,7 +72,8 @@ public class AttackAction : Action {
                 agent.type, 
                 target.type
             )],
-            target.type
+            target.type,
+            roll_modifer
         );
     }
 
@@ -95,6 +98,10 @@ public class AttackAction : Action {
         {(Piece.PieceType.Pawn,     Piece.PieceType.Knight),    6}, {(Piece.PieceType.Pawn,     Piece.PieceType.Bishop),    5}, 
         {(Piece.PieceType.Pawn,     Piece.PieceType.Rook),      6}, {(Piece.PieceType.Pawn,     Piece.PieceType.Pawn),      4} 
     };
+
+    public static double get_roll_prob(Piece.PieceType attacking, Piece.PieceType defending) {
+        return (6 - captureTable[(attacking, defending)] + 1) / 6.0;
+    }
 
 ///////////////////////////////////////////////////////////////////////////
 //                              OPERATORS
@@ -134,6 +141,7 @@ public class AttackAction : Action {
 public class AttackResult : Result  {
     // what the d6 (plus any modifer) resulted in
     public int roll_result { get; }
+    public int roll_modifer { get; set; }
     public Piece.PieceType targetType;
     // whether that roll was successful, given the roll table
 
@@ -141,11 +149,13 @@ public class AttackResult : Result  {
     public AttackResult(
         int roll_result,
         bool was_successful,
-        Piece.PieceType targetType
+        Piece.PieceType targetType,
+        int roll_modifer = 0
     ) {
         this.roll_result = roll_result;
         this.was_successful = was_successful;
         this.targetType = targetType;
+        this.roll_modifer = roll_modifer;
     }
 
     public override string ToString() => (
