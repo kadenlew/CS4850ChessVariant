@@ -10,19 +10,38 @@ public class MenuManager : MonoBehaviour
     public GameObject settings;
     public TMPro.TextMeshProUGUI player1;
     public TMPro.TextMeshProUGUI player2;
+    //public static bool GameIsPaused = false;
 
     void Start()
     {
         player1.text = PlayerButtonText(Settings.player1AI);
         player2.text = PlayerButtonText(Settings.player2AI);
     }
-
-    public void OnStart() {
-        SceneManager.LoadScene("GameScene");
+/*
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (GameIsPaused)
+            {
+                OnQuit();
+            }
+            else
+            {
+                OnBack();
+            }
+        }
     }
+*/
+    public void OnStart() {
+        SceneManager.LoadScene(0);
+    }
+
     public void OnSettings() {
         menu.SetActive(false);
         settings.SetActive(true);
+        //Time.timeScale = 0f;
+        //GameIsPaused = true;
     }
 
     public void OnQuit() {
@@ -34,6 +53,8 @@ public class MenuManager : MonoBehaviour
     {
         menu.SetActive(true);
         settings.SetActive(false);
+        //Time.timeScale = 1f;
+        //GameIsPaused = false;
     }
 
     public void OnPlayer1()
