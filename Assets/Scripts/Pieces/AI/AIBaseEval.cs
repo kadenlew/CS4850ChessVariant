@@ -94,6 +94,10 @@ class AIActionEval : MonoBehaviour
         return (best_action, best_desireability);
     }
 
+    public void update_rulebase(int game_state) {
+        logic_controller.set_rules_from_xml(get_xml_file_path(0));
+    }
+
     private string get_xml_file_path(int game_state) {
         string path = Path.Combine("ai_rules", piece_ref.type.ToString());
 

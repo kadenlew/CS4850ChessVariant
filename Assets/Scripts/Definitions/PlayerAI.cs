@@ -41,8 +41,18 @@ class PlayerAI : PlayerBase {
         }
     }
 
+    public void update_rulebase(int turn) {
+        foreach(Piece.AI.AICommanderEval commander in commander_AI) {
+            if(turn == 3)
+                commander.update_corp_rulebase(1);
+            else if(turn == 10)
+                commander.update_corp_rulebase(2);
+        }
+    }
+
     public override void begin_turn()
     {
+        update_rulebase(controller_ref.get_game_turn());
         controller_ref.StartCoroutine(TurnControlRoutine());
     }
 

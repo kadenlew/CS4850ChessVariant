@@ -30,7 +30,7 @@ public class AIRisk {
         Definitions.BoardPosition final_pos = get_ending_position(action);
 
         HashSet<Definitions.Action> actions_moving_to_final;
-        if(database.get_actions(final_pos, out actions_moving_to_final))
+        if(database.all_hypothetical_moves_to(final_pos, out actions_moving_to_final))
         {
             // for each possible action, find the one with the highest chance of killing me
             foreach(Definitions.MoveAction potential_attack in actions_moving_to_final) {
