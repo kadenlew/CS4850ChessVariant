@@ -69,7 +69,7 @@ class AIActionEval : MonoBehaviour
                 double risk = AIRisk.compute_risk(database, action);
                 logic_controller.set_input("risk", risk);
 
-                // double desireability = logic_controller.get_output();
+                double desireability = logic_controller.get_output();
                 if(reward < min_reward)
                     min_reward = reward;
                 if(reward > max_reward)
@@ -81,11 +81,27 @@ class AIActionEval : MonoBehaviour
 
                 // Debug.Log($"Action: {action} | Risk {risk} | Reward {reward} | Desire {desireability}");
 
-                double desireability = Random.Range(0f, 10f);
+                // double desireability = Random.Range(0f, 10f);
                 if(desireability > best_desireability)
                 {
                     best_desireability = desireability;
                     best_action = action;
+
+                    Debug.Log("===========================================");
+                    Debug.Log($"{action}");
+                    logic_controller.get_output(true);
+                    Debug.Log("===========================================");
+                }
+                if(desireability == best_desireability)
+                {
+                    if(Random.Range(0f, 2f) >= 1f)
+                    {
+                        best_action = action;
+                        Debug.Log("===========================================");
+                        Debug.Log($"{action}");
+                        logic_controller.get_output(true);
+                        Debug.Log("===========================================");
+                    }
                 }
             }
         }
@@ -99,7 +115,7 @@ class AIActionEval : MonoBehaviour
     }
 
     private string get_xml_file_path(int game_state) {
-        string path = Path.Combine("ai_rules", piece_ref.type.ToString());
+        string path = Path.Combine("Assets/ai_rules", piece_ref.type.ToString());
 
         switch (game_state) {
             case 0:
