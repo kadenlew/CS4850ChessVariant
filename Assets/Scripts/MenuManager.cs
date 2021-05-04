@@ -18,7 +18,7 @@ public class MenuManager : MonoBehaviour
     }
 
     public void OnStart() {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("GameScene");
     }
     public void OnSettings() {
         menu.SetActive(false);

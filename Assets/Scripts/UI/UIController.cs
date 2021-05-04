@@ -483,12 +483,18 @@ public class UIController : MonoBehaviour
     {
         if (uiStatus == UIState.PieceMoveAttack)
         {
-            if (selectedBoard || targetPiece)
+            if (selectedBoard && targetPiece && selected.type == PieceType.Knight)
             {
-                
+                boardController.execute_action(
+                        new Chess.Definitions.AttackMoveAction(
+                            selected,
+                            targetPiece.GetComponent<GamePieceBase>(),
+                            selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
+            }
+            else if (selectedBoard || targetPiece)
+            {  
                 if (selectedBoard)
                 {
-                    boardController.setPositions = false;
                     boardController.execute_action(
                         new Chess.Definitions.MoveAction(
                             selected,
@@ -503,36 +509,35 @@ public class UIController : MonoBehaviour
                             selected,
                             targetPiece.GetComponent<GamePieceBase>()));
                 }
-
-                uiStatus = UIState.PieceMainSelect;
-                DeselectAll();
-                if (selected is CommanderPiece)
-                {
-                    CommanderPiece temp = (CommanderPiece)(selected);
-                    if (temp.energy == 0)
-                    {
-                        foreach (Chess.Piece.SoldierPiece soldier in temp.soldiers_)
-                        {
-                            soldier.Select(HighlightColors[4]);
-                        }
-                        temp.Select(HighlightColors[4]);
-                    }
-                }
-                else if (selected is SoldierPiece)
-                {
-                    SoldierPiece temp = (SoldierPiece)selected;
-                    if (temp.commander.energy == 0)
-                    {
-                        foreach (Chess.Piece.SoldierPiece soldier in temp.commander.soldiers_)
-                        {
-                            soldier.Select(HighlightColors[4]);
-                        }
-                        temp.commander.Select(HighlightColors[4]);
-                    }
-                }
-                selected.Select(HighlightColors[0]);
-                UpdateUI();
             }
+            uiStatus = UIState.PieceMainSelect;
+            DeselectAll();
+            if (selected is CommanderPiece)
+            {
+                CommanderPiece temp = (CommanderPiece)(selected);
+                if (temp.energy == 0)
+                {
+                    foreach (Chess.Piece.SoldierPiece soldier in temp.soldiers_)
+                    {
+                        soldier.Select(HighlightColors[4]);
+                    }
+                    temp.Select(HighlightColors[4]);
+                }
+            }
+            else if (selected is SoldierPiece)
+            {
+                SoldierPiece temp = (SoldierPiece)selected;
+                if (temp.commander.energy == 0)
+                {
+                    foreach (Chess.Piece.SoldierPiece soldier in temp.commander.soldiers_)
+                    {
+                        soldier.Select(HighlightColors[4]);
+                    }
+                    temp.commander.Select(HighlightColors[4]);
+                }
+            }
+            selected.Select(HighlightColors[0]);
+            UpdateUI();
         }
     }
 
@@ -579,12 +584,12 @@ public class UIController : MonoBehaviour
 
     public void RestartButton()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("GameScene");
     }
 
     public void MainMenuButton()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("MenuScene");
     }
 
     public void ExitProgramButton()
