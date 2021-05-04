@@ -11,7 +11,7 @@ namespace Piece
 public class KingPiece : CommanderPiece {
     // the piece type for dictionary lookup
     public override PieceType type { get; } = PieceType.King;
-    public override int material_value { get; } = 15;
+    public override int material_value { get; } = 20;
     // the king can move in any direction as long as the path is 3 tiles or shorter,
     // and it can only attack adjacent pieces
     public override void Explore(ref Definitions.ActionDatabase results) {

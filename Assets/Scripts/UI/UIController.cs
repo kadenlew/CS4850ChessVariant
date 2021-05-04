@@ -574,12 +574,12 @@ public class UIController : MonoBehaviour
 
     public void RestartButton()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("GameScene");
     }
 
     public void MainMenuButton()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("MenuScene");
     }
 
     public void ExitProgramButton()

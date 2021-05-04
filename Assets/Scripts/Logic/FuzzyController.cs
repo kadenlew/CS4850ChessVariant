@@ -37,13 +37,13 @@ class FuzzyController {
 
     // will go and process the entire rule base against the current confidences of each of the
     // fuzzy sets in the input variables against the output
-    public double get_output() {
+    public double get_output(bool do_log = false) {
         // reset the output
         output_variable.Value.clear_sets();
 
         // evaluate each rule
         foreach(FuzzyRule rule in rule_base.rules) {
-            Debug.Log($"{rule}"); 
+            if(do_log) Debug.Log($"{rule}"); 
             rule.eval();
         }
 
