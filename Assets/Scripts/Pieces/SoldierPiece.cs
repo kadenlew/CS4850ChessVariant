@@ -13,7 +13,7 @@ namespace Piece
 public abstract class SoldierPiece : GamePieceBase {
     // forwarding the abstract explore
     public Piece.CommanderPiece commander { get; set; }
-    public Piece.CommanderPiece temp_commander {get; set; }
+    public Piece.CommanderPiece temp_commander; 
 
     public void soldier_init(
         bool is_white, 
