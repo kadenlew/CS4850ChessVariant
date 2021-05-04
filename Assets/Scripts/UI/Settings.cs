@@ -6,6 +6,7 @@ public class Settings : MonoBehaviour
 {
     static public bool dynamicProbabilities = false;
     static public bool playAnimations = true;
+    static public bool aiEnabled = true;
     static public float aiDelaySlider = 1;
 
     static public bool player1AI = false;

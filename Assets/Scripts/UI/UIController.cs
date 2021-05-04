@@ -87,6 +87,7 @@ public class UIController : MonoBehaviour
 
     public Toggle probabilityCheck;
     public Toggle animationPlay;
+    public Toggle aiPause;
     public Slider aiMoveSpeed;
     public Text aiMoveSpeedText;
 
@@ -101,6 +102,7 @@ public class UIController : MonoBehaviour
         boardController = GameObject.FindGameObjectWithTag("GameController").GetComponent<Chess.BoardController>();
         probabilityCheck.isOn = Settings.dynamicProbabilities;
         aiMoveSpeed.value = Settings.aiDelaySlider;
+        aiPause.isOn = !Settings.aiEnabled;
         Debug.Log(Settings.dynamicProbabilities.ToString());
         animationPlay.isOn = Settings.playAnimations;
         UpdateUI();
@@ -153,7 +155,10 @@ public class UIController : MonoBehaviour
                 leadershipButton.SetActive(false);
                 confirmButton.SetActive(false);
                 cancelButton.SetActive(false);
-                endTurnButton.SetActive(true);
+                if (IsPlayerControllable(boardController.is_white_turn))
+                    endTurnButton.SetActive(true);
+                else
+                    endTurnButton.SetActive(false);
                 endTurnButton.transform.position = ButtonPositionToVector(false, 0);
                 break;
 
@@ -670,6 +675,11 @@ public class UIController : MonoBehaviour
         Settings.playAnimations = animationPlay.isOn;
     }
 
+    public void AIEnabledToggleChanged()
+    {
+        Settings.aiEnabled = !aiPause.isOn;
+    }
+
     public void SpeedSliderChanged()
     {
         Settings.aiDelaySlider = aiMoveSpeed.value;
@@ -800,5 +810,10 @@ public class UIController : MonoBehaviour
             return !Settings.player1AI;
         else
             return !Settings.player2AI;
+    }
+
+    public void ForceUIUpdate()
+    {
+        UpdateUI();
     }
 }
