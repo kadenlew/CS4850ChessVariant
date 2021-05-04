@@ -115,21 +115,21 @@ class AIActionEval : MonoBehaviour
     }
 
     private string get_xml_file_path(int game_state) {
-        string path = Path.Combine("Assets/ai_rules", piece_ref.type.ToString());
+        string path = Path.Combine("ai_rules", piece_ref.type.ToString());
 
         switch (game_state) {
             case 0:
-                path = Path.Combine(path, "early.xml");
+                path = Path.Combine(path, "early");
                 break;
             case 1:
-                path = Path.Combine(path, "mid.xml");
+                path = Path.Combine(path, "mid");
                 break;
             case 2:
-                path = Path.Combine(path, "late.xml");
+                path = Path.Combine(path, "late");
                 break;
         }
 
-        return path;
+        return Resources.Load<TextAsset>(path).text;
     }
 
 }
