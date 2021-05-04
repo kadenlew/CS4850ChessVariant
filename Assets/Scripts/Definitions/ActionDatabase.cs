@@ -18,6 +18,8 @@ public class ActionDatabase {
     // of these actions by some other agent
     private Dictionary<Piece.GamePieceBase, HashSet<Action>> defending_action_map;
 
+    private Dictionary<BoardPosition, HashSet<Action>> hypothetical_moves;
+
     // the entire set of actions    
     private HashSet<Action> total_action_set;
 
@@ -76,6 +78,14 @@ public class ActionDatabase {
         }
     }
 
+    public void add_hypothetical(MoveAction value) {
+        append_to_dict<BoardPosition>(
+            hypothetical_moves,
+            value.target,
+            value
+        );
+    }
+
     public bool contains_value(Action value) {
         return total_action_set.Contains(value);
     }
@@ -97,6 +107,13 @@ public class ActionDatabase {
     public bool all_attacks_targeting(Piece.GamePieceBase defender, out HashSet<Action> result) {
         return defending_action_map.TryGetValue(
             defender,
+            out result
+        );
+    }
+
+    public bool all_hypothetical_moves_to(BoardPosition position, out HashSet<Action> result) {
+        return hypothetical_moves.TryGetValue(
+            position,
             out result
         );
     }

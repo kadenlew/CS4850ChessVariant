@@ -103,6 +103,14 @@ public class NPathExplore {
                     }
 
                 }
+                else {
+                    results.add_hypothetical(
+                        new Definitions.MoveAction(
+                            piece_ref,
+                            res.position
+                        )
+                    );
+                }
                 // stop searching after we've hit any piece (since you can't jump over pieces)
                 return;
             } 

@@ -63,6 +63,14 @@ public class RangedExplore {
                                 res
                             ));
                         } 
+                        else {
+                            results.add_hypothetical(
+                                new Definitions.MoveAction(
+                                    piece_ref,
+                                    res.position
+                                )
+                            );
+                        }
                     }
                     else{
                         results.add_action(
@@ -81,6 +89,14 @@ public class RangedExplore {
                                 res
                             ));
                         } 
+                        else {
+                            results.add_hypothetical(
+                                new Definitions.MoveAction(
+                                    piece_ref,
+                                    res.position
+                                )
+                            );
+                        }
                     }
                 }
             }
