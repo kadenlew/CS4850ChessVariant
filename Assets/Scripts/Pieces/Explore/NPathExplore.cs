@@ -43,6 +43,7 @@ public class NPathExplore {
         // start DFS where this piece currently is
         explore_adjacent(
             piece.position,
+            null,
             n,
             0,
             move_and_attack,
@@ -55,6 +56,7 @@ public class NPathExplore {
     // will stop searching a branch if various conditions are met
     public static void explore_adjacent(   
         Definitions.BoardPosition pos,
+        Definitions.BoardPosition prev,
         int max_length,
         int current_length,
         bool move_and_attack,
@@ -81,16 +83,33 @@ public class NPathExplore {
                     piece_ref.is_white != res.is_white
                 ) {
                     // it is, can we attack given our current path length?
-                    if(current_length == 1 || move_and_attack) {
+                    if(current_length == 1) {
                         // yes, we can attack
                         results.add_action(
                             new Definitions.AttackAction(
                                 piece_ref,
                                 res,
-                                current_length > 1 ? -1 : 0
+                                0
                         ));
                     }
+                    else if (move_and_attack) {
+                        results.add_action(
+                            new Definitions.AttackMoveAction(
+                                piece_ref,
+                                res,
+                                prev
+                            )
+                        );
+                    }
 
+                }
+                else {
+                    results.add_hypothetical(
+                        new Definitions.MoveAction(
+                            piece_ref,
+                            res.position
+                        )
+                    );
                 }
                 // stop searching after we've hit any piece (since you can't jump over pieces)
                 return;
@@ -110,6 +129,7 @@ public class NPathExplore {
         foreach(var move in adjacent) {
             explore_adjacent(
                 pos + move,
+                pos,
                 max_length,
                 current_length + 1, // increment the path length
                 move_and_attack,

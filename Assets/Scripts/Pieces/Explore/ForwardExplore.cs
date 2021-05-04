@@ -56,6 +56,14 @@ public class ForwardExplore {
                            res
                     )); 
                 }
+                else {
+                    results.add_hypothetical(
+                        new Definitions.MoveAction(
+                            piece,
+                            res.position
+                        )
+                    );
+                }
             }
             else {
                 // the space is empty, we can move there
