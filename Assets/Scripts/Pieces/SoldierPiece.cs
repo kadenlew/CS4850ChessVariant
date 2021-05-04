@@ -12,7 +12,7 @@ namespace Piece
 // does not require
 public abstract class SoldierPiece : GamePieceBase {
     // forwarding the abstract explore
-    public Piece.CommanderPiece commander { get; set; }
+    public Piece.CommanderPiece commander; 
     public Piece.CommanderPiece temp_commander; 
 
     public void soldier_init(
@@ -46,6 +46,10 @@ public abstract class SoldierPiece : GamePieceBase {
 
     public void set_temp_commander(CommanderPiece temp) {
         temp_commander = temp;
+    }
+
+    public CommanderPiece get_active_commander() {
+        return (temp_commander != null) ? temp_commander : commander;
     }
 
     public override void kill()
