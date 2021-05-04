@@ -20,10 +20,7 @@ public class AttackMoveAction : AttackAction {
         Piece.GamePieceBase agent, 
         Piece.GamePieceBase target,
         BoardPosition failsafe
-    ) {
-        this.agent = agent;
-        this.target = target;
-        targetType = target.type;
+    ) : base(agent, target, -1) {
         this.failsafe = failsafe;
     }
 
@@ -48,13 +45,42 @@ public class AttackMoveAction : AttackAction {
         else
         {
             agent.move(
-                failsafe.position
+                failsafe
             );
         }
 
         return result;
     }
 
+///////////////////////////////////////////////////////////////////////////
+//                              OPERATORS
+///////////////////////////////////////////////////////////////////////////
+
+    public static bool operator== (AttackMoveAction a, AttackMoveAction b) => (
+        ReferenceEquals(a.agent, b.agent) &&
+        ReferenceEquals(a.target, b.target) &&
+        ReferenceEquals(a.failsafe, b.failsafe)
+    );
+    
+    public static bool operator!= (AttackMoveAction a, AttackMoveAction b) => (
+        !(a == b)
+    );
+
+    public override bool Equals(object obj)
+    {
+        if((obj == null) || !this.GetType().Equals(obj.GetType()))
+            return false;
+
+        AttackMoveAction action = (AttackMoveAction) obj;
+        return action == this;
+    }
+
+    public override int GetHashCode() => (
+        failsafe.GetHashCode() * 100000 +
+        agent.position.GetHashCode() * 1000 +
+        target.position.GetHashCode()
+    );
 }
-}
-}
+
+} // Definitions
+} // Chess
