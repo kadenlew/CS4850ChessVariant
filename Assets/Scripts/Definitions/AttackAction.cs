@@ -72,7 +72,8 @@ public class AttackAction : Action {
                 agent.type, 
                 target.type
             )],
-            target.type
+            target.type,
+            roll_modifer
         );
     }
 
@@ -140,6 +141,7 @@ public class AttackAction : Action {
 public class AttackResult : Result  {
     // what the d6 (plus any modifer) resulted in
     public int roll_result { get; }
+    public int roll_modifer { get; set; }
     public Piece.PieceType targetType;
     // whether that roll was successful, given the roll table
 
@@ -147,11 +149,13 @@ public class AttackResult : Result  {
     public AttackResult(
         int roll_result,
         bool was_successful,
-        Piece.PieceType targetType
+        Piece.PieceType targetType,
+        int roll_modifer = 0
     ) {
         this.roll_result = roll_result;
         this.was_successful = was_successful;
         this.targetType = targetType;
+        this.roll_modifer = roll_modifer;
     }
 
     public override string ToString() => (
