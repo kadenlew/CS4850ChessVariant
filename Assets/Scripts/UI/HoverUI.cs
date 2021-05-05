@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class HoverUI : MonoBehaviour
 {
     public Vector3 target;
+    public Transform dynamic;
     public bool adapt = false;
     public float offset = 0f;
 
@@ -14,8 +15,16 @@ public class HoverUI : MonoBehaviour
     {
         if (adapt)
         {
-            Vector3 screenPos = Camera.main.WorldToScreenPoint(target);
-            transform.position = screenPos + new Vector3(0, offset, 0);
+            if(dynamic)
+            {
+                Vector3 screenPos = Camera.main.WorldToScreenPoint(dynamic.position);
+                transform.position = screenPos + new Vector3(0, offset, 0);
+            }
+            else
+            {
+                Vector3 screenPos = Camera.main.WorldToScreenPoint(target);
+                transform.position = screenPos + new Vector3(0, offset, 0);
+            }  
         }
     }
 

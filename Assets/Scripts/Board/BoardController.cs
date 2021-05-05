@@ -6,7 +6,6 @@ using Chess.AI;
 
 using Chess.Piece;
 using Chess.Control;
-using TMPro;
 
 namespace Chess
 {
@@ -31,7 +30,7 @@ public class BoardController : MonoBehaviour
         private GameObject activeProjectile;
 
     public bool setPositions = true;
-    public bool pauseAI = false;
+    public bool pauseAI = true;
     public bool do_update = true;
 
     public UIController UIController;
@@ -39,7 +38,9 @@ public class BoardController : MonoBehaviour
     public DiceController diceController;
 
     public GameObject endgameScreen;
-    public TMP_Text endgameText;
+    public UnityEngine.UI.Text endgameText;
+
+        public bool gameEnded = false;
 
     private float game_turn = 1f; 
 
@@ -47,7 +48,9 @@ public class BoardController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        endgameScreen.SetActive(false);
+            
+
+            endgameScreen.SetActive(false);
         // reserve storage structures
         players_ = new List<Control.PlayerBase>(2);
         board_lookup = new Dictionary<Definitions.BoardPosition, Piece.GamePieceBase>();
@@ -91,17 +94,17 @@ public class BoardController : MonoBehaviour
                 )
             );
 
-        // create the physical board with entitites for clicking and storing positions in them
-        InitializeBoard();
+            //This is to make sure the AI get set after it is created
+            UIController.SpeedSliderChanged();
+
+            // create the physical board with entitites for clicking and storing positions in them
+            InitializeBoard();
 
         // create the board look up table used to query whether a space is occupied and by who
         update_lookup();
 
-        //This is to make sure the AI get set after it is created
-        UIController.SpeedSliderChanged();
-
-        // start the turn for white
-        start_turn();
+            // start the turn for white
+            start_turn();
     }
 
     // Update is called once per frame
@@ -120,7 +123,7 @@ public class BoardController : MonoBehaviour
         if (setPositions && do_update)
             set_transforms();
 
-        if (pauseAI && !bezierMover.animating && !diceController.rolling && Settings.aiEnabled)
+        if (pauseAI && !bezierMover.animating && !diceController.rolling && Settings.aiEnabled && !gameEnded)
         {
              pauseAI = false;
         }
@@ -156,15 +159,18 @@ public class BoardController : MonoBehaviour
     }
 
     public void end_game(bool is_white) {
-        // do_update = false;
-        // Debug.Log($"{(is_white ? "Black" : "White")} Wins!");
-
+        gameEnded = true;
         pauseAI = true;
         do_update = false;
         setPositions = false;
 
-        endgameScreen.SetActive(true);
-        endgameText.text = $"{(is_white ? "Black" : "White")} Wins!";
+        UIController.EndGameUI();
+            set_transforms();
+            endgameScreen.SetActive(true);
+            GameObject tempPiece =  (is_white ? players_[0].commanders_[0].gameObject : players_[1].commanders_[0].gameObject) ;
+            tempPiece.transform.Translate(new Vector3(Random.Range(-pieceSize / 2, pieceSize / 2), 0.4f, Random.Range(-pieceSize / 2, pieceSize / 2)));
+            tempPiece.transform.localRotation = Quaternion.Euler(90f, 0, Random.Range(-180f, 180f));
+        endgameText.text = $"{(is_white ? "Black" : "White")} Wins";
     }
 
     public Definitions.Result execute_action(Definitions.Action action)
@@ -199,8 +205,9 @@ public class BoardController : MonoBehaviour
         {
             this.pauseAI = true;
             Definitions.AttackResult temp = (Definitions.AttackResult)result;
-            diceController.RollDice(temp.roll_result);
-                if(action.agent.type == PieceType.Rook)
+            diceController.RollDice(temp.roll_result - temp.roll_modifer);
+                UIController.DiceModifierText(temp.roll_modifer);
+                if (action.agent.type == PieceType.Rook)
                 {
                     activeProjectile = Instantiate(arrowProjectile, start_position + new Vector3(0,0,pieceSize/2), Quaternion.Euler(0, 0, 0));
                     bezierMover.ConfigureBezier(start_position + new Vector3(0, pieceSize / 2, 0), attackTarget + new Vector3(0, pieceSize / 2, 0));
@@ -389,14 +396,17 @@ public class BoardController : MonoBehaviour
 
     public void UpdateAIDelay(float newDelay)
     {
-        foreach (var player in players_)
-        {
-            if (player is PlayerAI)
+            if (players_.Count > 0)
             {
-                PlayerAI ai = (PlayerAI)player;
-                ai.move_delay = newDelay;
+                foreach (var player in players_)
+                {
+                    if (player is PlayerAI)
+                    {
+                        PlayerAI ai = (PlayerAI)player;
+                        ai.move_delay = newDelay;
+                    }
+                }
             }
-        }
     }
 
     public int get_game_turn() {
