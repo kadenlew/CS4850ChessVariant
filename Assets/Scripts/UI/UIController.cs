@@ -1126,7 +1126,7 @@ public class UIController : MonoBehaviour
 
     public void EndGameUI()
     {
-        toggleEndButton.SetActive(false);
+        toggleEndButton.SetActive(true);
 
         uint maxStat = 0;
         Veterancy tempVeterancy = null;
