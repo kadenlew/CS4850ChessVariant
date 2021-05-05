@@ -134,7 +134,7 @@ public class UIController : MonoBehaviour
             Cancel();
         }
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             MenuButton();
         }
