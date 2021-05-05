@@ -100,6 +100,7 @@ public class UIController : MonoBehaviour
 
     // End screen UI
     public GameObject endgameScreen;
+    public GameObject toggleEndButton;
 
     public Text whiteKillerType;
     public Text whiteKillerNumber;
@@ -1125,6 +1126,8 @@ public class UIController : MonoBehaviour
 
     public void EndGameUI()
     {
+        toggleEndButton.SetActive(false);
+
         uint maxStat = 0;
         Veterancy tempVeterancy = null;
 
