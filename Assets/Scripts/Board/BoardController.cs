@@ -169,7 +169,7 @@ public class BoardController : MonoBehaviour
             endgameScreen.SetActive(true);
             GameObject tempPiece =  (is_white ? players_[0].commanders_[0].gameObject : players_[1].commanders_[0].gameObject) ;
             tempPiece.transform.Translate(new Vector3(Random.Range(-pieceSize / 2, pieceSize / 2), 0.4f, Random.Range(-pieceSize / 2, pieceSize / 2)));
-            tempPiece.transform.localRotation = Quaternion.Euler(90f, 0, Random.Range(-180f, 180f));
+            tempPiece.transform.localRotation = Quaternion.Euler(100f, 0, Random.Range(-180f, 180f));
         endgameText.text = $"{(is_white ? "Black" : "White")} Wins";
     }
 
