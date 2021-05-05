@@ -11,6 +11,7 @@ public class BezierMovement : MonoBehaviour
     public bool animating { get; protected set; } = false;
     private GameObject animationTarget;
     private float currentTime = 0f;
+    private bool bezierMove = true;
 
     // Start is called before the first frame update
     void Start()
@@ -21,10 +22,26 @@ public class BezierMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(animating)
+        if (Vector3.Distance(startTransform.position, endTransform.position) < 0.001)
+            animating = false;
+        if(animating && bezierMove)
         {
             currentTime += Time.deltaTime;
             animationTarget.transform.position = CalculateQuadBezierCurve(currentTime / movingTime);
+            if (currentTime >= movingTime)
+                animating = false;
+        }
+        if(animating && !bezierMove)
+        {
+            currentTime += Time.deltaTime;
+            if(currentTime <= movingTime/2)
+            {
+                animationTarget.transform.position = (startTransform.position + (endTransform.position - startTransform.position) * ((currentTime / (movingTime / 2))));
+            }
+            else
+            {
+                animationTarget.transform.position = (startTransform.position + (endTransform.position - startTransform.position) * (((movingTime - currentTime) / (movingTime / 2))));
+            }
             if (currentTime >= movingTime)
                 animating = false;
         }
@@ -39,6 +56,17 @@ public class BezierMovement : MonoBehaviour
         return np;
     }
 
+    public void AnimateFailedAttack(GameObject piece, Vector3 bumpTowards, float distance)
+    {
+        bezierMove = false;
+        startTransform.position = piece.transform.position;
+        endTransform.position = Vector3.MoveTowards(startTransform.position, bumpTowards, distance);
+        movingTime = 0.4f;
+        currentTime = 0f;
+        animationTarget = piece;
+        animating = true;
+    }
+
     public void ConfigureBezier(Vector3 startPosition, Vector3 endPosition)
     {
         startTransform.position = startPosition;
@@ -48,6 +76,7 @@ public class BezierMovement : MonoBehaviour
 
     public void Animate(GameObject piece)
     {
+        bezierMove = true;
         animationTarget = piece;
         currentTime = 0f;
         animating = true;

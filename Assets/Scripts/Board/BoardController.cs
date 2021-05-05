@@ -27,6 +27,9 @@ public class BoardController : MonoBehaviour
     public Dictionary<Definitions.BoardPosition, Definitions.Tile> board_tiles { get; protected set; }
     public Dictionary<Definitions.BoardPosition, Piece.GamePieceBase> board_lookup { get; protected set; }
 
+        public GameObject arrowProjectile;
+        private GameObject activeProjectile;
+
     public bool setPositions = true;
     public bool pauseAI = false;
     public bool do_update = true;
@@ -104,6 +107,11 @@ public class BoardController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if(!Settings.aiEnabled)
+            {
+                pauseAI = true;
+            }
+
         // renable positon control after the animation is finished
         if(!setPositions && !bezierMover.animating)
             setPositions = true;
@@ -112,9 +120,9 @@ public class BoardController : MonoBehaviour
         if (setPositions && do_update)
             set_transforms();
 
-        if(pauseAI && !bezierMover.animating && !diceController.rolling)
+        if (pauseAI && !bezierMover.animating && !diceController.rolling && Settings.aiEnabled)
         {
-            pauseAI = false;
+             pauseAI = false;
         }
     }
 
@@ -142,6 +150,9 @@ public class BoardController : MonoBehaviour
 
         // start the next turn
         start_turn();
+
+            //force UI update
+            UIController.ForceUIUpdate();
     }
 
     public void end_game(bool is_white) {
@@ -169,6 +180,12 @@ public class BoardController : MonoBehaviour
         // prepare the controller for animation
         this.setPositions = false;
         var start_position = compute_transform(action.agent.position);
+            Vector3 attackTarget = new Vector3(0,0,0);
+        if(action is Definitions.AttackAction)
+            {
+                Definitions.AttackAction tempAction = (Definitions.AttackAction)action;
+                attackTarget = tempAction.target.transform.position;
+            }
 
         // execute the action
         var result = action.Execute(this);
@@ -183,6 +200,12 @@ public class BoardController : MonoBehaviour
             this.pauseAI = true;
             Definitions.AttackResult temp = (Definitions.AttackResult)result;
             diceController.RollDice(temp.roll_result);
+                if(action.agent.type == PieceType.Rook)
+                {
+                    activeProjectile = Instantiate(arrowProjectile, start_position + new Vector3(0,0,pieceSize/2), Quaternion.Euler(0, 0, 0));
+                    bezierMover.ConfigureBezier(start_position + new Vector3(0, pieceSize / 2, 0), attackTarget + new Vector3(0, pieceSize / 2, 0));
+                    bezierMover.Animate(activeProjectile);
+                }
         }
 
             // only execute if the move caused a change to board state
@@ -191,15 +214,32 @@ public class BoardController : MonoBehaviour
                 UIController.HandleCombatResult(result, action.agent);
                 if (Settings.playAnimations)
                 {
-                    this.pauseAI = true;
-                    bezierMover.ConfigureBezier(start_position, end_position);
-                    bezierMover.Animate(action.agent.gameObject);
+                    if (!((action is Definitions.AttackAction) && action.agent.type == PieceType.Rook))
+                    {
+                        this.pauseAI = true;
+                        bezierMover.ConfigureBezier(start_position, end_position);
+                        bezierMover.Animate(action.agent.gameObject);
+                    }
                 }
 
             }
             // nothing changed, reenable piece position control
             else
             {
+                if (Settings.playAnimations && action.agent.type != PieceType.Rook)
+                {
+                    if( action is Definitions.AttackMoveAction)
+                    {
+                        this.pauseAI = true;
+                        bezierMover.ConfigureBezier(start_position, end_position);
+                        bezierMover.Animate(action.agent.gameObject);
+                    }
+                    else
+                    {
+                        this.pauseAI = true;
+                        bezierMover.AnimateFailedAttack(action.agent.gameObject, attackTarget, pieceSize / 2);
+                    }
+                }
                 this.setPositions = true;
                 if (action is Definitions.AttackAction)
                 {

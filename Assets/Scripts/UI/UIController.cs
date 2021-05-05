@@ -87,6 +87,7 @@ public class UIController : MonoBehaviour
 
     public Toggle probabilityCheck;
     public Toggle animationPlay;
+    public Toggle aiPause;
     public Slider aiMoveSpeed;
     public Text aiMoveSpeedText;
 
@@ -101,7 +102,8 @@ public class UIController : MonoBehaviour
         boardController = GameObject.FindGameObjectWithTag("GameController").GetComponent<Chess.BoardController>();
         probabilityCheck.isOn = Settings.dynamicProbabilities;
         aiMoveSpeed.value = Settings.aiDelaySlider;
-        // Debug.Log(Settings.dynamicProbabilities.ToString());
+        aiPause.isOn = !Settings.aiEnabled;
+        Debug.Log(Settings.dynamicProbabilities.ToString());
         animationPlay.isOn = Settings.playAnimations;
         UpdateUI();
     }
@@ -158,7 +160,10 @@ public class UIController : MonoBehaviour
                 leadershipButton.SetActive(false);
                 confirmButton.SetActive(false);
                 cancelButton.SetActive(false);
-                endTurnButton.SetActive(true);
+                if (IsPlayerControllable(boardController.is_white_turn))
+                    endTurnButton.SetActive(true);
+                else
+                    endTurnButton.SetActive(false);
                 endTurnButton.transform.position = ButtonPositionToVector(false, 0);
                 break;
 
@@ -211,29 +216,62 @@ public class UIController : MonoBehaviour
                 }
                 else
                     tableBase.SetActive(false);
-                if (selectedBoard || targetPiece)
+
+                // The knight sure did make this dumb code happen
+                if(selected.type != PieceType.Knight)
                 {
-                    informationPanel.SetActive(true);
-                    moveButton.SetActive(false);
-                    attackButton.SetActive(false);
-                    leadershipButton.SetActive(false);
-                    endTurnButton.SetActive(false);
-                    confirmButton.SetActive(true);
-                    confirmButton.transform.position = ButtonPositionToVector(true, 0);
-                    cancelButton.SetActive(true);
-                    cancelButton.transform.position = ButtonPositionToVector(true, 1);
+                    if (selectedBoard || targetPiece)
+                    {
+                        informationPanel.SetActive(true);
+                        moveButton.SetActive(false);
+                        attackButton.SetActive(false);
+                        leadershipButton.SetActive(false);
+                        endTurnButton.SetActive(false);
+                        confirmButton.SetActive(true);
+                        confirmButton.transform.position = ButtonPositionToVector(true, 0);
+                        cancelButton.SetActive(true);
+                        cancelButton.transform.position = ButtonPositionToVector(true, 1);
+                    }
+                    else
+                    {
+                        informationPanel.SetActive(true);
+                        moveButton.SetActive(false);
+                        attackButton.SetActive(false);
+                        leadershipButton.SetActive(false);
+                        confirmButton.SetActive(false);
+                        endTurnButton.SetActive(false);
+                        cancelButton.SetActive(true);
+                        cancelButton.transform.position = ButtonPositionToVector(true, 0);
+                    }
                 }
                 else
                 {
-                    informationPanel.SetActive(true);
-                    moveButton.SetActive(false);
-                    attackButton.SetActive(false);
-                    leadershipButton.SetActive(false);
-                    confirmButton.SetActive(false);
-                    endTurnButton.SetActive(false);
-                    cancelButton.SetActive(true);
-                    cancelButton.transform.position = ButtonPositionToVector(true, 0);
+                    actionList = boardController.get_piece_actions(selected);
+                    if ((selectedBoard || TargetIsValidAttack(actionList, targetPiece)) || (selectedBoard && targetPiece))
+                    {
+                        informationPanel.SetActive(true);
+                        moveButton.SetActive(false);
+                        attackButton.SetActive(false);
+                        leadershipButton.SetActive(false);
+                        endTurnButton.SetActive(false);
+                        confirmButton.SetActive(true);
+                        confirmButton.transform.position = ButtonPositionToVector(true, 0);
+                        cancelButton.SetActive(true);
+                        cancelButton.transform.position = ButtonPositionToVector(true, 1);
+                    }
+                    else
+                    {
+                        informationPanel.SetActive(true);
+                        moveButton.SetActive(false);
+                        attackButton.SetActive(false);
+                        leadershipButton.SetActive(false);
+                        confirmButton.SetActive(false);
+                        endTurnButton.SetActive(false);
+                        cancelButton.SetActive(true);
+                        cancelButton.transform.position = ButtonPositionToVector(true, 0);
+                    }
                 }
+                
                 break;
 
             case UIState.EnemySelect:
@@ -341,7 +379,7 @@ public class UIController : MonoBehaviour
                     {
                         if (relevantTiles.Contains(objectHit.gameObject))
                         {
-                            if (targetPiece)
+                            if (targetPiece && selected.type != PieceType.Knight)
                             {
                                 targetPiece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
                                 targetPiece = null;
@@ -350,6 +388,8 @@ public class UIController : MonoBehaviour
                                 selectedBoard.GetComponent<Chess.Definitions.Tile>().Select();
                             selectedBoard = objectHit.gameObject;
                             selectedBoard.GetComponent<Chess.Definitions.Tile>().SelectMove();
+                            if (selected.type == PieceType.Knight)
+                                GetKnightActions();
                             UpdateUI();
                         }
                     }
@@ -357,7 +397,7 @@ public class UIController : MonoBehaviour
                     {
                         if (relevantPieces.Contains(objectHit.gameObject))
                         {
-                            if (selectedBoard)
+                            if (selectedBoard && selected.type != PieceType.Knight)
                             {
                                 selectedBoard.GetComponent<Chess.Definitions.Tile>().Select();
                                 selectedBoard = null;
@@ -366,6 +406,8 @@ public class UIController : MonoBehaviour
                                 targetPiece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
                             targetPiece = objectHit.gameObject;
                             targetPiece.GetComponent<GamePieceBase>().Select(HighlightColors[3]);
+                            if (selected.type == PieceType.Knight)
+                                GetKnightActions();
                             UpdateUI();
                         }
                     }
@@ -483,12 +525,18 @@ public class UIController : MonoBehaviour
     {
         if (uiStatus == UIState.PieceMoveAttack)
         {
-            if (selectedBoard || targetPiece)
+            if (selectedBoard && targetPiece && selected.type == PieceType.Knight)
             {
-                
+                boardController.execute_action(
+                        new Chess.Definitions.AttackMoveAction(
+                            selected,
+                            targetPiece.GetComponent<GamePieceBase>(),
+                            selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
+            }
+            else if (selectedBoard || targetPiece)
+            {  
                 if (selectedBoard)
                 {
-                    boardController.setPositions = false;
                     boardController.execute_action(
                         new Chess.Definitions.MoveAction(
                             selected,
@@ -497,42 +545,40 @@ public class UIController : MonoBehaviour
 
                 if (targetPiece)
                 {
-                    PieceType tempType = targetPiece.GetComponent<GamePieceBase>().type;
                     boardController.execute_action(
                         new Chess.Definitions.AttackAction(
                             selected,
                             targetPiece.GetComponent<GamePieceBase>()));
                 }
-
-                uiStatus = UIState.PieceMainSelect;
-                DeselectAll();
-                if (selected is CommanderPiece)
-                {
-                    CommanderPiece temp = (CommanderPiece)(selected);
-                    if (temp.energy == 0)
-                    {
-                        foreach (Chess.Piece.SoldierPiece soldier in temp.soldiers_)
-                        {
-                            soldier.Select(HighlightColors[4]);
-                        }
-                        temp.Select(HighlightColors[4]);
-                    }
-                }
-                else if (selected is SoldierPiece)
-                {
-                    SoldierPiece temp = (SoldierPiece)selected;
-                    if (temp.commander.energy == 0)
-                    {
-                        foreach (Chess.Piece.SoldierPiece soldier in temp.commander.soldiers_)
-                        {
-                            soldier.Select(HighlightColors[4]);
-                        }
-                        temp.commander.Select(HighlightColors[4]);
-                    }
-                }
-                selected.Select(HighlightColors[0]);
-                UpdateUI();
             }
+            uiStatus = UIState.PieceMainSelect;
+            DeselectAll();
+            if (selected is CommanderPiece)
+            {
+                CommanderPiece temp = (CommanderPiece)(selected);
+                if (temp.energy == 0)
+                {
+                    foreach (Chess.Piece.SoldierPiece soldier in temp.soldiers_)
+                    {
+                        soldier.Select(HighlightColors[4]);
+                    }
+                    temp.Select(HighlightColors[4]);
+                }
+            }
+            else if (selected is SoldierPiece)
+            {
+                SoldierPiece temp = (SoldierPiece)selected;
+                if (temp.commander.energy == 0)
+                {
+                    foreach (Chess.Piece.SoldierPiece soldier in temp.commander.soldiers_)
+                    {
+                        soldier.Select(HighlightColors[4]);
+                    }
+                    temp.commander.Select(HighlightColors[4]);
+                }
+            }
+            selected.Select(HighlightColors[0]);
+            UpdateUI();
         }
     }
 
@@ -583,12 +629,12 @@ public class UIController : MonoBehaviour
 
     public void RestartButton()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("GameScene");
     }
 
     public void MainMenuButton()
     {
-        SceneManager.LoadScene(1);
+        SceneManager.LoadScene("MenuScene");
     }
 
     public void ExitProgramButton()
@@ -597,6 +643,69 @@ public class UIController : MonoBehaviour
         // Debug.Log("Game Ended through ingame menu");
     }
 
+    public void GetKnightActions()
+    {
+        // Reselt selection highlights
+        foreach (GameObject piece in relevantPieces)
+        {
+            if (PieceHasTurn(piece.GetComponent<GamePieceBase>()) > 0)
+                piece.GetComponent<GamePieceBase>().Deselect();
+            else
+                piece.GetComponent<GamePieceBase>().Select(HighlightColors[4]);
+        }
+        foreach (GameObject tile in relevantTiles)
+        {
+            tile.GetComponent<Chess.Definitions.Tile>().Deselect();
+        }
+        DestroyFloatingText();
+        relevantPieces.Clear();
+        relevantTiles.Clear();
+
+        actionList = boardController.get_piece_actions(selected);
+        if (actionList != null)
+        {
+            if(selectedBoard)
+            {
+                relevantPieces = GetKnightTargets(actionList, selectedBoard);
+                foreach (GameObject piece in relevantPieces)
+                {
+                    piece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
+                }
+            }
+            else
+            {
+                relevantPieces = GetRelevantMoveAttack(actionList);
+                foreach (GameObject piece in relevantPieces)
+                {
+                    piece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
+                }
+            }
+            if (targetPiece)
+            {
+                relevantTiles = GetKnightSquares(actionList, targetPiece);
+                foreach (GameObject tile in relevantTiles)
+                {
+                    tile.GetComponent<Chess.Definitions.Tile>().Select();
+                }
+            }
+            else
+            {
+                relevantTiles = GetRelevantMoveTiles(actionList);
+                foreach (GameObject tile in relevantTiles)
+                {
+                    tile.GetComponent<Chess.Definitions.Tile>().Select();
+                }
+            }
+        }
+        if(targetPiece)
+            targetPiece.GetComponent<GamePieceBase>().Select(HighlightColors[3]);
+        if(selectedBoard)
+            selectedBoard.GetComponent<Chess.Definitions.Tile>().SelectMove();
+
+        if (probabilityCheck.isOn)
+            CreateFloatingProbability();
+        UpdateUI();
+    }
 
     public void HandleCombatResult(Chess.Definitions.Result result, GamePieceBase victor)
     {
@@ -679,6 +788,11 @@ public class UIController : MonoBehaviour
         Settings.playAnimations = animationPlay.isOn;
     }
 
+    public void AIEnabledToggleChanged()
+    {
+        Settings.aiEnabled = !aiPause.isOn;
+    }
+
     public void SpeedSliderChanged()
     {
         Settings.aiDelaySlider = aiMoveSpeed.value;
@@ -717,6 +831,68 @@ public class UIController : MonoBehaviour
                 }
             }
             return targets;
+        }
+        return null;
+    }
+
+    // True if selected target is in standard attack lists. Used for Knights.
+    private bool TargetIsValidAttack(HashSet<Chess.Definitions.Action> localActions, GameObject target)
+    {
+        if (!target)
+            return false;
+        if (selected && localActions != null)
+        {
+            foreach (Chess.Definitions.Action action in localActions)
+            {
+                if (action is Chess.Definitions.AttackAction && !(action is Chess.Definitions.AttackMoveAction))
+                {
+                    Chess.Definitions.AttackAction attack = (Chess.Definitions.AttackAction)action;
+                    if (attack.target == target.GetComponent<GamePieceBase>())
+                        return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    // Gets night targets assuming a tile
+    private List<GameObject> GetKnightTargets(HashSet<Chess.Definitions.Action> localActions, GameObject tile)
+    {
+        if (selected && localActions != null)
+        {
+            List<GameObject> targets = new List<GameObject>();
+            foreach (Chess.Definitions.Action action in localActions)
+            {
+                if (action is Chess.Definitions.AttackMoveAction)
+                {
+                    Chess.Definitions.AttackMoveAction attack = (Chess.Definitions.AttackMoveAction)action;
+                    if(boardController.board_tiles[attack.failsafe].gameObject ==  tile)
+                         targets.Add(attack.target.gameObject);
+                }
+            }
+            return targets;
+        }
+        return null;
+    }
+
+    // Gets valid tiles for a knight move attack on a target
+    private List<GameObject> GetKnightSquares(HashSet<Chess.Definitions.Action> localActions, GameObject target)
+    {
+        if (selected)
+        {
+            List<GameObject> tiles = new List<GameObject>();
+            foreach (Chess.Definitions.Action action in localActions)
+            {
+                if (action is Chess.Definitions.AttackMoveAction)
+                {
+                    Chess.Definitions.AttackMoveAction temp = (Chess.Definitions.AttackMoveAction)action;
+                    if(temp.target == target.GetComponent<GamePieceBase>())
+                         tiles.Add(boardController.board_tiles[temp.failsafe].gameObject);
+                }
+
+            }
+            return tiles;
         }
         return null;
     }
@@ -809,5 +985,10 @@ public class UIController : MonoBehaviour
             return !Settings.player1AI;
         else
             return !Settings.player2AI;
+    }
+
+    public void ForceUIUpdate()
+    {
+        UpdateUI();
     }
 }
