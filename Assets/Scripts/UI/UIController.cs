@@ -101,7 +101,7 @@ public class UIController : MonoBehaviour
         boardController = GameObject.FindGameObjectWithTag("GameController").GetComponent<Chess.BoardController>();
         probabilityCheck.isOn = Settings.dynamicProbabilities;
         aiMoveSpeed.value = Settings.aiDelaySlider;
-        Debug.Log(Settings.dynamicProbabilities.ToString());
+        // Debug.Log(Settings.dynamicProbabilities.ToString());
         animationPlay.isOn = Settings.playAnimations;
         UpdateUI();
     }
@@ -253,7 +253,7 @@ public class UIController : MonoBehaviour
                 break;
 
             default:
-                Debug.LogError("Unrecognized UI State");
+                // Debug.LogError("Unrecognized UI State");
                 break;
         }
 
@@ -414,7 +414,7 @@ public class UIController : MonoBehaviour
             return temp.commander.GetComponent<CommanderPiece>().energy;
         }
 
-        Debug.LogError("seleteced piece is nothing?");
+        // Debug.LogError("seleteced piece is nothing?");
         return 0;
 
 
@@ -585,7 +585,7 @@ public class UIController : MonoBehaviour
     public void ExitProgramButton()
     {
         Application.Quit();
-        Debug.Log("Game Ended through ingame menu");
+        // Debug.Log("Game Ended through ingame menu");
     }
 
 
@@ -752,7 +752,7 @@ public class UIController : MonoBehaviour
             }
             else
             {
-                Debug.LogError("A Piece is currently neither a commander nor a soldier!");
+                // Debug.LogError("A Piece is currently neither a commander nor a soldier!");
             }
 
             return relatedPieces;

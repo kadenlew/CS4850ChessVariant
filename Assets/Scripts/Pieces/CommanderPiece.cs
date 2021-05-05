@@ -110,7 +110,7 @@ public abstract class CommanderPiece : GamePieceBase {
     }
 
     public void remove_soldier(Piece.SoldierPiece soldier) {
-        Debug.Log($"{this}: killing soldier {soldier}");
+        // Debug.Log($"{this}: killing soldier {soldier}");
 
         // we no longer have this soldier
         soldiers_.Remove(

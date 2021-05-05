@@ -13,7 +13,7 @@ public class XMLHelper
         XmlSerializer serializer = new XmlSerializer(obj.GetType());   
         StreamWriter writer = new StreamWriter(path);
 
-        Debug.Log($"{Path.GetFullPath(path)}");
+        // Debug.Log($"{Path.GetFullPath(path)}");
 
         // write to the file 
         serializer.Serialize(writer.BaseStream, obj);

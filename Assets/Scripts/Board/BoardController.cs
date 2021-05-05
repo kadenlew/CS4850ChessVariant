@@ -146,9 +146,7 @@ public class BoardController : MonoBehaviour
 
     public void end_game(bool is_white) {
         // do_update = false;
-        Debug.Log($"{(is_white ? "Black" : "White")} Wins!");
-        Debug.Log($"Reward: [{Piece.AI.AIActionEval.min_reward}, {Piece.AI.AIActionEval.max_reward}]");
-        Debug.Log($"risk: [{Piece.AI.AIActionEval.min_risk}, {Piece.AI.AIActionEval.max_risk}]");
+        // Debug.Log($"{(is_white ? "Black" : "White")} Wins!");
 
         pauseAI = true;
         do_update = false;
@@ -163,10 +161,10 @@ public class BoardController : MonoBehaviour
         // check if this is a valid action
         if (!possible_actions.contains_value(action))
         {
-            Debug.Log("Invalid Action!");
+            // Debug.Log("Invalid Action!");
             return new Definitions.InvalidResult();
         }
-        Debug.Log($"{action}");
+        // Debug.Log($"{action}");
 
         // prepare the controller for animation
         this.setPositions = false;
@@ -174,7 +172,7 @@ public class BoardController : MonoBehaviour
 
         // execute the action
         var result = action.Execute(this);
-        Debug.Log($"{result}");
+        // Debug.Log($"{result}");
 
         // store out ending position to send off the the animator
         var end_position = compute_transform(action.agent.position);

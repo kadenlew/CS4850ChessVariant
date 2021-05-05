@@ -97,7 +97,7 @@ public class PlayerBase {
     }
 
     public bool remove_commander(Piece.CommanderPiece commander) {
-        Debug.Log($"{(is_white ? "WHITE" : "BLACK")}: killing commander {commander}");
+        // Debug.Log($"{(is_white ? "WHITE" : "BLACK")}: killing commander {commander}");
 
         // are we trying to kill our leader?
         if(ReferenceEquals(commander, commanders_[0]))
@@ -109,7 +109,7 @@ public class PlayerBase {
 
         // copy the soldiers to this players lead commander
         foreach(var soldier in commander.soldiers_) {
-            Debug.Log($"{this}: transfering soldier {soldier} to {commanders_[0]}");
+            // Debug.Log($"{this}: transfering soldier {soldier} to {commanders_[0]}");
             commanders_[0].soldiers_.Add(
                 soldier
             );

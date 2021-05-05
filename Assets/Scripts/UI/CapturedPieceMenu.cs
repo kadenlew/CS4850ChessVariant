@@ -137,7 +137,7 @@ public class CapturedPieceMenu : MonoBehaviour
                 return pieceValues.PawnValue;
 
             default:
-                Debug.LogWarning("Piece of type " + piece + " not defined in materiel table");
+                // Debug.LogWarning("Piece of type " + piece + " not defined in materiel table");
                 return 0;
         }
         
