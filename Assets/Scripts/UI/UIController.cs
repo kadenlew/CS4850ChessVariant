@@ -242,6 +242,7 @@ public class UIController : MonoBehaviour
                 else
                 {
                     actionList = boardController.get_piece_actions(selected);
+                    Debug.Log(TargetIsValidAttack(actionList, targetPiece));
                     if ((selectedBoard || TargetIsValidAttack(actionList, targetPiece)) || (selectedBoard && targetPiece))
                     {
                         informationPanel.SetActive(true);
@@ -522,11 +523,36 @@ public class UIController : MonoBehaviour
         {
             if (selectedBoard && targetPiece && selected.type == PieceType.Knight)
             {
-                boardController.execute_action(
-                        new Chess.Definitions.AttackMoveAction(
+                // Begin shit code
+                actionList = boardController.get_piece_actions(selected);
+                Chess.Definitions.AttackMoveAction tempAction = new Chess.Definitions.AttackMoveAction(
                             selected,
                             targetPiece.GetComponent<GamePieceBase>(),
-                            selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
+                            selectedBoard.GetComponent<Chess.Definitions.Tile>().position);
+                if (selected && actionList != null)
+                {
+                    foreach (Chess.Definitions.Action action in actionList)
+                    {
+                        if (action is Chess.Definitions.AttackMoveAction)
+                        {
+                            Chess.Definitions.AttackMoveAction attack = (Chess.Definitions.AttackMoveAction)action;
+                            if (boardController.board_tiles[attack.failsafe].gameObject == selectedBoard && attack.target == targetPiece.GetComponent<GamePieceBase>())
+                            {
+                                tempAction = attack;
+                                break;
+                            }
+                        }
+                    }
+                }
+                boardController.execute_action(tempAction);
+                // end shit code
+
+                // I would like to use this but I can't
+                //boardController.execute_action(
+                //        new Chess.Definitions.AttackMoveAction(
+                //            selected,
+                //            targetPiece.GetComponent<GamePieceBase>(),
+                //            selectedBoard.GetComponent<Chess.Definitions.Tile>().position));
             }
             else if (selectedBoard || targetPiece)
             {  
@@ -835,7 +861,7 @@ public class UIController : MonoBehaviour
         {
             foreach (Chess.Definitions.Action action in localActions)
             {
-                if (action is Chess.Definitions.AttackAction)
+                if (action is Chess.Definitions.AttackAction && !(action is Chess.Definitions.AttackMoveAction))
                 {
                     Chess.Definitions.AttackAction attack = (Chess.Definitions.AttackAction)action;
                     if (attack.target == target.GetComponent<GamePieceBase>())
