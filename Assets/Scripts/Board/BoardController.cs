@@ -295,6 +295,8 @@ public class BoardController : MonoBehaviour
                         // given the piece's position in board space
                         piece.position
                     );
+                        if (piece.is_white)
+                            piece.gameObject.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
 
                 }
 
