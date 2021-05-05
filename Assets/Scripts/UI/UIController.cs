@@ -97,7 +97,21 @@ public class UIController : MonoBehaviour
 
     // Animation controller
     public BezierMovement bezierMover;
-    
+
+    // End screen UI
+    public GameObject endgameScreen;
+
+    public Text whiteKillerType;
+    public Text whiteKillerNumber;
+    public Text blackKillerType;
+    public Text blackKillerNumber;
+    public Text whiteSurvivorType;
+    public Text whiteSurvivorNumber;
+    public Text blackSurvivorType;
+    public Text blackSurvivorNumber;
+
+    private bool endScreenToggle = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -713,6 +727,12 @@ public class UIController : MonoBehaviour
         // Debug.Log("Game Ended through ingame menu");
     }
 
+    public void EndScreenToggle()
+    {
+        endScreenToggle = !endScreenToggle;
+        endgameScreen.SetActive(endScreenToggle);
+    }
+
     public void GetKnightActions()
     {
         // Reselt selection highlights
@@ -1075,6 +1095,7 @@ public class UIController : MonoBehaviour
         catch (KeyNotFoundException)
         {
             pieceVeterancy.Add(piece, new Veterancy(piece));
+            pieceVeterancy[piece].isWhite = piece.is_white;
             return pieceVeterancy[piece];
         }
 
@@ -1100,5 +1121,97 @@ public class UIController : MonoBehaviour
     public void ForceUIUpdate()
     {
         UpdateUI();
+    }
+
+    public void EndGameUI()
+    {
+        uint maxStat = 0;
+        Veterancy tempVeterancy = null;
+
+        // White Kills
+        foreach (KeyValuePair<GamePieceBase, Veterancy> entry in pieceVeterancy)
+        {
+            if(entry.Value.isWhite && entry.Value.kills > maxStat)
+            {
+                maxStat = entry.Value.kills;
+                tempVeterancy = entry.Value;
+            }
+        }
+        if (maxStat > 0)
+        {
+            whiteKillerType.text = tempVeterancy.pieceType.ToString();
+            whiteKillerNumber.text = tempVeterancy.kills.ToString();
+        }
+        else
+        {
+            whiteKillerType.text = "";
+            whiteKillerNumber.text = "";
+        }
+
+        // Black Kills
+        maxStat = 0;
+        tempVeterancy = null;
+        foreach (KeyValuePair<GamePieceBase, Veterancy> entry in pieceVeterancy)
+        {
+            if (!entry.Value.isWhite && entry.Value.kills > maxStat)
+            {
+                maxStat = entry.Value.kills;
+                tempVeterancy = entry.Value;
+            }
+        }
+        if (maxStat > 0)
+        {
+            blackKillerType.text = tempVeterancy.pieceType.ToString();
+            blackKillerNumber.text = tempVeterancy.kills.ToString();
+        }
+        else
+        {
+            blackKillerType.text = "";
+            blackKillerNumber.text = "";
+        }
+
+        // White Survival
+        maxStat = 0;
+        tempVeterancy = null;
+        foreach (KeyValuePair<GamePieceBase, Veterancy> entry in pieceVeterancy)
+        {
+            if (entry.Value.isWhite && entry.Value.survival > maxStat)
+            {
+                maxStat = entry.Value.survival;
+                tempVeterancy = entry.Value;
+            }
+        }
+        if (maxStat > 0)
+        {
+            whiteSurvivorType.text = tempVeterancy.pieceType.ToString();
+            whiteSurvivorNumber.text = tempVeterancy.survival.ToString();
+        }
+        else
+        {
+            whiteSurvivorType.text = "";
+            whiteSurvivorNumber.text = "";
+        }
+
+        // Black Survival
+        maxStat = 0;
+        tempVeterancy = null;
+        foreach (KeyValuePair<GamePieceBase, Veterancy> entry in pieceVeterancy)
+        {
+            if (!entry.Value.isWhite && entry.Value.survival > maxStat)
+            {
+                maxStat = entry.Value.survival;
+                tempVeterancy = entry.Value;
+            }
+        }
+        if (maxStat > 0)
+        {
+            blackSurvivorType.text = tempVeterancy.pieceType.ToString();
+            blackSurvivorNumber.text = tempVeterancy.survival.ToString();
+        }
+        else
+        {
+            blackSurvivorType.text = "";
+            blackSurvivorNumber.text = "";
+        }
     }
 }

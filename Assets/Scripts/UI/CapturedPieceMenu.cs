@@ -186,4 +186,9 @@ public class CapturedPieceMenu : MonoBehaviour
             AdvantageB.fillAmount = Mathf.Clamp(0.5f + advantageSize / 2, 0.1f, 0.9f);
         }
     }
+
+    public void PushEndGameNumbers()
+    {
+
+    }
 }

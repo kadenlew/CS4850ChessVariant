@@ -11,6 +11,7 @@ namespace Chess
             public PieceType pieceType;
             public uint kills = 0;
             public uint survival = 0;
+            public bool isWhite = true;
 
             public Veterancy(GamePieceBase piece)
             {
