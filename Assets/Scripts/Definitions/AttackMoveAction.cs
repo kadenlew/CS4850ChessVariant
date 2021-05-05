@@ -59,7 +59,7 @@ public class AttackMoveAction : AttackAction {
     public static bool operator== (AttackMoveAction a, AttackMoveAction b) => (
         ReferenceEquals(a.agent, b.agent) &&
         ReferenceEquals(a.target, b.target) &&
-        ReferenceEquals(a.failsafe, b.failsafe)
+        a.failsafe == b.failsafe
     );
     
     public static bool operator!= (AttackMoveAction a, AttackMoveAction b) => (
