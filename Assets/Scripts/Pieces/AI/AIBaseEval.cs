@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
+using UnityEngine.Profiling;
+
 using System.Linq;
 
 using Chess.AI;
@@ -16,12 +18,6 @@ namespace AI
 
 class AIActionEval : MonoBehaviour
 {
-    public static double min_risk = double.MaxValue;
-    public static double max_risk = double.MinValue;
-
-    public static double min_reward = double.MaxValue;
-    public static double max_reward = double.MinValue;
-
     protected Piece.GamePieceBase piece_ref { get; set; }
 
     protected FuzzyController logic_controller { get; set; }
@@ -57,6 +53,8 @@ class AIActionEval : MonoBehaviour
         Definitions.Action best_action = null;
         double best_desireability = double.MinValue;
 
+        Profiler.BeginSample("AI_Eval");        
+
         // get the actions we need to evaluate for this piece  
         HashSet<Definitions.Action> possible_actions;
         if(database.get_actions(piece_ref, out possible_actions))
@@ -70,14 +68,6 @@ class AIActionEval : MonoBehaviour
                 logic_controller.set_input("risk", risk);
 
                 double desireability = logic_controller.get_output();
-                if(reward < min_reward)
-                    min_reward = reward;
-                if(reward > max_reward)
-                    max_reward = reward;
-                if(risk < min_risk)
-                    min_risk = risk;
-                if(risk > max_risk)
-                    max_risk = risk;
 
                 // Debug.Log($"Action: {action} | Risk {risk} | Reward {reward} | Desire {desireability}");
 
@@ -86,25 +76,18 @@ class AIActionEval : MonoBehaviour
                 {
                     best_desireability = desireability;
                     best_action = action;
-
-                    Debug.Log("===========================================");
-                    Debug.Log($"{action}");
-                    logic_controller.get_output(true);
-                    Debug.Log("===========================================");
                 }
                 if(desireability == best_desireability)
                 {
                     if(Random.Range(0f, 2f) >= 1f)
                     {
                         best_action = action;
-                        Debug.Log("===========================================");
-                        Debug.Log($"{action}");
-                        logic_controller.get_output(true);
-                        Debug.Log("===========================================");
                     }
                 }
             }
         }
+
+        Profiler.EndSample();
 
         // there are no actions this piece can take, return
         return (best_action, best_desireability);
@@ -115,21 +98,21 @@ class AIActionEval : MonoBehaviour
     }
 
     private string get_xml_file_path(int game_state) {
-        string path = Path.Combine("Assets/ai_rules", piece_ref.type.ToString());
+        string path = Path.Combine("ai_rules", piece_ref.type.ToString());
 
         switch (game_state) {
             case 0:
-                path = Path.Combine(path, "early.xml");
+                path = Path.Combine(path, "early");
                 break;
             case 1:
-                path = Path.Combine(path, "mid.xml");
+                path = Path.Combine(path, "mid");
                 break;
             case 2:
-                path = Path.Combine(path, "late.xml");
+                path = Path.Combine(path, "late");
                 break;
         }
 
-        return path;
+        return Resources.Load<TextAsset>(path).text;
     }
 
 }

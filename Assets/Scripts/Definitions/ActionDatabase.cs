@@ -32,9 +32,15 @@ public class ActionDatabase {
     }     
 
     public void clear() {
-        move_to_action_map.Clear();
-        agent_action_map.Clear();
-        defending_action_map.Clear();
+        foreach(var kv in move_to_action_map)
+            kv.Value.Clear();
+        foreach(var kv in agent_action_map)
+            kv.Value.Clear();
+        foreach(var kv in defending_action_map)
+            kv.Value.Clear();
+        foreach(var kv in hypothetical_moves)
+            kv.Value.Clear();
+
         total_action_set.Clear();
     }
 

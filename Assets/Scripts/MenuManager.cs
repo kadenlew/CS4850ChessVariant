@@ -46,7 +46,7 @@ public class MenuManager : MonoBehaviour
 
     public void OnQuit() {
         Application.Quit();
-        Debug.Log("Quit");
+        // Debug.Log("Quit");
     }
 
     public void OnBack()

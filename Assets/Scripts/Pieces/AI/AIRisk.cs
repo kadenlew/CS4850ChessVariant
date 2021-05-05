@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Chess
 {
@@ -68,12 +69,16 @@ public class AIRisk {
 
         // get all of the moves that currently target this piece if it does not move
         HashSet<Definitions.Action> current_risky_actions;
+        Profiler.BeginSample("All_Attacks_Targeting");
         if(database.all_attacks_targeting(piece_ref, out current_risky_actions))
         {
+            Profiler.EndSample();
             // for each possible attack, find the one with the highest chance of killing me
             foreach(Definitions.AttackAction attack in current_risky_actions) {
                 // what is the chance that this attack succeeds
                 // note: Agent is the piece attacking OUR agent in this instance
+                Profiler.BeginSample("Asses_Risk");
+
                 double risk = Definitions.AttackAction.get_roll_prob(attack.agent.type, attack.target.type); 
 
                 // determine which commander is commanding this agent
@@ -87,6 +92,8 @@ public class AIRisk {
                 else {
                     total_risk[commander] = risk;
                 }
+
+                Profiler.EndSample();
             } 
         }
 

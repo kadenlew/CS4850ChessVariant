@@ -53,7 +53,7 @@ public class DiceController : MonoBehaviour
     {
         if(roll > 6 || roll < 1)
         {
-            Debug.LogWarning("Dice cannot roll a " + roll.ToString());
+            // Debug.LogWarning("Dice cannot roll a " + roll.ToString());
             return;
         }
         transform.rotation = Quaternion.Euler(new Vector3(0f, Random.Range(-180f, 180f), 0f));

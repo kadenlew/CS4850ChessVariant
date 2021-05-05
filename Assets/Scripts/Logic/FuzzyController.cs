@@ -43,7 +43,7 @@ class FuzzyController {
 
         // evaluate each rule
         foreach(FuzzyRule rule in rule_base.rules) {
-            if(do_log) Debug.Log($"{rule}"); 
+            // if(do_log) Debug.Log($"{rule}"); 
             rule.eval();
         }
 
@@ -111,7 +111,7 @@ class FuzzyController {
         // associate ref with ft_set
         if(ft is FT_Set) {
             (ft as FT_Set).surrogate = find_set_by_name((ft as FT_Set).surrogate_name);
-            Debug.Log($"Associated set {(ft as FT_Set).surrogate_name}.");
+            // Debug.Log($"Associated set {(ft as FT_Set).surrogate_name}.");
         }
     }
 

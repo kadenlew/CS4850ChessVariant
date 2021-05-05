@@ -13,7 +13,7 @@ public class XMLHelper
         XmlSerializer serializer = new XmlSerializer(obj.GetType());   
         StreamWriter writer = new StreamWriter(path);
 
-        Debug.Log($"{Path.GetFullPath(path)}");
+        // Debug.Log($"{Path.GetFullPath(path)}");
 
         // write to the file 
         serializer.Serialize(writer.BaseStream, obj);
@@ -22,13 +22,13 @@ public class XMLHelper
         writer.Close();
     }
 
-    public static T Deserialize<T>(string path) {
+    public static T Deserialize<T>(string file_contents) {
         // open the streams and configure the serialization for this type of object
         XmlSerializer serializer = new XmlSerializer(typeof(T));
-        StreamReader reader = new StreamReader(path);
+        StringReader reader = new StringReader(file_contents);
 
         // deserialize and close 
-        T deserialized = (T) serializer.Deserialize(reader.BaseStream);
+        T deserialized = (T) serializer.Deserialize(reader);
         reader.Close();
 
         // return new object
