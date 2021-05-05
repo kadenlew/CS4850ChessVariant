@@ -495,7 +495,7 @@ public class UIController : MonoBehaviour
         if (piece is SoldierPiece)
         {
             SoldierPiece temp = (SoldierPiece)piece;
-            return temp.commander.GetComponent<CommanderPiece>().energy;
+            return temp.get_active_commander().GetComponent<CommanderPiece>().energy;
         }
 
         // Debug.LogError("seleteced piece is nothing?");
@@ -621,13 +621,13 @@ public class UIController : MonoBehaviour
             else if (selected is SoldierPiece)
             {
                 SoldierPiece temp = (SoldierPiece)selected;
-                if (temp.commander.energy == 0)
+                if (temp.get_active_commander().energy == 0)
                 {
-                    foreach (Chess.Piece.SoldierPiece soldier in temp.commander.soldiers_)
+                    foreach (Chess.Piece.SoldierPiece soldier in temp.get_active_commander().soldiers_)
                     {
                         soldier.Select(HighlightColors[4]);
                     }
-                    temp.commander.Select(HighlightColors[4]);
+                    temp.get_active_commander().Select(HighlightColors[4]);
                 }
             }
             selected.Select(HighlightColors[0]);
@@ -639,13 +639,13 @@ public class UIController : MonoBehaviour
             temp.set_temp_commander(targetPiece.GetComponent<CommanderPiece>());
             uiStatus = UIState.PieceMainSelect;
             DeselectAll();
-            if (temp.commander.energy == 0)
+            if (temp.get_active_commander().energy == 0)
             {
-                foreach (Chess.Piece.SoldierPiece soldier in temp.commander.soldiers_)
+                foreach (Chess.Piece.SoldierPiece soldier in temp.get_active_commander().soldiers_)
                 {
                     soldier.Select(HighlightColors[4]);
                 }
-                temp.commander.Select(HighlightColors[4]);
+                temp.get_active_commander().Select(HighlightColors[4]);
             }
             selected.Select(HighlightColors[0]);
             UpdateUI();
@@ -992,7 +992,7 @@ public class UIController : MonoBehaviour
             List<GameObject> relatedPieces = new List<GameObject>();
             if (selected.GetComponent<SoldierPiece>())
             {
-                if (selected.GetComponent<SoldierPiece>().commander.type == PieceType.King)
+                if (selected.GetComponent<SoldierPiece>().get_active_commander().type == PieceType.King)
                 {
                     List<CommanderPiece> tempList = boardController.get_player_leaders(boardController.is_white_turn);
                     foreach(GamePieceBase commander in tempList)
@@ -1002,7 +1002,7 @@ public class UIController : MonoBehaviour
                 }
                 else
                 {
-                    relatedPieces.Add(selected.GetComponent<SoldierPiece>().commander.gameObject);
+                    relatedPieces.Add(selected.GetComponent<SoldierPiece>().get_active_commander().gameObject);
                 }
             }
             else if(selected.GetComponent<CommanderPiece>())
