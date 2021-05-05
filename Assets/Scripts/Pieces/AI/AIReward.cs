@@ -13,7 +13,7 @@ public class AIReward {
         {
             // moves that move further are better
             Definitions.MoveAction move_action = action as Definitions.MoveAction;
-            return (move_action.target - move_action.agent.position).special_mag * 0.1;
+            return (move_action.target - move_action.agent.position).special_mag * 0.5;
         }
         else
         {

@@ -116,6 +116,11 @@ public class UIController : MonoBehaviour
             Cancel();
         }
 
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            MenuButton();
+        }
+
         if (Input.GetButtonDown("Jump") && confirmButton.activeSelf)
         {
             Confirm();
@@ -291,7 +296,7 @@ public class UIController : MonoBehaviour
                 break;
 
             default:
-                Debug.LogError("Unrecognized UI State");
+                // Debug.LogError("Unrecognized UI State");
                 break;
         }
 
@@ -456,7 +461,7 @@ public class UIController : MonoBehaviour
             return temp.commander.GetComponent<CommanderPiece>().energy;
         }
 
-        Debug.LogError("seleteced piece is nothing?");
+        // Debug.LogError("seleteced piece is nothing?");
         return 0;
 
 
@@ -615,6 +620,10 @@ public class UIController : MonoBehaviour
     public void MenuButton()
     {
         menuOpen = !menuOpen;
+        if (menuOpen)
+            Time.timeScale = 0f;
+        else
+            Time.timeScale = 1f;
         UpdateUI();
     }
 
@@ -631,7 +640,7 @@ public class UIController : MonoBehaviour
     public void ExitProgramButton()
     {
         Application.Quit();
-        Debug.Log("Game Ended through ingame menu");
+        // Debug.Log("Game Ended through ingame menu");
     }
 
     public void GetKnightActions()
@@ -928,7 +937,7 @@ public class UIController : MonoBehaviour
             }
             else
             {
-                Debug.LogError("A Piece is currently neither a commander nor a soldier!");
+                // Debug.LogError("A Piece is currently neither a commander nor a soldier!");
             }
 
             return relatedPieces;

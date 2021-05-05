@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Chess
 {
@@ -41,6 +42,8 @@ class AICommanderEval : AIActionEval
         Definitions.Action corp_action = null;
         double desireability = double.MinValue;
 
+        Profiler.BeginSample("Commander_AI_Eval"); 
+
         // ask each soldier what his best move is
         foreach(AIActionEval soldier_ai in soldier_AI) {
             var result = soldier_ai.eval(ref database);
@@ -57,6 +60,8 @@ class AICommanderEval : AIActionEval
             desireability = my_result.desireability;
             corp_action = my_result.action;
         }
+
+        Profiler.EndSample();
 
         // signal the best corp move
         return (corp_action, desireability);

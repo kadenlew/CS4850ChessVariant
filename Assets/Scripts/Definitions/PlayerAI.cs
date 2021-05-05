@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.Profiling;
 
 namespace Chess
 {
@@ -43,10 +44,14 @@ class PlayerAI : PlayerBase {
 
     public void update_rulebase(int turn) {
         foreach(Piece.AI.AICommanderEval commander in commander_AI) {
-            if(turn == 3)
+            if(turn == 3) {
                 commander.update_corp_rulebase(1);
-            else if(turn == 10)
+                Debug.Log("Turn 3!");
+            }
+            else if(turn == 10) {
                 commander.update_corp_rulebase(2);
+                Debug.Log("Turn 10!");
+            }
         }
     }
 
@@ -58,13 +63,15 @@ class PlayerAI : PlayerBase {
 
     IEnumerator TurnControlRoutine()
     {
-        Debug.Log($"Starting my turn!");
+        // Debug.Log($"Starting my turn!");
         
         // play each commander in any order (based on desireability scores)
         while(true) 
         {
+
             while (controller_ref.pauseAI) yield return new WaitForSeconds(0.1f);
-            Debug.Log("Evaluating my choices...");
+
+            Profiler.BeginSample("AI_One_Move");
 
             Definitions.Action player_action = null;
             double desireability = double.MinValue;
@@ -82,14 +89,16 @@ class PlayerAI : PlayerBase {
                 }
             }
 
+            Profiler.EndSample();
+
             watch.Stop();
-            Debug.Log($"Finished in {watch.ElapsedMilliseconds} ms.");
+            // Debug.Log($"Finished in {watch.ElapsedMilliseconds} ms.");
 
             // we have exhausted all of the moves, and must end turn
             if(player_action == null)
                 break;
 
-            Debug.Log($"With a score of {desireability}, im making this move! {player_action}");
+            // Debug.Log($"With a score of {desireability}, im making this move! {player_action}");
             yield return new WaitForSeconds(move_delay);
 
             // request that the board execute the action
@@ -98,10 +107,10 @@ class PlayerAI : PlayerBase {
             // wait until the animation has completed
             while(controller_ref.pauseAI) yield return new WaitForSeconds(0.1f);
 
-            Debug.Log($"I did my action, with a result of {result}");
+            // Debug.Log($"I did my action, with a result of {result}");
         }
 
-        Debug.Log("I've used all my moves, I'm ending my turn!");
+        // Debug.Log("I've used all my moves, I'm ending my turn!");
         controller_ref.end_turn();
     }
         

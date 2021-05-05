@@ -12,7 +12,8 @@ namespace Piece
 // does not require
 public abstract class SoldierPiece : GamePieceBase {
     // forwarding the abstract explore
-    public Piece.CommanderPiece commander { get; set; }
+    public Piece.CommanderPiece commander; 
+    public Piece.CommanderPiece temp_commander; 
 
     public void soldier_init(
         bool is_white, 
@@ -33,7 +34,22 @@ public abstract class SoldierPiece : GamePieceBase {
 
     public override bool expend_energy(uint cost)
     {
-        return commander.expend_energy(cost);
+        if(temp_commander != null)
+        {
+            bool success = temp_commander.expend_energy(cost);
+            temp_commander = null;
+            return success;
+        } else {
+           return commander.expend_energy(cost);
+        }
+    }
+
+    public void set_temp_commander(CommanderPiece temp) {
+        temp_commander = temp;
+    }
+
+    public CommanderPiece get_active_commander() {
+        return (temp_commander != null) ? temp_commander : commander;
     }
 
     public override void kill()

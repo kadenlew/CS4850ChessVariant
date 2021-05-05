@@ -72,17 +72,6 @@ public abstract class CommanderPiece : GamePieceBase {
     public void commander_explore(ref Definitions.ActionDatabase results) {
         // only search if we haven't moved our corp yet
         if(energy <= 0) {
-            // foreach(var soldier in soldiers_)
-            // {
-            //     soldier.GetComponent<GamePieceBase>().Select(
-            //         new Color(1f, 0f, 0f)
-            //     );
-            // }
-
-            // this.Select(
-            //     new Color(1f, 0f, 0f)
-            // );
- 
             return;
         }
 
@@ -121,7 +110,7 @@ public abstract class CommanderPiece : GamePieceBase {
     }
 
     public void remove_soldier(Piece.SoldierPiece soldier) {
-        Debug.Log($"{this}: killing soldier {soldier}");
+        // Debug.Log($"{this}: killing soldier {soldier}");
 
         // we no longer have this soldier
         soldiers_.Remove(
