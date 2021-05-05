@@ -176,7 +176,7 @@ public class BoardController : MonoBehaviour
     public Definitions.Result execute_action(Definitions.Action action)
     {
         // check if this is a valid action
-        if (!possible_actions.contains_value(action))
+        if (!possible_actions.contains_value(action) || gameEnded)
         {
             // Debug.Log("Invalid Action!");
             return new Definitions.InvalidResult();
