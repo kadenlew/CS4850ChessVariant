@@ -19,12 +19,12 @@ public class BoardController : MonoBehaviour
 
     public Definitions.PrefabCollection prefabs;
 
-    protected List<Control.PlayerBase> players_;
+    protected List<Control.PlayerBase> players_ = new List<PlayerBase>();
 
-    public Definitions.ActionDatabase possible_actions { get; protected set; }
+    public Definitions.ActionDatabase possible_actions { get; protected set; } = new Definitions.ActionDatabase();
 
-    public Dictionary<Definitions.BoardPosition, Definitions.Tile> board_tiles { get; protected set; }
-    public Dictionary<Definitions.BoardPosition, Piece.GamePieceBase> board_lookup { get; protected set; }
+    public Dictionary<Definitions.BoardPosition, Definitions.Tile> board_tiles { get; protected set; } = new Dictionary<Definitions.BoardPosition, Definitions.Tile>();
+    public Dictionary<Definitions.BoardPosition, Piece.GamePieceBase> board_lookup { get; protected set; } = new Dictionary<Definitions.BoardPosition, GamePieceBase>();
 
         public GameObject arrowProjectile;
         private GameObject activeProjectile;
@@ -52,9 +52,9 @@ public class BoardController : MonoBehaviour
 
             endgameScreen.SetActive(false);
         // reserve storage structures
-        players_ = new List<Control.PlayerBase>(2);
-        board_lookup = new Dictionary<Definitions.BoardPosition, Piece.GamePieceBase>();
-        possible_actions = new Definitions.ActionDatabase();
+        // players_ = new List<Control.PlayerBase>(2);
+        // board_lookup = new Dictionary<Definitions.BoardPosition, Piece.GamePieceBase>();
+        // possible_actions = new Definitions.ActionDatabase();
 
             if(Settings.player1AI)
         players_.Add(
@@ -338,7 +338,7 @@ public class BoardController : MonoBehaviour
 
     private void InitializeBoard()
     {
-        board_tiles = new Dictionary<Definitions.BoardPosition, Definitions.Tile>();
+        // board_tiles = new Dictionary<Definitions.BoardPosition, Definitions.Tile>();
         for (int i = 1; i <= dimensions; i++)
         {
             for (int k = 1; k <= dimensions; k++)
