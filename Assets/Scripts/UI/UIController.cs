@@ -82,6 +82,9 @@ public class UIController : MonoBehaviour
     private List<HoverUI> floatingText = new List<HoverUI>();
     public GameObject floatingTextPrefab;
 
+    private HoverUI DiceHover;
+    public Transform DiceTarget;
+
     // Settings gizmos
     private bool menuOpen = false;
     public GameObject menuPanel;
@@ -532,7 +535,7 @@ public class UIController : MonoBehaviour
             if(selected is SoldierPiece)
             {
                 SoldierPiece selectedSoldier = (SoldierPiece)selected;
-                if(piece.GetComponent<CommanderPiece>() == selectedSoldier.commander)
+                if(piece.GetComponent<CommanderPiece>() == selectedSoldier.get_active_commander())
                 {
                     piece.GetComponent<GamePieceBase>().Select(HighlightColors[2]);
                 }
@@ -871,6 +874,26 @@ public class UIController : MonoBehaviour
             aiMoveSpeedText.text += (" Seconds");
     }
 
+    public void DiceModifierText(int modifier)
+    {
+        Debug.Log(modifier);
+        if (modifier == 0 && DiceHover)
+            Destroy(DiceHover.gameObject);
+        if (modifier != 0)
+        {
+            if (!DiceHover)
+            {
+                GameObject text = Instantiate(floatingTextPrefab, transform);
+                DiceHover = text.GetComponent<HoverUI>();
+            }
+
+            DiceHover.SetText(modifier.ToString());
+            DiceHover.SetColor((modifier > 0) ? Color.green : Color.red);
+            DiceHover.dynamic = DiceTarget;
+            DiceHover.adapt = true;
+        }
+    }
+
     // Creates string of the probability
     private string WinProbability(PieceType attacker, PieceType defender)
     {
@@ -995,8 +1018,9 @@ public class UIController : MonoBehaviour
                 if (selected.GetComponent<SoldierPiece>().get_active_commander().type == PieceType.King)
                 {
                     List<CommanderPiece> tempList = boardController.get_player_leaders(boardController.is_white_turn);
-                    foreach(GamePieceBase commander in tempList)
+                    foreach(CommanderPiece commander in tempList)
                     {
+                        if (commander.energy > 0) 
                         relatedPieces.Add(commander.gameObject);
                     }
                 }

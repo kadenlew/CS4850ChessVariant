@@ -156,9 +156,6 @@ public class BoardController : MonoBehaviour
     }
 
     public void end_game(bool is_white) {
-        // do_update = false;
-        // Debug.Log($"{(is_white ? "Black" : "White")} Wins!");
-
         pauseAI = true;
         do_update = false;
         setPositions = false;
@@ -199,8 +196,9 @@ public class BoardController : MonoBehaviour
         {
             this.pauseAI = true;
             Definitions.AttackResult temp = (Definitions.AttackResult)result;
-            diceController.RollDice(temp.roll_result);
-                if(action.agent.type == PieceType.Rook)
+            diceController.RollDice(temp.roll_result - temp.roll_modifer);
+                UIController.DiceModifierText(temp.roll_modifer);
+                if (action.agent.type == PieceType.Rook)
                 {
                     activeProjectile = Instantiate(arrowProjectile, start_position + new Vector3(0,0,pieceSize/2), Quaternion.Euler(0, 0, 0));
                     bezierMover.ConfigureBezier(start_position + new Vector3(0, pieceSize / 2, 0), attackTarget + new Vector3(0, pieceSize / 2, 0));
