@@ -14,7 +14,7 @@
         <left_operand xsi:type="Set" name="low_risk" />
         <right_operand xsi:type="Set" name="medium_reward" />
       </condition>
-      <result name="medium_desire" />
+      <result name="low_desire" />
     </FuzzyRule>
     <FuzzyRule>
       <condition xsi:type="And">
@@ -37,14 +37,14 @@
         <left_operand xsi:type="Set" name="medium_risk" />
         <right_operand xsi:type="Set" name="medium_reward" />
       </condition>
-      <result name="medium_desire" />
+      <result name="low_desire" />
     </FuzzyRule>
     <FuzzyRule>
       <condition xsi:type="And">
         <left_operand xsi:type="Set" name="medium_risk" />
         <right_operand xsi:type="Set" name="high_reward" />
       </condition>
-      <result name="medium_desire" />
+      <result name="low_desire" />
     </FuzzyRule>
 
     <!-- HIGH RISK -->
@@ -60,14 +60,14 @@
         <left_operand xsi:type="Set" name="high_risk" />
         <right_operand xsi:type="Set" name="medium_reward" />
       </condition>
-      <result name="medium_desire" />
+      <result name="low_desire" />
     </FuzzyRule>
     <FuzzyRule>
       <condition xsi:type="And">
         <left_operand xsi:type="Set" name="high_risk" />
         <right_operand xsi:type="Set" name="high_reward" />
       </condition>
-      <result name="medium_desire" />
+      <result name="low_desire" />
     </FuzzyRule>
   </rules>
 </RuleBase>

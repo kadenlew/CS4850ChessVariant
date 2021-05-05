@@ -1,7 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-using UnityEngine.Profiling;
+using UnityEngine.Profiling; 
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Chess
 {
@@ -55,21 +57,21 @@ class PlayerAI : PlayerBase {
         }
     }
 
-    public override void begin_turn()
+    public override async void begin_turn()
     {
         update_rulebase(controller_ref.get_game_turn());
-        controller_ref.StartCoroutine(TurnControlRoutine());
+        await TurnControlAync();
     }
 
-    IEnumerator TurnControlRoutine()
+    public async Task<int> TurnControlAync()
     {
-        // Debug.Log($"Starting my turn!");
+        Debug.Log($"Starting my turn!");
         
         // play each commander in any order (based on desireability scores)
         while(true) 
         {
 
-            while (controller_ref.pauseAI) yield return new WaitForSeconds(0.1f);
+            while (controller_ref.pauseAI) await Task.Delay(100);
 
             Profiler.BeginSample("AI_One_Move");
 
@@ -99,19 +101,21 @@ class PlayerAI : PlayerBase {
                 break;
 
             // Debug.Log($"With a score of {desireability}, im making this move! {player_action}");
-            yield return new WaitForSeconds(move_delay);
+            await Task.Delay((int)(move_delay * 1000));
 
             // request that the board execute the action
             var result = controller_ref.execute_action(player_action); 
 
             // wait until the animation has completed
-            while(controller_ref.pauseAI) yield return new WaitForSeconds(0.1f);
+            while(controller_ref.pauseAI) await Task.Delay(100); 
 
             // Debug.Log($"I did my action, with a result of {result}");
         }
 
         // Debug.Log("I've used all my moves, I'm ending my turn!");
         controller_ref.end_turn();
+
+        return 0;
     }
         
 }
