@@ -98,18 +98,25 @@ public abstract class CommanderPiece : GamePieceBase {
     }
 
     public void end_turn() {
+        List<SoldierPiece> to_migrate = new List<SoldierPiece>();
         foreach(var soldier in soldiers_)
         {
             if(soldier.temp_commander != null)
             {
-                soldier.commander.soldiers_.Add(soldier);
-                soldier.temp_commander.soldiers_.Remove(soldier);
-                soldier.temp_commander = null;
+                to_migrate.Add(soldier);
+                continue;
             }
             soldier.GetComponent<GamePieceBase>().Deselect();
         }
         this.energy = 1;
         this.Deselect();
+
+        foreach(var soldier in to_migrate)
+        {
+            soldier.commander.soldiers_.Add(soldier);
+            soldier.temp_commander.soldiers_.Remove(soldier);
+            soldier.temp_commander = null;
+        } 
     }
 
     public void begin_turn() {
