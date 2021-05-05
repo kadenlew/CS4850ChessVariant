@@ -100,6 +100,12 @@ public abstract class CommanderPiece : GamePieceBase {
     public void end_turn() {
         foreach(var soldier in soldiers_)
         {
+            if(soldier.temp_commander != null)
+            {
+                soldier.commander.soldiers_.Add(soldier);
+                soldier.temp_commander.soldiers_.Remove(soldier);
+                soldier.temp_commander = null;
+            }
             soldier.GetComponent<GamePieceBase>().Deselect();
         }
         this.energy = 1;

@@ -13,7 +13,12 @@ public class AIReward {
         {
             // moves that move further are better
             Definitions.MoveAction move_action = action as Definitions.MoveAction;
-            return (move_action.target - move_action.agent.position).special_mag * 0.5;
+            var difference = (move_action.target - move_action.agent.position); 
+
+            return (
+                0.5 * difference.special_mag +                                      // any movement is good
+                1 * difference.rank_length * ((action.agent.is_white) ? 1 : -1)     // forward movement is particularly good
+            );
         }
         else
         {
