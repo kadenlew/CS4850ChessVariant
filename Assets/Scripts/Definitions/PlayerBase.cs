@@ -127,7 +127,7 @@ public class PlayerBase {
         return true;
     }
 
-    public virtual void begin_turn() {
+    public virtual async void begin_turn() {
         // do the begin turn step for each corp
         foreach(var commander in commanders_)
             commander.begin_turn();

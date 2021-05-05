@@ -14,7 +14,7 @@ public class BoardVector {
     // the magnitude of the file dimension
     public int file_length { get; }
     // the magnitude of the rank dimension
-    public int rank_length { get;  }   
+    public int rank_length { get; }   
     
     // manhattan magnitude of the entire vector
     public int manhattan_mag {
