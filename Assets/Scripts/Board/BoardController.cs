@@ -230,8 +230,17 @@ public class BoardController : MonoBehaviour
             {
                 if (Settings.playAnimations && action.agent.type != PieceType.Rook)
                 {
-                    this.pauseAI = true;
-                    bezierMover.AnimateFailedAttack(action.agent.gameObject, attackTarget, pieceSize/2);
+                    if( action is Definitions.AttackMoveAction)
+                    {
+                        this.pauseAI = true;
+                        bezierMover.ConfigureBezier(start_position, end_position);
+                        bezierMover.Animate(action.agent.gameObject);
+                    }
+                    else
+                    {
+                        this.pauseAI = true;
+                        bezierMover.AnimateFailedAttack(action.agent.gameObject, attackTarget, pieceSize / 2);
+                    }
                 }
                 this.setPositions = true;
                 if (action is Definitions.AttackAction)
