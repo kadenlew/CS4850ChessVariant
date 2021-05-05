@@ -17,7 +17,7 @@ public class AttackAction : Action {
     // the target piece that is under attack
     public Piece.GamePieceBase target { get; }
     // represents any positive or negative bonus applied to the random roll before checking that value with the roll table
-    int roll_modifer { get; } = 0;
+    public int roll_modifer { get; } = 0;
 
     // used by UI for materiel tracking
     public Piece.PieceType targetType;

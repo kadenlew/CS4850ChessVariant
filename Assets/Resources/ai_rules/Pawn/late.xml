@@ -19,7 +19,9 @@
     <FuzzyRule>
       <condition xsi:type="And">
         <left_operand xsi:type="Set" name="low_risk" />
-        <right_operand xsi:type="Set" name="high_reward" />
+        <right_operand xsi:type="Very">
+          <operand xsi:type="Set" name="high_reward" />
+        </right_operand>
       </condition>
       <result name="medium_desire" />
     </FuzzyRule>

@@ -116,6 +116,7 @@ public abstract class CommanderPiece : GamePieceBase {
             soldier.commander.soldiers_.Add(soldier);
             soldier.temp_commander.soldiers_.Remove(soldier);
             soldier.temp_commander = null;
+            soldier.GetComponent<GamePieceBase>().Deselect();
         } 
     }
 

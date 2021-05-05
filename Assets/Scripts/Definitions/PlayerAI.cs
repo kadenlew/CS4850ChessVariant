@@ -101,7 +101,7 @@ class PlayerAI : PlayerBase {
                 break;
 
             // Debug.Log($"With a score of {desireability}, im making this move! {player_action}");
-            await Task.Delay((int)(move_delay * 1000));
+            await Task.Delay((int)(move_delay * 1000) + 1);
 
             // request that the board execute the action
             var result = controller_ref.execute_action(player_action); 

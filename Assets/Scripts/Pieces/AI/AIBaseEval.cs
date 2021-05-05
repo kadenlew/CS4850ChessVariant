@@ -36,9 +36,9 @@ class AIActionEval : MonoBehaviour
         risk.add_set_right_shoulder("high_risk", 0, 0.5);
 
         var reward = logic_controller.add_input_variable("reward", 0, 8);
-        reward.add_set_left_shoulder("low_reward", 2 , 4);
+        reward.add_set_left_shoulder("low_reward", 2 , 3);
         reward.add_set_triangular("medium_reward", 2, 4, 6);
-        reward.add_set_right_shoulder("high_reward", 4, 6);
+        reward.add_set_right_shoulder("high_reward", 4, 7);
 
         var desire = logic_controller.create_output_variable("desire", 0, 100); 
         desire.add_set_left_shoulder("low_desire", 25, 50);

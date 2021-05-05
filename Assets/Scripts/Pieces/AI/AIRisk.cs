@@ -53,8 +53,6 @@ public class AIRisk {
             } 
         }
 
-        // also include hypothesis (TODO)
-
         // compute the liklihood that all attacks against this piece would fail
         double final_risk = 1;
         foreach(var risk in total_risk) {
