@@ -266,6 +266,19 @@ public class BoardController : MonoBehaviour
             player.explore_actions();
     }
 
+    public List<CommanderPiece> get_player_leaders(bool isWhite)
+        {
+            List<GamePieceBase> leadershipPieces = new List<GamePieceBase>();
+            if(isWhite)
+            {
+                return players_[0].commanders_;
+            }
+            else
+            {
+                return players_[1].commanders_;
+            }
+        }
+
     protected void set_transforms()
     {
         // set the positions for pieces of each player

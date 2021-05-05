@@ -14,7 +14,7 @@ namespace Control
 public class PlayerBase {
     // the commanders this player owns. Each commander owns its soldiers, so the player also owns 
     // those pieces by association
-    protected List<Piece.CommanderPiece> commanders_;
+    public List<Piece.CommanderPiece> commanders_ { get; protected set; }
 
     protected Definitions.ActionDatabase possible_actions;
 
