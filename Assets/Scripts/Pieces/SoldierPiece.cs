@@ -55,6 +55,12 @@ public abstract class SoldierPiece : GamePieceBase {
         return (temp_commander != null) ? temp_commander : commander;
     }
 
+    public bool is_temp_commander()
+    {
+        return (temp_commander != null) ? true : false;
+    }
+
+
     public override void kill()
     {
         commander.remove_soldier(this);

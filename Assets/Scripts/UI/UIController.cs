@@ -56,6 +56,7 @@ public class UIController : MonoBehaviour
     public Text infoPTurns;
     public Text infoPKills;
     public Text infoPSurvival;
+    public Text infoPLeadership;
     private Dictionary<GamePieceBase, Veterancy> pieceVeterancy = new Dictionary<GamePieceBase, Veterancy>();
 
 
@@ -103,7 +104,6 @@ public class UIController : MonoBehaviour
         probabilityCheck.isOn = Settings.dynamicProbabilities;
         aiMoveSpeed.value = Settings.aiDelaySlider;
         aiPause.isOn = !Settings.aiEnabled;
-        Debug.Log(Settings.dynamicProbabilities.ToString());
         animationPlay.isOn = Settings.playAnimations;
         UpdateUI();
     }
@@ -198,14 +198,29 @@ public class UIController : MonoBehaviour
                 }
                 else
                     tableBase.SetActive(false);
-                informationPanel.SetActive(true);
-                moveButton.SetActive(false);
-                attackButton.SetActive(false);
-                leadershipButton.SetActive(false);
-                confirmButton.SetActive(false);
-                endTurnButton.SetActive(false);
-                cancelButton.SetActive(true);
-                cancelButton.transform.position = ButtonPositionToVector(true, 0);
+                if(targetPiece)
+                {
+                    informationPanel.SetActive(true);
+                    moveButton.SetActive(false);
+                    attackButton.SetActive(false);
+                    leadershipButton.SetActive(false);
+                    endTurnButton.SetActive(false);
+                    confirmButton.SetActive(true);
+                    confirmButton.transform.position = ButtonPositionToVector(true, 0);
+                    cancelButton.SetActive(true);
+                    cancelButton.transform.position = ButtonPositionToVector(true, 1);
+                }
+                else
+                {
+                    informationPanel.SetActive(true);
+                    moveButton.SetActive(false);
+                    attackButton.SetActive(false);
+                    leadershipButton.SetActive(false);
+                    confirmButton.SetActive(false);
+                    endTurnButton.SetActive(false);
+                    cancelButton.SetActive(true);
+                    cancelButton.transform.position = ButtonPositionToVector(true, 0);
+                }
                 break;
 
             case UIState.PieceMoveAttack:
@@ -411,6 +426,28 @@ public class UIController : MonoBehaviour
                             UpdateUI();
                         }
                     }
+                    if (uiStatus == UIState.PieceLeadership && objectHit.gameObject.CompareTag("Player") && selected)
+                    {
+                        if (relevantPieces.Contains(objectHit.gameObject))
+                        {
+                            if (selected is SoldierPiece)
+                            {
+                                SoldierPiece tempSoldier = (SoldierPiece)selected;
+                                if (tempSoldier.commander != objectHit.gameObject.GetComponent<CommanderPiece>())
+                                {
+                                    if (targetPiece)
+                                    {
+                                        targetPiece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
+                                        targetPiece = null;
+                                    }
+                                    targetPiece = objectHit.gameObject;
+                                    targetPiece.GetComponent<GamePieceBase>().Select(HighlightColors[5]);
+                                    UpdateUI();
+                                }
+                            }
+
+                        }
+                    }
                 }
             }
             else
@@ -458,7 +495,7 @@ public class UIController : MonoBehaviour
         if (piece is SoldierPiece)
         {
             SoldierPiece temp = (SoldierPiece)piece;
-            return temp.commander.GetComponent<CommanderPiece>().energy;
+            return temp.get_active_commander().GetComponent<CommanderPiece>().energy;
         }
 
         // Debug.LogError("seleteced piece is nothing?");
@@ -492,7 +529,23 @@ public class UIController : MonoBehaviour
         relevantPieces = GetRelevantLeadership();
         foreach (GameObject piece in relevantPieces)
         {
-            piece.GetComponent<GamePieceBase>().Select(HighlightColors[2]);
+            if(selected is SoldierPiece)
+            {
+                SoldierPiece selectedSoldier = (SoldierPiece)selected;
+                if(piece.GetComponent<CommanderPiece>() == selectedSoldier.commander)
+                {
+                    piece.GetComponent<GamePieceBase>().Select(HighlightColors[2]);
+                }
+                else
+                {
+                    piece.GetComponent<GamePieceBase>().Select(HighlightColors[1]);
+                }
+            }
+            else
+            {
+                piece.GetComponent<GamePieceBase>().Select(HighlightColors[2]);
+            }
+            
         }
         UpdateUI();
     }
@@ -568,17 +621,35 @@ public class UIController : MonoBehaviour
             else if (selected is SoldierPiece)
             {
                 SoldierPiece temp = (SoldierPiece)selected;
-                if (temp.commander.energy == 0)
+                if (temp.get_active_commander().energy == 0)
                 {
-                    foreach (Chess.Piece.SoldierPiece soldier in temp.commander.soldiers_)
+                    foreach (Chess.Piece.SoldierPiece soldier in temp.get_active_commander().soldiers_)
                     {
                         soldier.Select(HighlightColors[4]);
                     }
-                    temp.commander.Select(HighlightColors[4]);
+                    temp.get_active_commander().Select(HighlightColors[4]);
                 }
             }
             selected.Select(HighlightColors[0]);
             UpdateUI();
+        }
+        if(uiStatus == UIState.PieceLeadership)
+        {
+            SoldierPiece temp = (SoldierPiece)selected;
+            temp.set_temp_commander(targetPiece.GetComponent<CommanderPiece>());
+            uiStatus = UIState.PieceMainSelect;
+            DeselectAll();
+            if (temp.get_active_commander().energy == 0)
+            {
+                foreach (Chess.Piece.SoldierPiece soldier in temp.get_active_commander().soldiers_)
+                {
+                    soldier.Select(HighlightColors[4]);
+                }
+                temp.get_active_commander().Select(HighlightColors[4]);
+            }
+            selected.Select(HighlightColors[0]);
+            UpdateUI();
+
         }
     }
 
@@ -620,10 +691,6 @@ public class UIController : MonoBehaviour
     public void MenuButton()
     {
         menuOpen = !menuOpen;
-        if (menuOpen)
-            Time.timeScale = 0f;
-        else
-            Time.timeScale = 1f;
         UpdateUI();
     }
 
@@ -925,7 +992,18 @@ public class UIController : MonoBehaviour
             List<GameObject> relatedPieces = new List<GameObject>();
             if (selected.GetComponent<SoldierPiece>())
             {
-                relatedPieces.Add(selected.GetComponent<SoldierPiece>().commander.gameObject);
+                if (selected.GetComponent<SoldierPiece>().get_active_commander().type == PieceType.King)
+                {
+                    List<CommanderPiece> tempList = boardController.get_player_leaders(boardController.is_white_turn);
+                    foreach(GamePieceBase commander in tempList)
+                    {
+                        relatedPieces.Add(commander.gameObject);
+                    }
+                }
+                else
+                {
+                    relatedPieces.Add(selected.GetComponent<SoldierPiece>().get_active_commander().gameObject);
+                }
             }
             else if(selected.GetComponent<CommanderPiece>())
             {
@@ -949,6 +1027,14 @@ public class UIController : MonoBehaviour
     private void SetInfoPanel(GamePieceBase piece)
     {
         Veterancy tempVet = GetVeterancy(piece);
+        if(piece is SoldierPiece)
+        {
+            SoldierPiece temp = (SoldierPiece)piece;
+            if (temp.is_temp_commander())
+                infoPLeadership.text = "Delegated to Bishop";
+            else
+                infoPLeadership.text = "";
+        }
         infoPName.text = piece.type.ToString();
         infoPTurns.text = PieceHasTurn(piece).ToString();
         infoPKills.text = tempVet.kills.ToString();
