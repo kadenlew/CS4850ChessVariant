@@ -2443,6 +2443,7 @@ MonoBehaviour:
   aiMoveSpeedText: {fileID: 1352592355}
   bezierMover: {fileID: 981801852}
   endgameScreen: {fileID: 101048929}
+  toggleEndButton: {fileID: 1837523138}
   whiteKillerType: {fileID: 152622000}
   whiteKillerNumber: {fileID: 1556425227}
   blackKillerType: {fileID: 153514062}
@@ -9656,7 +9657,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1837523139
 RectTransform:
   m_ObjectHideFlags: 0
